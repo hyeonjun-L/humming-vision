@@ -6,6 +6,7 @@ import { CameraModel } from './camera.entity';
 import { LensModel } from './lens.entity';
 import { FrameGrabberModel } from './frame-grabber.entity';
 import { SoftwareModel } from './software.entity';
+import { LogModel } from 'src/admin/entity/log.entity';
 
 @Entity()
 export class ProductModel extends BaseModel {
@@ -47,4 +48,7 @@ export class ProductModel extends BaseModel {
 
   @OneToOne(() => SoftwareModel, (sw) => sw.product, { nullable: true })
   software?: SoftwareModel;
+
+  @OneToOne(() => LogModel, (log) => log.product, { nullable: true })
+  log?: LogModel;
 }

@@ -1,4 +1,4 @@
-import { Column, OneToOne } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 import { ProductModel } from './product.entity';
 import { InterfaceEnum } from '../const/interface.const';
 
@@ -9,6 +9,7 @@ enum FrameGrabberModelMaker {
   BASLER = 'BASLER',
 }
 
+@Entity()
 export class FrameGrabberModel {
   @OneToOne(() => ProductModel, (product) => product.frameGrabber)
   product: ProductModel;

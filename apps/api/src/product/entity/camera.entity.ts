@@ -1,4 +1,4 @@
-import { Column, In, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, In, JoinColumn, OneToOne } from 'typeorm';
 import { ProductModel } from './product.entity';
 import { InterfaceEnum } from '../const/interface.const';
 
@@ -21,6 +21,7 @@ enum CameraModelMaker {
   JAI = 'JAI',
 }
 
+@Entity()
 export class CameraModel {
   @OneToOne(() => ProductModel, (product) => product.camera)
   @JoinColumn()

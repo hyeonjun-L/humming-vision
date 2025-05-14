@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseModel } from './base.entity';
-import { ProductModel } from 'src/products/entity/product.entity';
+import { ProductModel } from 'src/product/entity/product.entity';
 
 export enum ImageModelType {
   SPEC = 'SPEC',

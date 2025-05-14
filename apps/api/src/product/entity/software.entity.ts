@@ -1,4 +1,4 @@
-import { Column, OneToOne } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 import { ProductModel } from './product.entity';
 
 enum SoftwareModelMaker {
@@ -6,6 +6,7 @@ enum SoftwareModelMaker {
   EURESYS = 'EURESYS',
 }
 
+@Entity()
 export class SoftwareModel {
   @OneToOne(() => ProductModel, (product) => product.software)
   product: ProductModel;

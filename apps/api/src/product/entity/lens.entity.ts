@@ -1,4 +1,4 @@
-import { Column, OneToOne } from 'typeorm';
+import { Column, Entity, OneToOne } from 'typeorm';
 import { ProductModel } from './product.entity';
 
 enum LensModelType {
@@ -13,6 +13,7 @@ enum LensModelMount {
   M = 'M',
 }
 
+@Entity()
 export class LensModel {
   @OneToOne(() => ProductModel, (product) => product.lens)
   product: ProductModel;
