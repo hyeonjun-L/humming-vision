@@ -23,6 +23,9 @@ enum CameraModelMaker {
 
 @Entity()
 export class CameraModel {
+  @Column({ primary: true, generated: true })
+  id: number;
+
   @OneToOne(() => ProductModel, (product) => product.camera)
   @JoinColumn()
   product: ProductModel;

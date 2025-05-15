@@ -8,6 +8,9 @@ enum SoftwareModelMaker {
 
 @Entity()
 export class SoftwareModel {
+  @Column({ primary: true, generated: true })
+  id: number;
+
   @OneToOne(() => ProductModel, (product) => product.software)
   product: ProductModel;
 

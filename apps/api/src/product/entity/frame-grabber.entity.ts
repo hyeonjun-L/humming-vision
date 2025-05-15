@@ -11,6 +11,9 @@ enum FrameGrabberModelMaker {
 
 @Entity()
 export class FrameGrabberModel {
+  @Column({ primary: true, generated: true })
+  id: number;
+
   @OneToOne(() => ProductModel, (product) => product.frameGrabber)
   product: ProductModel;
 

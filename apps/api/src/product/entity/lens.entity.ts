@@ -15,6 +15,9 @@ enum LensModelMount {
 
 @Entity()
 export class LensModel {
+  @Column({ primary: true, generated: true })
+  id: number;
+
   @OneToOne(() => ProductModel, (product) => product.lens)
   product: ProductModel;
 
