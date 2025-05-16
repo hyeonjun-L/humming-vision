@@ -1,25 +1,11 @@
-import { Column, Entity, In, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { ProductModel } from './product.entity';
 import { InterfaceEnum } from '../const/interface.const';
-
-enum CameraModelType {
-  AREA = 'AREA',
-  LINE = 'LINE',
-}
-
-enum CameraModelColor {
-  MONO = 'MONO',
-  COLOR = 'COLOR',
-}
-
-enum CameraModelMaker {
-  CREVIS = 'CREVIS',
-  VIEWORKS = 'VIEWORKS',
-  BASLER = 'BASLER',
-  HIK = 'HIK',
-  HUARAY = 'HUARAY',
-  JAI = 'JAI',
-}
+import {
+  CameraModelColor,
+  CameraModelMaker,
+  CameraModelType,
+} from '../const/camera.const';
 
 @Entity()
 export class CameraModel {
@@ -64,7 +50,7 @@ export class CameraModel {
   speed: number;
 
   @Column({ type: 'int' })
-  pixelSize: number;
+  pixelSize?: number;
 
   @Column()
   formatSize: string;

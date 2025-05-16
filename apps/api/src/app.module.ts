@@ -20,9 +20,11 @@ import {
   ENV_DB_PORT_KEY,
   ENV_DB_USERNAME_KEY,
 } from './common/const/env-kets.const';
+import { ProductsModule } from './product/products.module';
 
 @Module({
   imports: [
+    ProductsModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
