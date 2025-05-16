@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { In, Repository } from 'typeorm';
+import { In, QueryRunner, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductModel } from './entity/product.entity';
 import { CatagoriesEnum } from './const/categories.const';
@@ -16,19 +16,23 @@ export class ProductsService {
     private cameraRepository: Repository<CameraModel>,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
-    const product = this.productRepository.create(createProductDto);
+  async create(createProductDto: CreateProductDto, qr: QueryRunner) {
+    const productRepository =
+      qr.manager.getRepository<ProductModel>(ProductModel);
 
-    const savedProduct = await this.productRepository.save(product);
+    const product = productRepository.create(createProductDto);
+    const savedProduct = await productRepository.save(product);
 
     switch (createProductDto.categories) {
       case CatagoriesEnum.CAMERA:
         if (createProductDto.camera) {
-          const camera = this.cameraRepository.create({
+          const cameraRepo = qr.manager.getRepository<CameraModel>(CameraModel);
+
+          const camera = cameraRepo.create({
             ...createProductDto.camera,
             product: savedProduct,
           });
-          await this.cameraRepository.save(camera);
+          await cameraRepo.save(camera);
         }
         break;
     }
