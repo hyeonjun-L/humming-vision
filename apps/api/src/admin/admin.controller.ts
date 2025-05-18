@@ -7,6 +7,28 @@ import { BasicTokenGuard } from './guard/basic-token.guard';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @Post('token/access')
+  tokenAccess(@Headers('authorization') rawToken: string) {
+    const token = this.adminService.extractTokenFromHeader(rawToken, true);
+
+    const newToken = this.adminService.rotateToken(token, false);
+
+    return {
+      accessToken: newToken,
+    };
+  }
+
+  @Post('token/refresh')
+  tokenRefresh(@Headers('authorization') rawToken: string) {
+    const token = this.adminService.extractTokenFromHeader(rawToken, true);
+
+    const newToken = this.adminService.rotateToken(token, true);
+
+    return {
+      refreshToken: newToken,
+    };
+  }
+
   @Post('register')
   registerAdmin(@Body() registerAdminDto: RegisterAdminDto) {
     return this.adminService.registerAdminWithEmail(registerAdminDto);

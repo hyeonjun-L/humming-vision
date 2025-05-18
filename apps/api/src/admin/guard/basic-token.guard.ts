@@ -16,7 +16,7 @@ export class BasicTokenGuard implements CanActivate {
     const rawToken = req.headers['authorization'];
 
     if (!rawToken) {
-      throw new UnauthorizedException('authorization header is missing');
+      throw new UnauthorizedException('Basic 토큰이 없습니다.');
     }
 
     const token = this.adminService.extractTokenFromHeader(rawToken, false);
