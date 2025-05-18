@@ -21,10 +21,12 @@ import {
   ENV_DB_USERNAME_KEY,
 } from './common/const/env-kets.const';
 import { ProductsModule } from './product/products.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
     ProductsModule,
+    AdminModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
