@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdminModel } from './admin/entity/admin.entity';
@@ -22,6 +22,8 @@ import {
 } from './common/const/env-kets.const';
 import { ProductsModule } from './product/products.module';
 import { AdminModule } from './admin/admin.module';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { AccessTokenGuard } from './admin/guard/bearer-token.guard';
 
 @Module({
   imports: [
@@ -54,6 +56,20 @@ import { AdminModule } from './admin/admin.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
 })
 export class AppModule {}

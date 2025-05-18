@@ -141,4 +141,12 @@ export class AdminService {
       isRefreshToken,
     );
   }
+
+  async getAdminByEmail(email: string) {
+    return this.adminRepository.findOne({
+      where: {
+        email,
+      },
+    });
+  }
 }

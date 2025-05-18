@@ -2,6 +2,7 @@ import { Body, Controller, Post, Headers, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import { BasicTokenGuard } from './guard/basic-token.guard';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
 @Controller('admin')
 export class AdminController {
@@ -35,6 +36,7 @@ export class AdminController {
   }
 
   @Post('login')
+  @IsPublic()
   @UseGuards(BasicTokenGuard)
   postLoginEmail(@Headers('authorization') rawToken: string) {
     const token = this.adminService.extractTokenFromHeader(rawToken, false);
