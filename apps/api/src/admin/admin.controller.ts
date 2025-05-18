@@ -3,6 +3,8 @@ import { AdminService } from './admin.service';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import { BasicTokenGuard } from './guard/basic-token.guard';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { Roles } from './decorator/roles.decorator';
+import { RolesEnum } from './const/role.const';
 
 @Controller('admin')
 export class AdminController {
@@ -31,6 +33,7 @@ export class AdminController {
   }
 
   @Post('register')
+  @Roles(RolesEnum.SUPER)
   registerAdmin(@Body() registerAdminDto: RegisterAdminDto) {
     return this.adminService.registerAdminWithEmail(registerAdminDto);
   }

@@ -2,7 +2,8 @@ import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, OneToOne } from 'typeorm';
 import { SessionModel } from './session.entity';
 import { LogModel } from './log.entity';
-import { AdminModelRole } from '../const/role.const';
+import { RolesEnum } from '../const/role.const';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class AdminModel extends BaseModel {
@@ -10,9 +11,9 @@ export class AdminModel extends BaseModel {
   session?: SessionModel;
 
   @Column({
-    enum: Object.values(AdminModelRole),
+    enum: Object.values(RolesEnum),
     nullable: false,
-    default: AdminModelRole.ADMIN,
+    default: RolesEnum.ADMIN,
   })
   role: string;
 
@@ -20,6 +21,7 @@ export class AdminModel extends BaseModel {
   email: string;
 
   @Column({ nullable: false })
+  @Exclude()
   password: string;
 
   @Column({ nullable: false })

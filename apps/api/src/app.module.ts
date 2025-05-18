@@ -24,6 +24,7 @@ import { ProductsModule } from './product/products.module';
 import { AdminModule } from './admin/admin.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AccessTokenGuard } from './admin/guard/bearer-token.guard';
+import { RolesGuard } from './admin/guard/roles.guard';
 
 @Module({
   imports: [
@@ -66,10 +67,10 @@ import { AccessTokenGuard } from './admin/guard/bearer-token.guard';
       provide: APP_GUARD,
       useClass: AccessTokenGuard,
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}
