@@ -9,5 +9,6 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [JwtModule.register({}), TypeOrmModule.forFeature([AdminModel])],
   controllers: [AdminController],
   providers: [AdminService],
+  exports: [AdminService],
 })
 export class AdminModule {}
