@@ -7,14 +7,15 @@ import {
 import { Type } from 'class-transformer';
 import { CatagoriesEnum } from '../const/categories.const';
 import { CreateCameraDto } from './create-camera.dto';
-import { IsUniqueProductName } from '../validator/is-unique-product-name.validator';
+import { IsUnique } from 'src/common/decorator/is-unique-field.decotator';
+import { ProductModel } from '../entity/product.entity';
 
 export class CreateProductDto {
   @IsEnum(CatagoriesEnum)
   categories: CatagoriesEnum;
 
   @IsNotEmpty()
-  @IsUniqueProductName()
+  @IsUnique(ProductModel, 'name', { message: '이미 존재하는 제품명입니다.' })
   name: string;
 
   @IsNotEmpty()
