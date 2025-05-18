@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Headers } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 
@@ -9,5 +9,14 @@ export class AdminController {
   @Post('register')
   registerAdmin(@Body() registerAdminDto: RegisterAdminDto) {
     return this.adminService.registerAdminWithEmail(registerAdminDto);
+  }
+
+  @Post('login')
+  postLoginEmail(@Headers('authorization') rawToken: string) {
+    const token = this.adminService.extractTokenFromHeader(rawToken, false);
+
+    const credentials = this.adminService.decodeBasicToken(token);
+
+    return this.adminService.loginWithEmail(credentials);
   }
 }
