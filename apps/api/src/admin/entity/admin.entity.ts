@@ -15,7 +15,7 @@ export class AdminModel extends BaseModel {
     nullable: false,
     default: RolesEnum.ADMIN,
   })
-  role: string;
+  role: RolesEnum;
 
   @Column({ nullable: false })
   email: string;

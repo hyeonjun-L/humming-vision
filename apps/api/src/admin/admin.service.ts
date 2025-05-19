@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
@@ -14,9 +10,10 @@ import {
 } from 'src/common/const/env-kets.const';
 import { AdminModel } from './entity/admin.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, QueryRunner, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { SessionModel } from './entity/session.entity';
+import { JwtPayload } from './types/jwt-payload.types';
 @Injectable()
 export class AdminService {
   constructor(
@@ -126,7 +123,7 @@ export class AdminService {
 
   async verifyToken(token: string) {
     try {
-      const decoded = this.jwtService.verify(token, {
+      const decoded = this.jwtService.verify<JwtPayload>(token, {
         secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
       });
 
@@ -136,12 +133,13 @@ export class AdminService {
 
       return decoded;
     } catch (e) {
-      throw new UnauthorizedException('verifyToken error', e.message);
+      const message = e instanceof Error ? e.message : String(e);
+      throw new UnauthorizedException('verifyToken error', message);
     }
   }
 
   rotateToken(token: string, isRefreshToken: boolean) {
-    const decoded = this.jwtService.verify(token, {
+    const decoded = this.jwtService.verify<JwtPayload>(token, {
       secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
     });
 
@@ -153,7 +151,8 @@ export class AdminService {
 
     const newToken = this.signToken(
       {
-        ...decoded,
+        email: decoded.email,
+        id: decoded.sub,
       },
       isRefreshToken,
     );
@@ -203,12 +202,13 @@ export class AdminService {
   }
 
   async updateSessionByAdminId(token: string) {
-    const payload = this.jwtService.decode(token);
+    const payload: unknown = this.jwtService.decode(token);
     if (!payload || typeof payload !== 'object' || !('email' in payload)) {
       throw new UnauthorizedException('유효하지 않은 토큰입니다.');
     }
+    const { email } = payload as { email: string; sub: number; type: string };
     const existingAdmin = await this.adminRepository.findOne({
-      where: { email: payload.email },
+      where: { email },
     });
     if (!existingAdmin) {
       throw new UnauthorizedException('존재하지 않는 관리자입니다.');

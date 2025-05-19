@@ -7,28 +7,30 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorator/roles.decorator';
+import { RolesEnum } from '../const/role.const';
+import { AdminRequest } from '../types/interfaces.types';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRole = this.reflector.getAllAndOverride(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRole = this.reflector.getAllAndOverride<RolesEnum>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (!requiredRole) {
       return true;
     }
 
-    const { user } = context.switchToHttp().getRequest();
+    const { admin } = context.switchToHttp().getRequest<AdminRequest>();
 
-    if (!user) {
+    if (!admin) {
       throw new UnauthorizedException(`토큰을 제공 해주세요!`);
     }
 
-    if (user.role !== requiredRole) {
+    if (admin.role !== requiredRole) {
       throw new ForbiddenException(
         `이 작업을 수행할 권한이 없습니다. ${requiredRole} 권한이 필요합니다.`,
       );

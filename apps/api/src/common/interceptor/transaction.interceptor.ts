@@ -1,13 +1,12 @@
 import {
   CallHandler,
   ExecutionContext,
-  Inject,
   Injectable,
-  InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable, catchError, tap } from 'rxjs';
+import { Observable, catchError, finalize, from } from 'rxjs';
 import { DataSource } from 'typeorm';
+import { QueryRunnerRequest } from '../types/interface.types';
 
 @Injectable()
 export class TransactionInterceptor implements NestInterceptor {
@@ -17,7 +16,7 @@ export class TransactionInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest<QueryRunnerRequest>();
 
     const qr = this.dataSource.createQueryRunner();
 
@@ -26,17 +25,21 @@ export class TransactionInterceptor implements NestInterceptor {
 
     req.queryRunner = qr;
 
-    // 후 처리
     return next.handle().pipe(
-      catchError(async (e) => {
-        await qr.rollbackTransaction();
-        await qr.release();
-
-        throw e;
+      catchError((e) => {
+        return from(
+          (async () => {
+            await qr.rollbackTransaction();
+            await qr.release();
+            throw e;
+          })(),
+        );
       }),
-      tap(async () => {
-        await qr.commitTransaction();
-        await qr.release();
+      finalize(() => {
+        void (async () => {
+          await qr.commitTransaction();
+          await qr.release();
+        })();
       }),
     );
   }

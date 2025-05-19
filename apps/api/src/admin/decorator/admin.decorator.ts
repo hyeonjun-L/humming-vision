@@ -4,12 +4,13 @@ import {
   createParamDecorator,
 } from '@nestjs/common';
 import { AdminModel } from '../entity/admin.entity';
+import { AdminRequest } from '../types/interfaces.types';
 
 export const Admin = createParamDecorator(
   (data: keyof AdminModel | undefined, context: ExecutionContext) => {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest<AdminRequest>();
 
-    const admin = req.admin as AdminModel;
+    const admin = req.admin;
 
     if (!admin) {
       throw new InternalServerErrorException(
