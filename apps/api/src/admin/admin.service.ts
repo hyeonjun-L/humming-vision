@@ -1,21 +1,29 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import {
   ENV_HASH_ROUNDS_KEY,
+  ENV_JWT_ACCESS_EXPIRES,
+  ENV_JWT_REFRESH_EXPIRES,
   ENV_JWT_SECRET_KEY,
 } from 'src/common/const/env-kets.const';
 import { AdminModel } from './entity/admin.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, QueryRunner, Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
-
+import { SessionModel } from './entity/session.entity';
 @Injectable()
 export class AdminService {
   constructor(
     @InjectRepository(AdminModel)
     private readonly adminRepository: Repository<AdminModel>,
+    @InjectRepository(SessionModel)
+    private readonly sessionRepository: Repository<SessionModel>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -23,7 +31,7 @@ export class AdminService {
   async loginWithEmail(user: Pick<AdminModel, 'email' | 'password'>) {
     const existingUser = await this.authenticateWithEmailAndPassword(user);
 
-    return this.loginAdmin(existingUser);
+    return await this.loginAdmin(existingUser);
   }
 
   async authenticateWithEmailAndPassword(
@@ -46,10 +54,14 @@ export class AdminService {
     return existingAdmin;
   }
 
-  loginAdmin(admin: Pick<AdminModel, 'email' | 'id'>) {
+  async loginAdmin(admin: Pick<AdminModel, 'email' | 'id'>) {
+    const accessToken = this.signToken(admin, false);
+    const refreshToken = this.signToken(admin, true);
+    await this.upsertSession(admin.id, refreshToken);
     return {
-      accessToken: this.signToken(admin, false),
-      refreshToken: this.signToken(admin, true),
+      admin,
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -62,7 +74,9 @@ export class AdminService {
 
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
-      expiresIn: isRefreshToken ? 3600 : 300,
+      expiresIn: isRefreshToken
+        ? Number(this.configService.get(ENV_JWT_REFRESH_EXPIRES))
+        : Number(this.configService.get(ENV_JWT_ACCESS_EXPIRES)),
     });
   }
 
@@ -75,9 +89,7 @@ export class AdminService {
       password: hash,
     });
 
-    await this.adminRepository.save(newAdmin);
-
-    return newAdmin;
+    return await this.adminRepository.save(newAdmin);
   }
 
   extractTokenFromHeader(header: string, isBearer: boolean) {
@@ -86,7 +98,7 @@ export class AdminService {
     const prefix = isBearer ? 'Bearer' : 'Basic';
 
     if (splitToken.length !== 2 || splitToken[0] !== prefix) {
-      throw new UnauthorizedException('잘못된 토큰입니다!');
+      throw new UnauthorizedException('잘못된 유형의 토큰입니다.');
     }
 
     const token = splitToken[1];
@@ -112,34 +124,41 @@ export class AdminService {
     };
   }
 
-  verifyToken(token: string) {
+  async verifyToken(token: string) {
     try {
-      return this.jwtService.verify(token, {
+      const decoded = this.jwtService.verify(token, {
         secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
       });
+
+      if (decoded.type === 'refresh') {
+        await this.validateRefreshTokenSession(token, decoded.sub);
+      }
+
+      return decoded;
     } catch (e) {
-      throw new UnauthorizedException('토큰이 만료됐거나 잘못된 토큰입니다.');
+      throw new UnauthorizedException('verifyToken error', e.message);
     }
   }
 
   rotateToken(token: string, isRefreshToken: boolean) {
     const decoded = this.jwtService.verify(token, {
       secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
-      complete: true,
     });
 
-    if (decoded.payload.type !== 'refresh') {
+    if (decoded.type !== 'refresh') {
       throw new UnauthorizedException(
         '토큰 재발급은 Refresh 토큰으로만 가능합니다!',
       );
     }
 
-    return this.signToken(
+    const newToken = this.signToken(
       {
         ...decoded,
       },
       isRefreshToken,
     );
+
+    return newToken;
   }
 
   async getAdminByEmail(email: string) {
@@ -148,5 +167,68 @@ export class AdminService {
         email,
       },
     });
+  }
+
+  async upsertSession(adminId: number, token: string) {
+    const refreshExpiresMs = Number(
+      this.configService.get(ENV_JWT_REFRESH_EXPIRES),
+    );
+    const expiresAt = new Date(Date.now() + refreshExpiresMs);
+    const session = await this.getSessionByAdminId(adminId);
+
+    if (session) {
+      return this.sessionRepository.update(
+        { admin: { id: adminId } },
+        { token, expiresAt },
+      );
+    } else {
+      return this.sessionRepository.save({
+        admin: { id: adminId },
+        token,
+        expiresAt,
+      });
+    }
+  }
+
+  async getSessionByAdminId(adminId: number) {
+    return await this.sessionRepository.findOne({
+      where: { admin: { id: adminId } },
+    });
+  }
+
+  async deleteSessionByAdminId(adminId: number) {
+    return await this.sessionRepository.delete({
+      admin: { id: adminId },
+    });
+  }
+
+  async updateSessionByAdminId(token: string) {
+    const payload = this.jwtService.decode(token);
+    if (!payload || typeof payload !== 'object' || !('email' in payload)) {
+      throw new UnauthorizedException('유효하지 않은 토큰입니다.');
+    }
+    const existingAdmin = await this.adminRepository.findOne({
+      where: { email: payload.email },
+    });
+    if (!existingAdmin) {
+      throw new UnauthorizedException('존재하지 않는 관리자입니다.');
+    }
+    return await this.upsertSession(existingAdmin.id, token);
+  }
+
+  async validateRefreshTokenSession(token: string, id: number) {
+    const session = await this.getSessionByAdminId(id);
+
+    if (!session || token !== session.token) {
+      await this.deleteSessionByAdminId(id);
+      throw new UnauthorizedException('validateRefreshTokenSession error');
+    }
+
+    if (session.expiresAt && session.expiresAt.getTime() < Date.now()) {
+      await this.deleteSessionByAdminId(id);
+      throw new UnauthorizedException('refresh token 세션이 만료되었습니다.');
+    }
+
+    return true;
   }
 }

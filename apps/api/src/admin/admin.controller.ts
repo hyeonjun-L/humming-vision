@@ -5,28 +5,35 @@ import { BasicTokenGuard } from './guard/basic-token.guard';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { Roles } from './decorator/roles.decorator';
 import { RolesEnum } from './const/role.const';
+import { RefreshTokenGuard } from './guard/bearer-token.guard';
+import { Admin } from './decorator/admin.decorator';
+import { AdminModel } from './entity/admin.entity';
 
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Post('token/access')
-  tokenAccess(@Headers('authorization') rawToken: string) {
+  @IsPublic()
+  @UseGuards(RefreshTokenGuard)
+  async tokenAccess(@Headers('authorization') rawToken: string) {
     const token = this.adminService.extractTokenFromHeader(rawToken, true);
-
-    const newToken = this.adminService.rotateToken(token, false);
-
+    const newAccessToken = this.adminService.rotateToken(token, false);
+    const newRefreshToken = this.adminService.rotateToken(token, true);
+    await this.adminService.updateSessionByAdminId(newRefreshToken);
     return {
-      accessToken: newToken,
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
     };
   }
 
   @Post('token/refresh')
-  tokenRefresh(@Headers('authorization') rawToken: string) {
+  @IsPublic()
+  @UseGuards(RefreshTokenGuard)
+  async tokenRefresh(@Headers('authorization') rawToken: string) {
     const token = this.adminService.extractTokenFromHeader(rawToken, true);
-
     const newToken = this.adminService.rotateToken(token, true);
-
+    await this.adminService.updateSessionByAdminId(newToken);
     return {
       refreshToken: newToken,
     };
@@ -41,11 +48,19 @@ export class AdminController {
   @Post('login')
   @IsPublic()
   @UseGuards(BasicTokenGuard)
-  postLoginEmail(@Headers('authorization') rawToken: string) {
+  async postLoginEmail(@Headers('authorization') rawToken: string) {
     const token = this.adminService.extractTokenFromHeader(rawToken, false);
-
     const credentials = this.adminService.decodeBasicToken(token);
+    const { accessToken, refreshToken, admin } =
+      await this.adminService.loginWithEmail(credentials);
 
-    return this.adminService.loginWithEmail(credentials);
+    await this.adminService.upsertSession(admin.id, refreshToken);
+
+    return { accessToken, refreshToken, admin };
+  }
+
+  @Post('logout')
+  postLogout(@Admin() admin: AdminModel) {
+    return this.adminService.deleteSessionByAdminId(admin.id);
   }
 }
