@@ -34,7 +34,7 @@ export class ProductModel extends BaseModel {
   @Column()
   manualUrl: string;
 
-  @OneToMany((type) => ImageModel, (image) => image.product)
+  @OneToMany(() => ImageModel, (image) => image.product)
   images: ImageModel[];
 
   @OneToOne(() => CameraModel, (camera) => camera.product, { nullable: true })
