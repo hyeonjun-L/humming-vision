@@ -38,7 +38,7 @@ export default function Home() {
         />
         <ol>
           <li>
-            ci cd 자동화 테스트 <code>apps/web/app/page.tsx</code>
+            2ci cd 자동화 테스트2 <code>apps/web/app/page.tsx</code>
           </li>
           <li>Save and see your changes instantly.</li>
         </ol>
