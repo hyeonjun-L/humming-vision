@@ -1,46 +1,60 @@
+# 베이스 이미지 설정
 FROM node:20-alpine AS base
 
 # ======================
-# 1단계: 빌더
+# 1단계: 빌더 이미지
 # ======================
-FROM node:20 AS builder
+FROM base AS builder
 WORKDIR /app
 
-# 디렉토리 생성
-RUN mkdir -p apps/web
+# 필요한 패키지 설치
+RUN apk update && apk add --no-cache libc6-compat
 
-# 필수 파일 복사
-COPY out/json/package.json ./package.json
-COPY out/json/package-lock.json ./package-lock.json
-COPY out/json/apps/web/package.json ./apps/web/package.json
+# 터보 설치 (Prune에 사용)
+RUN npm install -g turbo
 
-# 디버깅을 위한 출력
-RUN echo "📦 package.json:" && cat package.json
-RUN echo "📦 apps/web/package.json:" && cat apps/web/package.json
+# 전체 프로젝트 복사
+COPY . .
 
-# 의존성 설치
-RUN npm install || (echo "===== NPM INSTALL FAILED =====" && cat /root/.npm/_logs/* || true)
-
-# 전체 소스 복사
-COPY out/full ./
-
-# Next.js 빌드 (web만)
-RUN npm run build --workspace=web
+# web만 남기고 prune (이미 실행했다면 생략 가능)
+RUN turbo prune web --docker
 
 # ======================
-# 2단계: 런타임
+# 2단계: 의존성 설치
+# ======================
+FROM base AS installer
+WORKDIR /app
+
+# 필수 파일 복사
+COPY --from=builder /app/out/json/ .
+
+# 설치
+RUN npm install --frozen-lockfile
+
+# 전체 소스 복사
+COPY --from=builder /app/out/full/ .
+
+# 빌드
+RUN npx turbo run build --filter=web
+
+
+# ======================
+# 3단계: 런타임 이미지
 # ======================
 FROM base AS runner
 WORKDIR /app
 
-# 보안 사용자 생성
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+# 사용자 생성 (보안 목적)
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-# 빌드 결과 복사
-COPY --from=builder /app/apps/web/.next/standalone ./
-COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /app/apps/web/public ./apps/web/public
+# 필요한 파일만 복사 (standalone 방식)
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
 EXPOSE 3000
+
+# Next.js 실행
 CMD ["node", "apps/web/server.js"]
