@@ -1,36 +1,57 @@
-# ==================================
-# 1단계: 빌더
-# ==================================
-FROM node:20 AS builder
+# 베이스 이미지 설정
+FROM node:20-alpine AS base
+
+# ======================
+# 1단계: 빌더 이미지
+# ======================
+FROM base AS builder
 WORKDIR /app
 
-# Turbo prune 결과물 복사
-COPY out/json/package.json ./package.json
-COPY out/json/package-lock.json ./package-lock.json
-COPY out/json/apps/api/package.json ./apps/api/package.json
+# 필요한 패키지 설치
+RUN apk update && apk add --no-cache libc6-compat
 
-# 디렉토리 구조 사전 생성
-RUN mkdir -p apps/api
+# 터보 설치 (Prune에 사용)
+RUN npm install -g turbo
 
-# 의존성 설치
-RUN npm install
+# 전체 프로젝트 복사
+COPY . .
+
+# api만 남기고 prune (이미 실행했다면 생략 가능)
+RUN turbo prune api --docker
+
+# ======================
+# 2단계: 의존성 설치
+# ======================
+FROM base AS installer
+WORKDIR /app
+
+# 필수 파일 복사
+COPY --from=builder /app/out/json/ .
+
+# 설치
+RUN npm install --frozen-lockfile
 
 # 전체 소스 복사
-COPY out/full ./
+COPY --from=builder /app/out/full/ .
 
-# NestJS 빌드 (api workspace만)
-RUN npm run build --workspace=api
+# 빌드 (api만)
+RUN npx turbo run build --filter=api
 
-# ==================================
-# 2단계: 런타임
-# ==================================
-FROM node:20-slim AS runner
+# ======================
+# 3단계: 런타임 이미지
+# ======================
+FROM base AS runner
 WORKDIR /app
 
-# 필요한 파일 복사
-COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api/package.json ./package.json
+# 보안 사용자 생성
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nestjs
+USER nestjs
+
+# 빌드 결과 복사
+COPY --from=installer --chown=nestjs:nodejs /app/apps/api/dist ./dist
+COPY --from=installer --chown=nestjs:nodejs /app/node_modules ./node_modules
+COPY --from=installer --chown=nestjs:nodejs /app/apps/api/package.json ./package.json
 
 EXPOSE 4000
 CMD ["node", "dist/main"]
