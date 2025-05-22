@@ -1,12 +1,18 @@
+version: "3.8"
+
 services:
-  postgres:
-    image: postgres:15
-    restart: always
-    volumes:
-      - ./humming-vision-data:/var/lib/postgresql/data
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
     ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      - "3000:3000"
+    restart: always
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "4000:3000"
+    restart: always
