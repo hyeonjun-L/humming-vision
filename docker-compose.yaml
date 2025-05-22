@@ -1,18 +1,16 @@
-version: "3.8"
+version: "3"
 
 services:
   web:
-    build:
-      context: .
-      dockerfile: apps/web/Dockerfile
+    image: humming-vision-web
     ports:
       - "3000:3000"
     restart: always
 
   api:
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
+    image: humming-vision-api
     ports:
       - "4000:3000"
     restart: always
+    env_file:
+      - .env.api
