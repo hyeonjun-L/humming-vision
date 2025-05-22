@@ -31,7 +31,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/package.json ./package.json
 
 # 앱 포트 열기
-EXPOSE 3000
+EXPOSE 4000
 
 # NestJS 실행
 CMD ["node", "dist/main"]
