@@ -28,8 +28,8 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -f out/web/apps/web/Dockerfile -t humming-vision-web out/web
-          docker build -f out/api/apps/api/Dockerfile -t humming-vision-api out/api
+          docker build -f apps/web/Dockerfile -t humming-vision-web .
+          docker build -f apps/api/Dockerfile -t humming-vision-api .
 
       - name: Save images to tar
         run: |
