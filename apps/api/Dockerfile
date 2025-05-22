@@ -6,15 +6,15 @@ WORKDIR /app
 
 # --- 1-1. 의존성 설치를 위한 최소 파일 복사 (prune 결과물 사용)
 # 루트 및 api의 package.json + package-lock.json 복사
-COPY ../../out/json/package.json ./package.json
-COPY ../../out/json/package-lock.json ./package-lock.json
-COPY ../../out/json/apps/api/package.json ./apps/api/package.json
+COPY /app/out/json/package.json ./package.json
+COPY /app/out/json/package-lock.json ./package-lock.json
+COPY /app/out/json/apps/api/package.json ./apps/api/package.json
 
 # 의존성 설치 (dev 포함 — NestJS의 타입 등 포함됨)
 RUN npm install
 
 # --- 1-2. 전체 소스 복사 (NestJS 코드 + 설정 파일 포함)
-COPY ../../out/full ./
+COPY /app/out/full ./
 
 # NestJS 앱 빌드 (해당 workspace만)
 RUN npm run build --workspace=api
