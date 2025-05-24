@@ -54,6 +54,9 @@ import { RolesGuard } from './admin/guard/roles.guard';
         FrameGrabberModel,
       ],
       synchronize: process.env.NODE_ENV === 'development',
+      ssl: {
+        rejectUnauthorized: false,
+      },
     }),
   ],
   controllers: [AppController],
