@@ -52,7 +52,7 @@ USER nestjs
 COPY --from=installer --chown=nestjs:nodejs /app/apps/api/dist ./dist
 COPY --from=installer --chown=nestjs:nodejs /app/node_modules ./node_modules
 COPY --from=installer --chown=nestjs:nodejs /app/apps/api/package.json ./package.json
-COPY apps/api/entrypoint.sh ./entrypoint.sh
+COPY --chown=nestjs:nodejs apps/api/entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
 EXPOSE 4000
