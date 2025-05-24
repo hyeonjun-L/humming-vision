@@ -2,11 +2,18 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
+import { AppDataSource } from './data-source';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+  await AppDataSource.initialize();
+
+  if (process.env.NODE_ENV === 'production') {
+    await AppDataSource.runMigrations();
+  }
 
   app.useGlobalPipes(
     new ValidationPipe({

@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "build:migrate": "npx typeorm-ts-node-commonjs migration:generate src/database/migrations/InitSchema --dataSource src/data-source.ts && npm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",
