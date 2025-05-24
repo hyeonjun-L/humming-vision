@@ -55,7 +55,7 @@ import { RolesGuard } from './admin/guard/roles.guard';
       ],
       synchronize: process.env.NODE_ENV === 'development',
       ssl: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: process.env.NODE_ENV === 'development',
       },
     }),
   ],
