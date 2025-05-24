@@ -1,12 +1,16 @@
 services:
   web:
-    image: humming-vision-web
+    build:
+      context: ./out
+      dockerfile: apps/web/Dockerfile
     ports:
       - "3000:3000"
     restart: always
 
   api:
-    image: humming-vision-api
+    build:
+      context: ./out
+      dockerfile: apps/api/Dockerfile
     ports:
       - "4000:3000"
     restart: always
