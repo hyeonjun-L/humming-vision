@@ -9,91 +9,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
+      # 1. Checkout source code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Turbo 캐시 설정
-      - name: Cache turbo build setup
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
-
-      # 3. Node.js 설치 + npm 캐시
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm install
-
-      # 4. Turbo 설치
+      # 2. Install Turbo CLI
       - name: Install Turbo CLI
         run: npm install -g turbo
 
-      # 5. Turbo Prune
-      - name: Prune for web
+      # 3. Prune for web
+      - name: Turbo Prune for web
         run: npx turbo prune web --docker
 
-      - name: Prune for api
+      # 4. Prune for api
+      - name: Turbo Prune for api
         run: npx turbo prune api --docker
 
-      # 6. Docker buildx 및 layer cache
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # 7. Build Docker images with caching
-      - name: Build Docker images
-        run: |
-          docker buildx create --use
-          docker buildx build \
-            --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache \
-            -f apps/web/Dockerfile -t humming-vision-web .
-
-          docker buildx build \
-            --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache \
-            -f apps/api/Dockerfile -t humming-vision-api .
-
-      # 8. Save images as tar
-      - name: Save images to tar
-        run: |
-          docker save humming-vision-web > web.tar
-          docker save humming-vision-api > api.tar
-
-      # 9. Transfer to EC2
-      - name: Copy Docker images and Compose file to EC2
+      # 5. Send pruned files and docker-compose.yaml to EC2
+      - name: Copy pruned apps and Compose file to EC2
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          source: "web.tar,api.tar,docker-compose.yaml"
-          target: "/home/ec2-user"
+          source: "out/**,docker-compose.yaml"
+          target: "/home/ec2-user/humming-vision"
 
-      # 10. Deploy remotely
-      - name: Remote Deploy (load + restart with docker compose)
+      # 6. Remote deploy via SSH on EC2
+      - name: Remote Build & Deploy on EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
-            docker load < web.tar
-            docker load < api.tar
+            cd /home/ec2-user/humming-vision
+            docker compose build
             docker compose down
             docker compose up -d
