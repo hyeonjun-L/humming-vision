@@ -11,11 +11,8 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV === 'production') {
     console.log('NODE_ENV is production');
-    await AppDataSource.initialize()
-      .then(() => console.log('DataSource initialized'))
-      .then(() => AppDataSource.runMigrations())
-      .then(() => console.log('Migrations executed'))
-      .catch((err) => console.error('Migration error:', err));
+    await AppDataSource.initialize();
+    await AppDataSource.runMigrations();
   }
 
   app.useGlobalPipes(

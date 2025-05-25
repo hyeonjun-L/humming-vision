@@ -5,10 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModel } from './entity/product.entity';
 import { CameraModel } from './entity/camera.entity';
 import { IsUniqueFieldConstraint } from 'src/common/validator/is-unique-field.validator';
+import { ProductImagesService } from './image/images.service';
+import { ImageModel } from 'src/common/entity/image.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProductModel, CameraModel])],
+  imports: [TypeOrmModule.forFeature([ProductModel, CameraModel, ImageModel])],
   controllers: [ProductsController],
-  providers: [ProductsService, IsUniqueFieldConstraint],
+  providers: [ProductsService, IsUniqueFieldConstraint, ProductImagesService],
 })
 export class ProductsModule {}

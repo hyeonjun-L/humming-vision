@@ -25,11 +25,13 @@ import { AdminModule } from './admin/admin.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AccessTokenGuard } from './admin/guard/bearer-token.guard';
 import { RolesGuard } from './admin/guard/roles.guard';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
     ProductsModule,
     AdminModule,
+    CommonModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
