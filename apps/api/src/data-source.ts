@@ -6,7 +6,7 @@ import {
   ENV_DB_PASSWORD_KEY,
   ENV_DB_PORT_KEY,
   ENV_DB_USERNAME_KEY,
-  EODE_ENV_KEY,
+  NODE_ENV_KEY,
 } from './common/const/env-kets.const';
 
 dotenv.config();
@@ -24,6 +24,6 @@ export const AppDataSource = new DataSource({
     rejectUnauthorized: false,
   },
   entities: ['dist/**/*.entity.js'],
-  synchronize: process.env[EODE_ENV_KEY] === 'development' ? true : false,
+  synchronize: process.env[NODE_ENV_KEY] === 'development' ? true : false,
   migrations: ['dist/database/migrations/*.js'],
 });

@@ -10,7 +10,6 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   if (process.env.NODE_ENV === 'production') {
-    console.log('NODE_ENV is production');
     await AppDataSource.initialize();
     await AppDataSource.runMigrations();
   }

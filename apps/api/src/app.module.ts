@@ -57,7 +57,7 @@ import { CommonModule } from './common/common.module';
       ],
       synchronize: process.env.NODE_ENV === 'development',
       ssl: {
-        rejectUnauthorized: process.env.NODE_ENV === 'development',
+        rejectUnauthorized: process.env.NODE_ENV !== 'development',
       },
     }),
   ],

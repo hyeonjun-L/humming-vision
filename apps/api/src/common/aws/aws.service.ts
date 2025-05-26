@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { extname } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { createS3Client, getBucketName } from './s3.client';
+import { FileType } from '../const/aws.const';
 
 @Injectable()
 export class AwsService {
@@ -15,8 +16,8 @@ export class AwsService {
     this.bucketName = getBucketName(this.configService);
   }
 
-  async uploadFile(file: Express.Multer.File): Promise<string> {
-    const key = `image/${uuid()}${extname(file.originalname)}`;
+  async uploadFile(file: Express.Multer.File, type: FileType): Promise<string> {
+    const key = `${type}/${uuid()}${extname(file.originalname)}`;
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,

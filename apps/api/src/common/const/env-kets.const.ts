@@ -15,4 +15,4 @@ export const ENV_DB_DATABASE_KEY = 'DB_DATABASE';
 export const ENV_AWS_REGION_KEY = 'AWS_REGION';
 export const ENV_AWS_S3_BUCKET_KEY = 'AWS_S3_BUCKET';
 
-export const EODE_ENV_KEY = 'NODE_ENV';
+export const NODE_ENV_KEY = 'NODE_ENV';
