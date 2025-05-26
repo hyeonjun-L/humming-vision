@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
-import { BaseModel } from './base.entity';
 import { ProductModel } from 'src/product/entity/product.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
 
 export enum ImageModelType {
   SPEC = 'SPEC',
@@ -23,6 +23,6 @@ export class ImageModel extends BaseModel {
   @Column()
   path: string;
 
-  @ManyToOne((type) => ProductModel, (product) => product.images)
+  @ManyToOne(() => ProductModel, (product) => product.images)
   product?: ProductModel;
 }

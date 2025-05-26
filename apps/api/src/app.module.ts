@@ -6,7 +6,6 @@ import { LogModel } from './admin/entity/log.entity';
 import { SessionModel } from './admin/entity/session.entity';
 import { ContactModel } from './contact/entity/contact.entity';
 import { ProductModel } from './product/entity/product.entity';
-import { ImageModel } from './common/entity/image.entity';
 import { CameraModel } from './product/entity/camera.entity';
 import { LensModel } from './product/entity/lens.entity';
 import { SoftwareModel } from './product/entity/software.entity';
@@ -26,6 +25,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AccessTokenGuard } from './admin/guard/bearer-token.guard';
 import { RolesGuard } from './admin/guard/roles.guard';
 import { CommonModule } from './common/common.module';
+import { ImageModel } from './product/entity/image.entity';
 
 @Module({
   imports: [

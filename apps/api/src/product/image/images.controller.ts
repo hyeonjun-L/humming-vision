@@ -8,12 +8,16 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { AwsService } from './aws.service';
-import { ExtendedMulterFile, FileRequest } from './types/interfaces.types';
-import { fileTypeFilter } from './utils/file-type.filter';
+import { AwsService } from 'src/common/aws/aws.service';
+import {
+  ExtendedMulterFile,
+  FileRequest,
+} from 'src/common/types/interface.types';
 
-@Controller('aws')
-export class AwsController {
+import { fileTypeFilter } from 'src/product/image/utils/file-type.filter';
+
+@Controller('products/images')
+export class ImagesController {
   constructor(private readonly awsService: AwsService) {}
 
   @Post('upload')
