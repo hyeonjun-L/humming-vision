@@ -1,17 +1,6 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { ProductModel } from '../product.entity';
-
-enum LensModelType {
-  CCTV = 'CCTV',
-  TCL = 'TCL',
-}
-
-enum LensModelMount {
-  C = 'C',
-  CS = 'CS',
-  F = 'F',
-  M = 'M',
-}
+import { LensModelMount, LensModelType } from './lens.const';
 
 @Entity()
 export class LensModel {
@@ -19,6 +8,7 @@ export class LensModel {
   id: number;
 
   @OneToOne(() => ProductModel, (product) => product.lens)
+  @JoinColumn()
   product: ProductModel;
 
   @Column({

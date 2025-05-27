@@ -13,6 +13,7 @@ import { ProductModel } from '../product.entity';
 import { CreateImageDto } from '../image/dto/create-image.dto';
 import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.validator';
 import { FrameGrabberDto } from '../frame-grabber/dto/frame-grabber.dto';
+import { LensDto } from '../lens/dto/lens.dto';
 
 export class CreateProductDto {
   @IsEnum(CatagoriesEnum)
@@ -54,4 +55,9 @@ export class CreateProductDto {
   @Type(() => FrameGrabberDto)
   @IsOptional()
   frameGrabber?: FrameGrabberDto;
+
+  @ValidateNested()
+  @Type(() => LensDto)
+  @IsOptional()
+  lens?: LensDto;
 }

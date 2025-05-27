@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { ProductModel } from './product.entity';
-import { CatagoriesEnum } from './const/categories.const';
+import { CatagoriesEnum, CategoryRelationMap } from './const/categories.const';
 import { ProductImagesService } from './image/images.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CameraService } from './camera/camera.service';
 import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
+import { LensService } from './lens/lens.service';
 
 @Injectable()
 export class ProductsService {
@@ -13,6 +14,7 @@ export class ProductsService {
     private readonly productImagesService: ProductImagesService,
     private readonly cameraService: CameraService,
     private readonly frameGrabberService: FrameGrabberService,
+    private readonly lensService: LensService,
   ) {}
 
   async createProduct(createProductDto: CreateProductDto, qr: QueryRunner) {
@@ -49,12 +51,23 @@ export class ProductsService {
           );
         }
         break;
+      case CatagoriesEnum.LENS:
+        if (createProductDto.lens) {
+          await this.lensService.createLens(
+            createProductDto.lens,
+            savedProduct,
+            qr,
+          );
+        }
+        break;
+      case CatagoriesEnum.SOFTWARE:
+        break;
     }
 
     return productRepository.findOne({
       where: { id: savedProduct.id },
       relations: {
-        [createProductDto.categories.toLocaleLowerCase()]: true,
+        [CategoryRelationMap[createProductDto.categories]]: true,
         images: true,
       },
     });

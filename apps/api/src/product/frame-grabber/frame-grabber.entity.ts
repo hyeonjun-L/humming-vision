@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { ProductModel } from '../product.entity';
 import { InterfaceEnum } from '../const/interface.const';
 import { FrameGrabberModelMaker } from './frame-grabber.const';
@@ -9,6 +9,7 @@ export class FrameGrabberModel {
   id: number;
 
   @OneToOne(() => ProductModel, (product) => product.frameGrabber)
+  @JoinColumn()
   product: ProductModel;
 
   @Column({ enum: Object.values(FrameGrabberModelMaker), nullable: false })
