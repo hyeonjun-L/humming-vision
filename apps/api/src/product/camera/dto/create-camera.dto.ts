@@ -4,7 +4,7 @@ import {
   CameraModelColor,
   CameraModelMaker,
   CameraModelType,
-} from '../../const/camera.const';
+} from '../camera.const';
 
 export class CreateCameraDto {
   @IsEnum(InterfaceEnum)

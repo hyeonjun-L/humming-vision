@@ -3,12 +3,17 @@ import { QueryRunner } from 'typeorm';
 import { ProductModel } from './product.entity';
 import { CatagoriesEnum } from './const/categories.const';
 import { ProductImagesService } from './image/images.service';
-import { CameraModel } from './camera/camera.entity';
 import { CreateProductDto } from './dto/create-product.dto';
+import { CameraService } from './camera/camera.service';
+import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly productImagesService: ProductImagesService) {}
+  constructor(
+    private readonly productImagesService: ProductImagesService,
+    private readonly cameraService: CameraService,
+    private readonly frameGrabberService: FrameGrabberService,
+  ) {}
 
   async createProduct(createProductDto: CreateProductDto, qr: QueryRunner) {
     const productRepository =
@@ -28,18 +33,30 @@ export class ProductsService {
     switch (createProductDto.categories) {
       case CatagoriesEnum.CAMERA:
         if (createProductDto.camera) {
-          const cameraRepo = qr.manager.getRepository<CameraModel>(CameraModel);
-
-          const camera = cameraRepo.create({
-            ...createProductDto.camera,
-            product: savedProduct,
-          });
-          await cameraRepo.save(camera);
+          await this.cameraService.createCamera(
+            createProductDto.camera,
+            savedProduct,
+            qr,
+          );
         }
         break;
-      // case CatagoriesEnum.LENS:
+      case CatagoriesEnum.FRAMEGRABBER:
+        if (createProductDto.frameGrabber) {
+          await this.frameGrabberService.createFrameGrabber(
+            createProductDto.frameGrabber,
+            savedProduct,
+            qr,
+          );
+        }
+        break;
     }
 
-    return savedProduct;
+    return productRepository.findOne({
+      where: { id: savedProduct.id },
+      relations: {
+        [createProductDto.categories.toLocaleLowerCase()]: true,
+        images: true,
+      },
+    });
   }
 }

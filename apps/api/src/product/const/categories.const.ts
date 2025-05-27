@@ -2,5 +2,5 @@ export enum CatagoriesEnum {
   SOFTWARE = 'SOFTWARE',
   FRAMEGRABBER = 'FRAMEGRABBER',
   CAMERA = 'CAMERA',
-  LENSES = 'LENSES',
+  LENS = 'LENS',
 }

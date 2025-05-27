@@ -2,6 +2,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsUrl,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -11,6 +12,7 @@ import { CreateCameraDto } from '../camera/dto/create-camera.dto';
 import { ProductModel } from '../product.entity';
 import { CreateImageDto } from '../image/dto/create-image.dto';
 import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.validator';
+import { FrameGrabberDto } from '../frame-grabber/dto/frame-grabber.dto';
 
 export class CreateProductDto {
   @IsEnum(CatagoriesEnum)
@@ -24,12 +26,15 @@ export class CreateProductDto {
   mainFeature: string;
 
   @IsOptional()
+  @IsUrl()
   datasheetUrl?: string;
 
   @IsOptional()
+  @IsUrl()
   drawingUrl?: string;
 
   @IsOptional()
+  @IsUrl()
   manualUrl?: string;
 
   @ValidateNested({ each: true })
@@ -44,4 +49,9 @@ export class CreateProductDto {
   @Type(() => CreateCameraDto)
   @IsOptional()
   camera?: CreateCameraDto;
+
+  @ValidateNested()
+  @Type(() => FrameGrabberDto)
+  @IsOptional()
+  frameGrabber?: FrameGrabberDto;
 }

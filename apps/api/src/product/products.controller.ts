@@ -19,7 +19,6 @@ export class ProductsController {
       createProductDto,
       qr,
     );
-
     return product;
   }
 }

@@ -1,13 +1,7 @@
 import { Column, Entity, OneToOne } from 'typeorm';
 import { ProductModel } from '../product.entity';
 import { InterfaceEnum } from '../const/interface.const';
-
-enum FrameGrabberModelMaker {
-  MATROX = 'MATROX',
-  EURESYS = 'EURESYS',
-  ADLINK = 'ADLINK',
-  BASLER = 'BASLER',
-}
+import { FrameGrabberModelMaker } from './frame-grabber.const';
 
 @Entity()
 export class FrameGrabberModel {

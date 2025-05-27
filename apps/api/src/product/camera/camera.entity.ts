@@ -1,11 +1,11 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { InterfaceEnum } from '../const/interface.const';
+import { ProductModel } from '../product.entity';
 import {
   CameraModelColor,
   CameraModelMaker,
   CameraModelType,
-} from '../const/camera.const';
-import { ProductModel } from '../product.entity';
+} from './camera.const';
 
 @Entity()
 export class CameraModel {
