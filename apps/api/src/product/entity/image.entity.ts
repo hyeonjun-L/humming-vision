@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, Unique } from 'typeorm';
 import { ProductModel } from 'src/product/entity/product.entity';
 import { BaseModel } from 'src/common/entity/base.entity';
 
@@ -7,6 +7,7 @@ export enum ImageModelType {
   PRODUCT = 'PRODUCT',
 }
 
+@Unique(['product', 'type', 'order'])
 @Entity()
 export class ImageModel extends BaseModel {
   @Column({

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProductModel } from './entity/product.entity';
 import { CatagoriesEnum } from './const/categories.const';
 import { CameraModel } from './entity/camera.entity';
+import { ProductImagesService } from './image/images.service';
 
 @Injectable()
 export class ProductsService {
@@ -13,14 +14,23 @@ export class ProductsService {
     private productRepository: Repository<ProductModel>,
     @InjectRepository(CameraModel)
     private cameraRepository: Repository<CameraModel>,
+    private readonly productImagesService: ProductImagesService,
   ) {}
 
-  async create(createProductDto: CreateProductDto, qr: QueryRunner) {
+  async createProduct(createProductDto: CreateProductDto, qr: QueryRunner) {
     const productRepository =
       qr.manager.getRepository<ProductModel>(ProductModel);
 
     const product = productRepository.create(createProductDto);
     const savedProduct = await productRepository.save(product);
+
+    if (createProductDto.images && createProductDto.images.length > 0) {
+      await Promise.all(
+        createProductDto.images.map((image) =>
+          this.productImagesService.createImage(image, savedProduct, qr),
+        ),
+      );
+    }
 
     switch (createProductDto.categories) {
       case CatagoriesEnum.CAMERA:

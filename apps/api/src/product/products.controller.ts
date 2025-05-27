@@ -19,7 +19,10 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
     @QueryRunner() qr: QR,
   ) {
-    const product = await this.productsService.create(createProductDto, qr);
+    const product = await this.productsService.createProduct(
+      createProductDto,
+      qr,
+    );
 
     return product;
   }

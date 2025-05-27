@@ -9,6 +9,7 @@ import { ProductImagesService } from './image/images.service';
 import { AwsService } from 'src/common/aws/aws.service';
 import { ImageModel } from './entity/image.entity';
 import { ImagesController } from './image/images.controller';
+import { IsUniqueImageOrderConstraint } from './validator/is-unique-image-order.validator';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProductModel, CameraModel, ImageModel])],
@@ -18,6 +19,7 @@ import { ImagesController } from './image/images.controller';
     IsUniqueFieldConstraint,
     ProductImagesService,
     AwsService,
+    IsUniqueImageOrderConstraint,
   ],
 })
 export class ProductsModule {}
