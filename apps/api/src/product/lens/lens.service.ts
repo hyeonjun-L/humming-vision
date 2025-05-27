@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ProductModel } from '../product.entity';
 import { QueryRunner } from 'typeorm';
-import { LensDto } from './dto/lens.dto';
+import { LensDto } from './dto/create-lens.dto';
 import { LensModel } from './lens.entity';
 @Injectable()
 export class LensService {

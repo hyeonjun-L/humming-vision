@@ -1,10 +1,6 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { ProductModel } from '../product.entity';
-
-enum SoftwareModelMaker {
-  MATROX = 'MATROX',
-  EURESYS = 'EURESYS',
-}
+import { SoftwareModelMaker } from './software.const';
 
 @Entity()
 export class SoftwareModel {
@@ -12,6 +8,7 @@ export class SoftwareModel {
   id: number;
 
   @OneToOne(() => ProductModel, (product) => product.software)
+  @JoinColumn()
   product: ProductModel;
 
   @Column({ enum: Object.values(SoftwareModelMaker), nullable: false })

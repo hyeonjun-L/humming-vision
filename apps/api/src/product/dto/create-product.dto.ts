@@ -12,8 +12,9 @@ import { CreateCameraDto } from '../camera/dto/create-camera.dto';
 import { ProductModel } from '../product.entity';
 import { CreateImageDto } from '../image/dto/create-image.dto';
 import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.validator';
-import { FrameGrabberDto } from '../frame-grabber/dto/frame-grabber.dto';
-import { LensDto } from '../lens/dto/lens.dto';
+import { FrameGrabberDto } from '../frame-grabber/dto/create-frame-grabber.dto';
+import { LensDto } from '../lens/dto/create-lens.dto';
+import { SoftwareDto } from '../software/dto/create-software';
 
 export class CreateProductDto {
   @IsEnum(CatagoriesEnum)
@@ -60,4 +61,9 @@ export class CreateProductDto {
   @Type(() => LensDto)
   @IsOptional()
   lens?: LensDto;
+
+  @ValidateNested()
+  @Type(() => SoftwareDto)
+  @IsOptional()
+  software?: SoftwareDto;
 }

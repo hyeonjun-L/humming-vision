@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ProductModel } from '../product.entity';
 import { QueryRunner } from 'typeorm';
-import { FrameGrabberDto } from './dto/frame-grabber.dto';
+import { FrameGrabberDto } from './dto/create-frame-grabber.dto';
 import { FrameGrabberModel } from './frame-grabber.entity';
 
 @Injectable()

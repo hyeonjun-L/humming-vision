@@ -7,6 +7,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { CameraService } from './camera/camera.service';
 import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
 import { LensService } from './lens/lens.service';
+import { SoftwareService } from './software/software.service';
 
 @Injectable()
 export class ProductsService {
@@ -15,6 +16,7 @@ export class ProductsService {
     private readonly cameraService: CameraService,
     private readonly frameGrabberService: FrameGrabberService,
     private readonly lensService: LensService,
+    private readonly softwareService: SoftwareService,
   ) {}
 
   async createProduct(createProductDto: CreateProductDto, qr: QueryRunner) {
@@ -61,6 +63,13 @@ export class ProductsService {
         }
         break;
       case CatagoriesEnum.SOFTWARE:
+        if (createProductDto.software) {
+          await this.softwareService.createSoftware(
+            createProductDto.software,
+            savedProduct,
+            qr,
+          );
+        }
         break;
     }
 

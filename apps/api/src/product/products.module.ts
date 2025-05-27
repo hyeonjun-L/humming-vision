@@ -13,6 +13,7 @@ import { CameraService } from './camera/camera.service';
 import { FrameGrabberModel } from './frame-grabber/frame-grabber.entity';
 import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
 import { LensService } from './lens/lens.service';
+import { SoftwareService } from './software/software.service';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { LensService } from './lens/lens.service';
     AwsService,
     IsUniqueImageOrderConstraint,
     LensService,
+    SoftwareService,
   ],
 })
 export class ProductsModule {}
