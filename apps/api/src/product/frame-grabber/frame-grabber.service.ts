@@ -22,4 +22,25 @@ export class FrameGrabberService {
 
     return frameGrabberRepo.save(frameGrabber);
   }
+
+  async updateFrameGrabber(
+    frameGrabberDto: FrameGrabberDto,
+    id: number,
+    qr: QueryRunner,
+  ) {
+    const frameGrabberRepo = qr.manager.getRepository(FrameGrabberModel);
+
+    const frameGrabber = await frameGrabberRepo.findOne({
+      where: { product: { id } },
+    });
+    if (!frameGrabber) {
+      throw new Error('Frame Grabber not found');
+    }
+
+    const updatedFrameGrabber = frameGrabberRepo.merge(
+      frameGrabber,
+      frameGrabberDto,
+    );
+    return frameGrabberRepo.save(updatedFrameGrabber);
+  }
 }

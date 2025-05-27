@@ -32,4 +32,20 @@ export class ProductImagesService {
     });
     return imageRepository.save(image);
   }
+
+  async updateImage(
+    updateImageDto: CreateImageDto,
+    id: number,
+    qr?: QueryRunner,
+  ): Promise<ImageModel> {
+    const imageRepository = this.getImageRepository(qr);
+
+    const image = await imageRepository.findOne({ where: { product: { id } } });
+    if (!image) {
+      throw new Error('Image not found');
+    }
+
+    const updatedImage = imageRepository.merge(image, updateImageDto);
+    return imageRepository.save(updatedImage);
+  }
 }

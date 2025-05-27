@@ -17,4 +17,18 @@ export class LensService {
 
     return lensRepo.save(lens);
   }
+
+  async updateLens(lensDto: LensDto, id: number, qr: QueryRunner) {
+    const lensRepo = qr.manager.getRepository(LensModel);
+
+    const lens = await lensRepo.findOne({
+      where: { product: { id } },
+    });
+    if (!lens) {
+      throw new Error('Lens not found');
+    }
+
+    const updatedLens = lensRepo.merge(lens, lensDto);
+    return lensRepo.save(updatedLens);
+  }
 }

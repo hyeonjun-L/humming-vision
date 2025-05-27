@@ -22,4 +22,16 @@ export class CameraService {
 
     return cameraRepo.save(camera);
   }
+
+  async updateCamera(cameraDto: CreateCameraDto, id: number, qr: QueryRunner) {
+    const cameraRepo = qr.manager.getRepository(CameraModel);
+
+    const camera = await cameraRepo.findOne({ where: { product: { id } } });
+    if (!camera) {
+      throw new Error('Camera not found');
+    }
+
+    const updatedCamera = cameraRepo.merge(camera, cameraDto);
+    return cameraRepo.save(updatedCamera);
+  }
 }
