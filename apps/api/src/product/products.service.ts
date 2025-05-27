@@ -1,21 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { QueryRunner, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ProductModel } from './entity/product.entity';
+import { QueryRunner } from 'typeorm';
+import { ProductModel } from './product.entity';
 import { CatagoriesEnum } from './const/categories.const';
-import { CameraModel } from './entity/camera.entity';
 import { ProductImagesService } from './image/images.service';
+import { CameraModel } from './camera/camera.entity';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    @InjectRepository(ProductModel)
-    private productRepository: Repository<ProductModel>,
-    @InjectRepository(CameraModel)
-    private cameraRepository: Repository<CameraModel>,
-    private readonly productImagesService: ProductImagesService,
-  ) {}
+  constructor(private readonly productImagesService: ProductImagesService) {}
 
   async createProduct(createProductDto: CreateProductDto, qr: QueryRunner) {
     const productRepository =
@@ -44,6 +37,7 @@ export class ProductsService {
           await cameraRepo.save(camera);
         }
         break;
+      // case CatagoriesEnum.LENS:
     }
 
     return savedProduct;

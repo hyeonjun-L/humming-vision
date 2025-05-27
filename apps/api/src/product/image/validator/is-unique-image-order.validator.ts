@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { ImageModel } from '../entity/image.entity';
+import { ImageModel } from '../image.entity';
 import { CreateImageDto } from '../dto/create-image.dto';
 import {
   ValidatorConstraint,

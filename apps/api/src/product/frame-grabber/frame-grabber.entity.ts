@@ -1,5 +1,5 @@
 import { Column, Entity, OneToOne } from 'typeorm';
-import { ProductModel } from './product.entity';
+import { ProductModel } from '../product.entity';
 import { InterfaceEnum } from '../const/interface.const';
 
 enum FrameGrabberModelMaker {

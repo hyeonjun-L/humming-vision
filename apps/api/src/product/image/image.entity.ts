@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, Unique } from 'typeorm';
-import { ProductModel } from 'src/product/entity/product.entity';
+import { ProductModel } from 'src/product/product.entity';
 import { BaseModel } from 'src/common/entity/base.entity';
 
 export enum ImageModelType {

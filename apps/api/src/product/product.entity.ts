@@ -1,12 +1,12 @@
 import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
-import { CatagoriesEnum } from '../const/categories.const';
-import { CameraModel } from './camera.entity';
-import { LensModel } from './lens.entity';
-import { FrameGrabberModel } from './frame-grabber.entity';
-import { SoftwareModel } from './software.entity';
+import { CatagoriesEnum } from './const/categories.const';
+import { LensModel } from './lens/lens.entity';
+import { FrameGrabberModel } from './frame-grabber/frame-grabber.entity';
+import { SoftwareModel } from './software/software.entity';
 import { LogModel } from 'src/admin/entity/log.entity';
-import { ImageModel } from './image.entity';
+import { ImageModel } from './image/image.entity';
+import { CameraModel } from './camera/camera.entity';
 
 @Entity()
 export class ProductModel extends BaseModel {

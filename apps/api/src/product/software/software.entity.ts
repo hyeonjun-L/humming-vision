@@ -1,5 +1,5 @@
 import { Column, Entity, OneToOne } from 'typeorm';
-import { ProductModel } from './product.entity';
+import { ProductModel } from '../product.entity';
 
 enum SoftwareModelMaker {
   MATROX = 'MATROX',

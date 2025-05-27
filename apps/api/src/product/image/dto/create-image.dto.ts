@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsNotEmpty, IsUrl } from 'class-validator';
-import { ImageModelType } from '../entity/image.entity';
+import { ImageModelType } from '../image.entity';
 
 export class CreateImageDto {
   @IsInt()

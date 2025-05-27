@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { IsUniqueImageOrderInArrayConstraint } from '../validator/is-unique-image-order-in-array.validator';
+import { IsUniqueImageOrderInArrayConstraint } from '../image/validator/is-unique-image-order-in-array.validator';
 
 export function IsUniqueImageOrderInArray(
   validationOptions?: ValidationOptions,

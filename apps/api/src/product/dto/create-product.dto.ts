@@ -5,11 +5,11 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CatagoriesEnum } from '../const/categories.const';
-import { CreateCameraDto } from './create-camera.dto';
 import { IsUnique } from 'src/common/decorator/is-unique-field.decotator';
-import { ProductModel } from '../entity/product.entity';
-import { CreateImageDto } from './create-image.dto';
+import { CatagoriesEnum } from '../const/categories.const';
+import { CreateCameraDto } from '../camera/dto/create-camera.dto';
+import { ProductModel } from '../product.entity';
+import { CreateImageDto } from '../image/dto/create-image.dto';
 import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.validator';
 
 export class CreateProductDto {

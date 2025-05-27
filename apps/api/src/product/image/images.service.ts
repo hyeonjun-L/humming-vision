@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryRunner, Repository } from 'typeorm';
-import { ImageModel } from '../entity/image.entity';
-import { CreateImageDto } from '../dto/create-image.dto';
-import { ProductModel } from '../entity/product.entity';
+import { ImageModel } from './image.entity';
+import { ProductModel } from '../product.entity';
+import { CreateImageDto } from './dto/create-image.dto';
 
 @Injectable()
 export class ProductImagesService {
