@@ -2,7 +2,7 @@ import { IsEnum, IsInt, IsString } from 'class-validator';
 import { InterfaceEnum } from '../../const/interface.const';
 import { FrameGrabberModelMaker } from '../frame-grabber.const';
 
-export class FrameGrabberDto {
+export class CreateFrameGrabberDto {
   @IsEnum(InterfaceEnum)
   interface: InterfaceEnum;
 

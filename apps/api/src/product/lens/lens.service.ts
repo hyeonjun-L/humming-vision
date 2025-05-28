@@ -1,13 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductModel } from '../product.entity';
 import { QueryRunner } from 'typeorm';
-import { LensDto } from './dto/create-lens.dto';
+import { CreateLensDto } from './dto/create-lens.dto';
 import { LensModel } from './lens.entity';
+import { UpdateLensDto } from './dto/update-lens.dto';
 @Injectable()
 export class LensService {
   constructor() {}
 
-  async createLens(lensDto: LensDto, product: ProductModel, qr: QueryRunner) {
+  async createLens(
+    lensDto: CreateLensDto,
+    product: ProductModel,
+    qr: QueryRunner,
+  ) {
     const lensRepo = qr.manager.getRepository(LensModel);
 
     const lens = lensRepo.create({
@@ -18,14 +23,14 @@ export class LensService {
     return lensRepo.save(lens);
   }
 
-  async updateLens(lensDto: LensDto, id: number, qr: QueryRunner) {
+  async updateLens(lensDto: UpdateLensDto, id: number, qr: QueryRunner) {
     const lensRepo = qr.manager.getRepository(LensModel);
 
     const lens = await lensRepo.findOne({
-      where: { product: { id } },
+      where: { id: lensDto.id, product: { id } },
     });
     if (!lens) {
-      throw new Error('Lens not found');
+      throw new NotFoundException('Lens not found');
     }
 
     const updatedLens = lensRepo.merge(lens, lensDto);

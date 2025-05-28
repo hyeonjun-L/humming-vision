@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductModel } from '../product.entity';
 import { QueryRunner } from 'typeorm';
-import { FrameGrabberDto } from './dto/create-frame-grabber.dto';
+import { CreateFrameGrabberDto } from './dto/create-frame-grabber.dto';
 import { FrameGrabberModel } from './frame-grabber.entity';
+import { UpdateFrameGrabberDto } from './dto/update-frame-grabber.dto';
 
 @Injectable()
 export class FrameGrabberService {
   constructor() {}
 
   async createFrameGrabber(
-    frameGrabberDto: FrameGrabberDto,
+    frameGrabberDto: CreateFrameGrabberDto,
     product: ProductModel,
     qr: QueryRunner,
   ) {
@@ -24,17 +25,18 @@ export class FrameGrabberService {
   }
 
   async updateFrameGrabber(
-    frameGrabberDto: FrameGrabberDto,
+    frameGrabberDto: UpdateFrameGrabberDto,
     id: number,
     qr: QueryRunner,
   ) {
     const frameGrabberRepo = qr.manager.getRepository(FrameGrabberModel);
 
     const frameGrabber = await frameGrabberRepo.findOne({
-      where: { product: { id } },
+      where: { id: frameGrabberDto.id, product: { id } },
     });
+
     if (!frameGrabber) {
-      throw new Error('Frame Grabber not found');
+      throw new NotFoundException('Frame Grabber not found');
     }
 
     const updatedFrameGrabber = frameGrabberRepo.merge(

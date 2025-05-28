@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { ProductModel } from './product.entity';
 import { CatagoriesEnum, CategoryRelationMap } from './const/categories.const';
@@ -27,17 +27,22 @@ export class ProductsService {
   ) {
     const productRepository =
       qr.manager.getRepository<ProductModel>(ProductModel);
+    const CATEGOTY = updateProductDto.categories;
 
     const product = await productRepository.findOne({
       where: { id },
-      relations: {
-        [CategoryRelationMap[updateProductDto.categories]]: true,
-        images: true,
-      },
+      relations: CATEGOTY
+        ? {
+            [CategoryRelationMap[CATEGOTY]]: true,
+            images: true,
+          }
+        : {
+            images: true,
+          },
     });
 
     if (!product) {
-      throw new Error('Product not found');
+      throw new NotFoundException('Product not found');
     }
 
     const updatedProduct = productRepository.merge(product, updateProductDto);
@@ -51,7 +56,7 @@ export class ProductsService {
       );
     }
 
-    switch (updateProductDto.categories) {
+    switch (CATEGOTY) {
       case CatagoriesEnum.CAMERA:
         if (updateProductDto.camera) {
           await this.cameraService.updateCamera(
@@ -86,12 +91,17 @@ export class ProductsService {
         break;
     }
 
+    // 하나 product id 기준으로 조회되는 함수 생성하면 해당 함수로 대체
     return productRepository.findOne({
       where: { id: savedProduct.id },
-      relations: {
-        [CategoryRelationMap[updateProductDto.categories]]: true,
-        images: true,
-      },
+      relations: CATEGOTY
+        ? {
+            [CategoryRelationMap[CATEGOTY]]: true,
+            images: true,
+          }
+        : {
+            images: true,
+          },
     });
   }
 

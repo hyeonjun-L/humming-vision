@@ -1,23 +1,27 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { CreateProductDto } from './create-product.dto';
-import { IsEnum, IsNotEmpty, ValidateNested } from 'class-validator';
-import { CatagoriesEnum } from '../const/categories.const';
+import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.validator';
 import { Type } from 'class-transformer';
 import { UpdateImageDto } from '../image/dto/update-image.dto';
 import { UpdateCameraDto } from '../camera/dto/update-camera.dto';
 import { UpdateLensDto } from '../lens/dto/update-lens.dto';
 import { IsValidImageOrderGlobally } from '../decorator/is-unique-image-order.decorator';
+import { UpdateFrameGrabberDto } from '../frame-grabber/dto/update-frame-grabber.dto';
+import { UpdateSoftwareDto } from '../software/dto/update-software';
 
 export class UpdateProductDto extends PartialType(
-  OmitType(CreateProductDto, ['images', 'camera', 'lens'] as const),
+  OmitType(CreateProductDto, [
+    'images',
+    'camera',
+    'lens',
+    'frameGrabber',
+    'software',
+  ] as const),
 ) {
   @IsNotEmpty()
+  @IsNumber()
   id: number;
-
-  @IsNotEmpty()
-  @IsEnum(CatagoriesEnum)
-  categories: CatagoriesEnum;
 
   @ValidateNested({ each: true })
   @Type(() => UpdateImageDto)
@@ -29,16 +33,15 @@ export class UpdateProductDto extends PartialType(
   @Type(() => UpdateCameraDto)
   camera?: UpdateCameraDto;
 
-  // @ValidateNested()
-  // @Type(() => FrameGrabberDto)
-  // frameGrabber?: FrameGrabberDto;
+  @ValidateNested()
+  @Type(() => UpdateFrameGrabberDto)
+  frameGrabber?: UpdateFrameGrabberDto;
 
   @ValidateNested()
   @Type(() => UpdateLensDto)
   lens?: UpdateLensDto;
 
-  // @ValidateNested()
-  // @Type(() => SoftwareDto)
-  // @IsOptional()
-  // software?: SoftwareDto;
+  @ValidateNested()
+  @Type(() => UpdateSoftwareDto)
+  software?: UpdateSoftwareDto;
 }
