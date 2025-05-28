@@ -1,4 +1,11 @@
-import { Controller, Post, Body, UseInterceptors, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseInterceptors,
+  Param,
+  Patch,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { QueryRunner as QR } from 'typeorm';
@@ -23,7 +30,7 @@ export class ProductsController {
     return product;
   }
 
-  @Post('update/:id')
+  @Patch('update/:id')
   @UseInterceptors(TransactionInterceptor)
   async update(
     @Param('id') id: number,

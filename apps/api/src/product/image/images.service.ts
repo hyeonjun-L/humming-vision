@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryRunner, Repository } from 'typeorm';
 import { ImageModel } from './image.entity';
 import { ProductModel } from '../product.entity';
 import { CreateImageDto } from './dto/create-image.dto';
+import { UpdateImageDto } from './dto/update-image.dto';
 
 @Injectable()
 export class ProductImagesService {
@@ -23,7 +24,7 @@ export class ProductImagesService {
     createImageDto: CreateImageDto,
     product: ProductModel,
     qr?: QueryRunner,
-  ): Promise<ImageModel> {
+  ) {
     const imageRepository = this.getImageRepository(qr);
 
     const image = imageRepository.create({
@@ -34,15 +35,18 @@ export class ProductImagesService {
   }
 
   async updateImage(
-    updateImageDto: CreateImageDto,
+    updateImageDto: UpdateImageDto,
     id: number,
     qr?: QueryRunner,
-  ): Promise<ImageModel> {
+  ) {
     const imageRepository = this.getImageRepository(qr);
 
-    const image = await imageRepository.findOne({ where: { product: { id } } });
+    const image = await imageRepository.findOne({
+      where: { id: updateImageDto.id, product: { id } },
+    });
+
     if (!image) {
-      throw new Error('Image not found');
+      throw new NotFoundException('Image not found');
     }
 
     const updatedImage = imageRepository.merge(image, updateImageDto);
