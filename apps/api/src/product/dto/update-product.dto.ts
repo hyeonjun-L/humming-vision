@@ -6,9 +6,11 @@ import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in
 import { Type } from 'class-transformer';
 import { UpdateImageDto } from '../image/dto/update-image.dto';
 import { UpdateCameraDto } from '../camera/dto/update-camera.dto';
+import { UpdateLensDto } from '../lens/dto/update-lens.dto';
+import { IsValidImageOrderGlobally } from '../decorator/is-unique-image-order.decorator';
 
 export class UpdateProductDto extends PartialType(
-  OmitType(CreateProductDto, ['images', 'camera'] as const),
+  OmitType(CreateProductDto, ['images', 'camera', 'lens'] as const),
 ) {
   @IsNotEmpty()
   id: number;
@@ -19,9 +21,8 @@ export class UpdateProductDto extends PartialType(
 
   @ValidateNested({ each: true })
   @Type(() => UpdateImageDto)
-  @IsUniqueImageOrderInArray({
-    message: '이미지 배열 내에 같은 type과 order 조합이 중복되었습니다.',
-  })
+  @IsUniqueImageOrderInArray()
+  @IsValidImageOrderGlobally()
   images?: UpdateImageDto[];
 
   @ValidateNested()
@@ -30,13 +31,11 @@ export class UpdateProductDto extends PartialType(
 
   // @ValidateNested()
   // @Type(() => FrameGrabberDto)
-  // @IsOptional()
   // frameGrabber?: FrameGrabberDto;
 
-  // @ValidateNested()
-  // @Type(() => LensDto)
-  // @IsOptional()
-  // lens?: LensDto;
+  @ValidateNested()
+  @Type(() => UpdateLensDto)
+  lens?: UpdateLensDto;
 
   // @ValidateNested()
   // @Type(() => SoftwareDto)

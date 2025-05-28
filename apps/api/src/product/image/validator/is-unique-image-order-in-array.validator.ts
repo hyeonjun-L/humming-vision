@@ -9,6 +9,8 @@ export class IsUniqueImageOrderInArrayConstraint
   implements ValidatorConstraintInterface
 {
   validate(images: CreateImageDto[]): boolean {
+    if (!Array.isArray(images)) return true;
+
     const seen = new Set<string>();
 
     for (const image of images) {
