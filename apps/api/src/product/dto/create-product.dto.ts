@@ -15,9 +15,13 @@ import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in
 import { CreateFrameGrabberDto } from '../frame-grabber/dto/create-frame-grabber.dto';
 import { CreateLensDto } from '../lens/dto/create-lens.dto';
 import { CreateSoftwareDto } from '../software/dto/create-software';
+import { IsCategoryFieldConsistent } from '../decorator/is-category-field';
 
 export class CreateProductDto {
   @IsEnum(CatagoriesEnum)
+  @IsCategoryFieldConsistent({
+    message: '선택된 카테고리와 부적절한 필드가 같이 사용되었습니다.',
+  })
   categories: CatagoriesEnum;
 
   @IsNotEmpty()

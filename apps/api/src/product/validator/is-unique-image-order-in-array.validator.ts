@@ -2,7 +2,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { CreateImageDto } from '../dto/create-image.dto';
+import { CreateImageDto } from '../image/dto/create-image.dto';
 
 @ValidatorConstraint({ name: 'IsUniqueImageOrderInArray', async: false })
 export class IsUniqueImageOrderInArrayConstraint

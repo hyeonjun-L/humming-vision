@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Not } from 'typeorm';
-import { ImageModel } from '../image.entity';
 import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { UpdateImageDto } from '../dto/update-image.dto';
 import { UpdateProductDto } from 'src/product/dto/update-product.dto';
+import { ImageModel } from '../image/image.entity';
+import { UpdateImageDto } from '../image/dto/update-image.dto';
 
 @ValidatorConstraint({ name: 'IsValidImageOrderGlobally', async: true })
 @Injectable()
