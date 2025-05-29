@@ -6,7 +6,7 @@ import {
   CameraModelType,
 } from '../camera.const';
 
-export class CreateCameraDto {
+export class BaseCameraDto {
   @IsEnum(InterfaceEnum)
   interface: InterfaceEnum;
 

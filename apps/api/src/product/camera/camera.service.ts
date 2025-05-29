@@ -3,14 +3,14 @@ import { ProductModel } from '../product.entity';
 import { QueryRunner } from 'typeorm';
 import { CameraModel } from './camera.entity';
 import { UpdateCameraDto } from './dto/update-camera.dto';
-import { CreateCameraDto } from './dto/create-camera.dto';
+import { BaseCameraDto } from './dto/create-camera.dto';
 
 @Injectable()
 export class CameraService {
   constructor() {}
 
   async createCamera(
-    cameraDto: CreateCameraDto,
+    cameraDto: BaseCameraDto,
     product: ProductModel,
     qr: QueryRunner,
   ) {
@@ -37,4 +37,10 @@ export class CameraService {
     const updatedCamera = cameraRepo.merge(camera, cameraDto);
     return cameraRepo.save(updatedCamera);
   }
+
+  // async paginateCameras(
+  //   dto: any, // Replace with actual pagination DTO
+  //   product: ProductModel,
+  //   qr: QueryRunner,
+  // ) {}
 }
