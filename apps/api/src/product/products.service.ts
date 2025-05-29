@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { ProductModel } from './product.entity';
-import { CatagoriesEnum, CategoryRelationMap } from './const/categories.const';
+import { CategoriesEnum, CategoryRelationMap } from './const/categories.const';
 import { ProductImagesService } from './image/images.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CameraService } from './camera/camera.service';
@@ -20,25 +20,109 @@ export class ProductsService {
     private readonly softwareService: SoftwareService,
   ) {}
 
+  private async handleCategoryUpdate(
+    category: CategoriesEnum,
+    updateProductDto: UpdateProductDto,
+    id: number,
+    qr: QueryRunner,
+  ) {
+    switch (category) {
+      case CategoriesEnum.CAMERA:
+        if (updateProductDto.camera) {
+          await this.cameraService.updateCamera(
+            updateProductDto.camera,
+            id,
+            qr,
+          );
+        }
+        break;
+      case CategoriesEnum.FRAMEGRABBER:
+        if (updateProductDto.frameGrabber) {
+          await this.frameGrabberService.updateFrameGrabber(
+            updateProductDto.frameGrabber,
+            id,
+            qr,
+          );
+        }
+        break;
+      case CategoriesEnum.LENS:
+        if (updateProductDto.lens) {
+          await this.lensService.updateLens(updateProductDto.lens, id, qr);
+        }
+        break;
+      case CategoriesEnum.SOFTWARE:
+        if (updateProductDto.software) {
+          await this.softwareService.updateSoftware(
+            updateProductDto.software,
+            id,
+            qr,
+          );
+        }
+        break;
+    }
+  }
+
+  private async handleCategoryCreate(
+    category: CategoriesEnum,
+    createProductDto: CreateProductDto,
+    savedProduct: ProductModel,
+    qr: QueryRunner,
+  ) {
+    switch (category) {
+      case CategoriesEnum.CAMERA:
+        if (createProductDto.camera) {
+          await this.cameraService.createCamera(
+            createProductDto.camera,
+            savedProduct,
+            qr,
+          );
+        }
+        break;
+      case CategoriesEnum.FRAMEGRABBER:
+        if (createProductDto.frameGrabber) {
+          await this.frameGrabberService.createFrameGrabber(
+            createProductDto.frameGrabber,
+            savedProduct,
+            qr,
+          );
+        }
+        break;
+      case CategoriesEnum.LENS:
+        if (createProductDto.lens) {
+          await this.lensService.createLens(
+            createProductDto.lens,
+            savedProduct,
+            qr,
+          );
+        }
+        break;
+      case CategoriesEnum.SOFTWARE:
+        if (createProductDto.software) {
+          await this.softwareService.createSoftware(
+            createProductDto.software,
+            savedProduct,
+            qr,
+          );
+        }
+        break;
+    }
+  }
+
   async updateProduct(
     id: number,
+    category: CategoriesEnum,
     updateProductDto: UpdateProductDto,
     qr: QueryRunner,
   ) {
     const productRepository =
       qr.manager.getRepository<ProductModel>(ProductModel);
-    const CATEGOTY = updateProductDto.categories;
 
     const product = await productRepository.findOne({
       where: { id },
-      relations: CATEGOTY
-        ? {
-            [CategoryRelationMap[CATEGOTY]]: true,
-            images: true,
-          }
-        : {
-            images: true,
-          },
+      relations: {
+        [CategoryRelationMap[category]]: true,
+        images: true,
+      },
     });
 
     if (!product) {
@@ -56,52 +140,14 @@ export class ProductsService {
       );
     }
 
-    switch (CATEGOTY) {
-      case CatagoriesEnum.CAMERA:
-        if (updateProductDto.camera) {
-          await this.cameraService.updateCamera(
-            updateProductDto.camera,
-            id,
-            qr,
-          );
-        }
-        break;
-      case CatagoriesEnum.FRAMEGRABBER:
-        if (updateProductDto.frameGrabber) {
-          await this.frameGrabberService.updateFrameGrabber(
-            updateProductDto.frameGrabber,
-            id,
-            qr,
-          );
-        }
-        break;
-      case CatagoriesEnum.LENS:
-        if (updateProductDto.lens) {
-          await this.lensService.updateLens(updateProductDto.lens, id, qr);
-        }
-        break;
-      case CatagoriesEnum.SOFTWARE:
-        if (updateProductDto.software) {
-          await this.softwareService.updateSoftware(
-            updateProductDto.software,
-            id,
-            qr,
-          );
-        }
-        break;
-    }
+    await this.handleCategoryUpdate(category, updateProductDto, id, qr);
 
-    // 하나 product id 기준으로 조회되는 함수 생성하면 해당 함수로 대체
     return productRepository.findOne({
       where: { id: savedProduct.id },
-      relations: CATEGOTY
-        ? {
-            [CategoryRelationMap[CATEGOTY]]: true,
-            images: true,
-          }
-        : {
-            images: true,
-          },
+      relations: {
+        [CategoryRelationMap[category]]: true,
+        images: true,
+      },
     });
   }
 
@@ -120,44 +166,12 @@ export class ProductsService {
       );
     }
 
-    switch (createProductDto.categories) {
-      case CatagoriesEnum.CAMERA:
-        if (createProductDto.camera) {
-          await this.cameraService.createCamera(
-            createProductDto.camera,
-            savedProduct,
-            qr,
-          );
-        }
-        break;
-      case CatagoriesEnum.FRAMEGRABBER:
-        if (createProductDto.frameGrabber) {
-          await this.frameGrabberService.createFrameGrabber(
-            createProductDto.frameGrabber,
-            savedProduct,
-            qr,
-          );
-        }
-        break;
-      case CatagoriesEnum.LENS:
-        if (createProductDto.lens) {
-          await this.lensService.createLens(
-            createProductDto.lens,
-            savedProduct,
-            qr,
-          );
-        }
-        break;
-      case CatagoriesEnum.SOFTWARE:
-        if (createProductDto.software) {
-          await this.softwareService.createSoftware(
-            createProductDto.software,
-            savedProduct,
-            qr,
-          );
-        }
-        break;
-    }
+    await this.handleCategoryCreate(
+      createProductDto.categories,
+      createProductDto,
+      savedProduct,
+      qr,
+    );
 
     return productRepository.findOne({
       where: { id: savedProduct.id },

@@ -1,7 +1,7 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { CreateProductDto } from './create-product.dto';
 import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
-import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.validator';
+import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.decorator';
 import { Type } from 'class-transformer';
 import { UpdateImageDto } from '../image/dto/update-image.dto';
 import { UpdateCameraDto } from '../camera/dto/update-camera.dto';

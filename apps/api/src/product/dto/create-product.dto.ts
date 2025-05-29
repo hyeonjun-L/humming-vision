@@ -7,22 +7,22 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsUnique } from 'src/common/decorator/is-unique-field.decotator';
-import { CatagoriesEnum } from '../const/categories.const';
+import { CategoriesEnum } from '../const/categories.const';
 import { CreateCameraDto } from '../camera/dto/create-camera.dto';
 import { ProductModel } from '../product.entity';
 import { CreateImageDto } from '../image/dto/create-image.dto';
-import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.validator';
+import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.decorator';
 import { CreateFrameGrabberDto } from '../frame-grabber/dto/create-frame-grabber.dto';
 import { CreateLensDto } from '../lens/dto/create-lens.dto';
 import { CreateSoftwareDto } from '../software/dto/create-software';
-import { IsCategoryFieldConsistent } from '../decorator/is-category-field';
+import { IsCategoryFieldConsistent } from '../decorator/is-category-field.decorator';
 
 export class CreateProductDto {
-  @IsEnum(CatagoriesEnum)
+  @IsEnum(CategoriesEnum)
   @IsCategoryFieldConsistent({
     message: '선택된 카테고리와 부적절한 필드가 같이 사용되었습니다.',
   })
-  categories: CatagoriesEnum;
+  categories: CategoriesEnum;
 
   @IsNotEmpty()
   @IsUnique(ProductModel, 'name', { message: '이미 존재하는 제품명입니다.' })

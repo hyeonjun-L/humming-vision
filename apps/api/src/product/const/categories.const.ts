@@ -1,4 +1,4 @@
-export enum CatagoriesEnum {
+export enum CategoriesEnum {
   SOFTWARE = 'SOFTWARE',
   FRAMEGRABBER = 'FRAMEGRABBER',
   CAMERA = 'CAMERA',

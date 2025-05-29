@@ -4,7 +4,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { CreateProductDto } from '../dto/create-product.dto';
-import { CatagoriesEnum } from '../const/categories.const';
+import { CategoriesEnum } from '../const/categories.const';
 
 @ValidatorConstraint({ name: 'CategoryFieldConsistency', async: false })
 export class CategoryFieldConsistency implements ValidatorConstraintInterface {
@@ -12,13 +12,13 @@ export class CategoryFieldConsistency implements ValidatorConstraintInterface {
     const dto = args.object as CreateProductDto;
 
     switch (dto.categories) {
-      case CatagoriesEnum.CAMERA:
+      case CategoriesEnum.CAMERA:
         return !!dto.camera && !dto.lens && !dto.frameGrabber && !dto.software;
-      case CatagoriesEnum.LENS:
+      case CategoriesEnum.LENS:
         return !!dto.lens && !dto.camera && !dto.frameGrabber && !dto.software;
-      case CatagoriesEnum.FRAMEGRABBER:
+      case CategoriesEnum.FRAMEGRABBER:
         return !!dto.frameGrabber && !dto.camera && !dto.lens && !dto.software;
-      case CatagoriesEnum.SOFTWARE:
+      case CategoriesEnum.SOFTWARE:
         return !!dto.software && !dto.camera && !dto.lens && !dto.frameGrabber;
       default:
         return false;

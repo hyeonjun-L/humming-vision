@@ -1,6 +1,6 @@
 import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
-import { CatagoriesEnum } from './const/categories.const';
+import { CategoriesEnum } from './const/categories.const';
 import { LensModel } from './lens/lens.entity';
 import { FrameGrabberModel } from './frame-grabber/frame-grabber.entity';
 import { SoftwareModel } from './software/software.entity';
@@ -11,9 +11,9 @@ import { CameraModel } from './camera/camera.entity';
 @Entity()
 export class ProductModel extends BaseModel {
   @Column({
-    enum: Object.values(CatagoriesEnum),
+    enum: Object.values(CategoriesEnum),
   })
-  categories: CatagoriesEnum;
+  categories: CategoriesEnum;
 
   @Column({
     length: 50,

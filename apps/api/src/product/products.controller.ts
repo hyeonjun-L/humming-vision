@@ -5,6 +5,7 @@ import {
   UseInterceptors,
   Param,
   Patch,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -12,6 +13,8 @@ import { QueryRunner as QR } from 'typeorm';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { CategoriesEnum } from './const/categories.const';
+import { ParseCategoryPipe } from './pipe/category-pipe.pipe';
 
 @Controller('products')
 export class ProductsController {
@@ -30,15 +33,17 @@ export class ProductsController {
     return product;
   }
 
-  @Patch('update/:id')
+  @Patch('update/:category/:productId')
   @UseInterceptors(TransactionInterceptor)
   async update(
-    @Param('id') id: number,
+    @Param('productId', ParseIntPipe) id: number,
+    @Param('category', ParseCategoryPipe) category: CategoriesEnum,
     @Body() updateProductDto: UpdateProductDto,
     @QueryRunner() qr: QR,
   ) {
     const product = await this.productsService.updateProduct(
       updateProductDto.id || id,
+      category,
       updateProductDto,
       qr,
     );
