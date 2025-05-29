@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   ParseIntPipe,
+  Get,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -15,8 +16,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CategoriesEnum } from './const/categories.const';
 import { ParseCategoryPipe } from './pipe/category-pipe.pipe';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
-@Controller('products')
+@Controller('product')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
@@ -47,6 +49,16 @@ export class ProductsController {
       updateProductDto,
       qr,
     );
+    return product;
+  }
+
+  @Get(':category/:productId')
+  @IsPublic()
+  async getProduct(
+    @Param('productId', ParseIntPipe) id: number,
+    @Param('category', ParseCategoryPipe) category: CategoriesEnum,
+  ) {
+    const product = await this.productsService.getProductById(id, category);
     return product;
   }
 }

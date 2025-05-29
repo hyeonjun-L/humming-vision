@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { QueryRunner } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { ProductModel } from './product.entity';
 import { CategoriesEnum, CategoryRelationMap } from './const/categories.const';
 import { ProductImagesService } from './image/images.service';
@@ -9,6 +9,7 @@ import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
 import { LensService } from './lens/lens.service';
 import { SoftwareService } from './software/software.service';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ProductsService {
@@ -18,6 +19,8 @@ export class ProductsService {
     private readonly frameGrabberService: FrameGrabberService,
     private readonly lensService: LensService,
     private readonly softwareService: SoftwareService,
+    @InjectRepository(ProductModel)
+    private readonly productRepository: Repository<ProductModel>,
   ) {}
 
   private async handleCategoryUpdate(
@@ -106,6 +109,25 @@ export class ProductsService {
         }
         break;
     }
+  }
+
+  async getProductById(
+    id: number,
+    category: CategoriesEnum,
+  ): Promise<ProductModel> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: {
+        [CategoryRelationMap[category]]: true,
+        images: true,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
   }
 
   async updateProduct(
