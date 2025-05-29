@@ -13,6 +13,7 @@ import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
 import { LensService } from './lens/lens.service';
 import { SoftwareService } from './software/software.service';
 import { IsValidImageOrderGloballyConstraint } from './validator/is-unique-image-order-globally.validator';
+import { CommonService } from 'src/common/common.service';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { IsValidImageOrderGloballyConstraint } from './validator/is-unique-image
     IsValidImageOrderGloballyConstraint,
     LensService,
     SoftwareService,
+    CommonService,
   ],
 })
 export class ProductsModule {}

@@ -10,6 +10,8 @@ import { LensService } from './lens/lens.service';
 import { SoftwareService } from './software/software.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CommonService } from 'src/common/common.service';
+import { PaginateProductDto } from './dto/paginate-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -19,6 +21,7 @@ export class ProductsService {
     private readonly frameGrabberService: FrameGrabberService,
     private readonly lensService: LensService,
     private readonly softwareService: SoftwareService,
+    private readonly commonService: CommonService,
     @InjectRepository(ProductModel)
     private readonly productRepository: Repository<ProductModel>,
   ) {}
@@ -128,6 +131,15 @@ export class ProductsService {
     }
 
     return product;
+  }
+
+  async paginateProduct(dto: PaginateProductDto, category: CategoriesEnum) {
+    return this.commonService.paginate(dto, this.productRepository, {
+      relations: {
+        [CategoryRelationMap[category]]: true,
+        images: true,
+      },
+    });
   }
 
   async updateProduct(
