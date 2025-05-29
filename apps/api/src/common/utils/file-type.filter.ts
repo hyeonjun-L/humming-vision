@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
-import { FileType } from '../../../common/const/aws.const';
 import {
   ExtendedMulterFile,
   FileRequest,
 } from 'src/common/types/interface.types';
+import { FileType } from '../const/aws.const';
 
 /**
  * fileTypeFilter는 단일/다중 파일 업로드 모두 지원하도록 타입을 분리합니다.

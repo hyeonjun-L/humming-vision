@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModel } from './product.entity';
 import { IsUniqueFieldConstraint } from 'src/common/validator/is-unique-field.validator';
 import { ProductImagesService } from './image/images.service';
-import { AwsService } from 'src/common/aws/aws.service';
 import { ImageModel } from './image/image.entity';
 import { CameraModel } from './camera/camera.entity';
 import { CameraService } from './camera/camera.service';
@@ -31,7 +30,6 @@ import { IsValidImageOrderGloballyConstraint } from './validator/is-unique-image
     ProductsService,
     IsUniqueFieldConstraint,
     ProductImagesService,
-    AwsService,
     IsValidImageOrderGloballyConstraint,
     LensService,
     SoftwareService,
