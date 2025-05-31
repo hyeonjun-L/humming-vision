@@ -8,7 +8,7 @@ import {
 import { Type } from 'class-transformer';
 import { IsUnique } from 'src/common/decorator/is-unique-field.decotator';
 import { CategoriesEnum } from '../const/categories.const';
-import { BaseCameraDto } from '../camera/dto/create-camera.dto';
+import { CreateCameraDto } from '../camera/dto/create-camera.dto';
 import { ProductModel } from '../product.entity';
 import { CreateImageDto } from '../image/dto/create-image.dto';
 import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in-array.decorator';
@@ -52,9 +52,9 @@ export class CreateProductDto {
   images: CreateImageDto[];
 
   @ValidateNested()
-  @Type(() => BaseCameraDto)
+  @Type(() => CreateCameraDto)
   @IsOptional()
-  camera?: BaseCameraDto;
+  camera?: CreateCameraDto;
 
   @ValidateNested()
   @Type(() => CreateFrameGrabberDto)

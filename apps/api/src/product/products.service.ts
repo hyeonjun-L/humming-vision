@@ -11,7 +11,7 @@ import { SoftwareService } from './software/software.service';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommonService } from 'src/common/common.service';
-import { PaginateProductDto } from './dto/paginate-product.dto';
+import { BasePaginateProductDto } from './dto/paginate-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -133,13 +133,20 @@ export class ProductsService {
     return product;
   }
 
-  async paginateProduct(dto: PaginateProductDto, category: CategoriesEnum) {
-    return this.commonService.paginate(dto, this.productRepository, {
-      relations: {
-        [CategoryRelationMap[category]]: true,
-        images: true,
+  async paginateProduct(dto: BasePaginateProductDto, category: CategoriesEnum) {
+    return this.commonService.paginate(
+      dto,
+      this.productRepository,
+      {
+        relations: {
+          [CategoryRelationMap[category]]: true,
+          images: true,
+        },
       },
-    });
+      {
+        categories: category,
+      },
+    );
   }
 
   async updateProduct(

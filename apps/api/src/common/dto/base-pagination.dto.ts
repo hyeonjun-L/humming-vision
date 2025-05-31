@@ -1,15 +1,11 @@
-import { IsIn, IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional } from 'class-validator';
 
 export class BasePaginationDto {
   @IsNumber()
   @IsOptional()
-  page: number;
-
-  @IsIn(['ASC', 'DESC'])
-  @IsOptional()
-  order__createdAt: 'ASC' | 'DESC' = 'ASC';
+  page: number = 1;
 
   @IsNumber()
   @IsOptional()
-  take: number = 20;
+  take: number = 2;
 }

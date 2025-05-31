@@ -18,16 +18,30 @@ export class CommonService {
     dto: BasePaginationDto,
     repository: Repository<T>,
     overrideFindOptions: FindManyOptions<T> = {},
+    defaultWhere: FindOptionsWhere<T> = {},
+    defaultOrder: FindOptionsOrder<T> = {},
   ) {
-    return this.pagePaginate(dto, repository, overrideFindOptions);
+    return this.pagePaginate(
+      dto,
+      repository,
+      overrideFindOptions,
+      defaultWhere,
+      defaultOrder,
+    );
   }
 
   private async pagePaginate<T extends BaseModel>(
     dto: BasePaginationDto,
     repository: Repository<T>,
     overrideFindOptions: FindManyOptions<T> = {},
+    defaultWhere: FindOptionsWhere<T> = {},
+    defaultOrder: FindOptionsOrder<T> = {},
   ) {
-    const findOptions = this.composeFindOptions<T>(dto);
+    const findOptions = this.composeFindOptions<T>(
+      dto,
+      defaultWhere,
+      defaultOrder,
+    );
 
     const [data, count] = await repository.findAndCount({
       ...findOptions,
@@ -42,11 +56,22 @@ export class CommonService {
 
   private composeFindOptions<T extends BaseModel>(
     dto: BasePaginationDto,
+    defaultWhere: FindOptionsWhere<T> = {},
+    defaultOrder: FindOptionsOrder<T> = {},
   ): FindManyOptions<T> {
-    let where: FindOptionsWhere<T> = {};
-    let order: FindOptionsOrder<T> = {};
+    let where: FindOptionsWhere<T> = defaultWhere;
+    let order: FindOptionsOrder<T> = defaultOrder;
 
     for (const [key, value] of Object.entries(dto)) {
+      if (
+        key === 'page' ||
+        key === 'take' ||
+        value === undefined ||
+        value === null
+      ) {
+        continue;
+      }
+
       if (key.startsWith('where__')) {
         where = {
           ...where,
@@ -57,14 +82,30 @@ export class CommonService {
           ...order,
           ...this.parseWhereFilter(key, value),
         };
+      } else {
+        const [relation] = key.split('__');
+
+        where = {
+          ...where,
+          [relation]: {
+            ...(typeof where[relation] === 'object' && where[relation] !== null
+              ? (where[relation] as Record<string, any>)
+              : {}),
+            ...this.parseWhereFilter(key, value),
+          },
+        };
       }
     }
+
+    const take = typeof dto.take === 'number' && dto.take > 0 ? dto.take : 2;
+    const page = typeof dto.page === 'number' && dto.page > 0 ? dto.page : 1;
+    const skip = take * (page - 1);
 
     return {
       where,
       order,
-      take: dto.take,
-      skip: dto.take * (dto.page - 1),
+      take,
+      skip: Math.max(0, skip),
     };
   }
 

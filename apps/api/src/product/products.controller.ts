@@ -7,6 +7,7 @@ import {
   Patch,
   ParseIntPipe,
   Get,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -17,6 +18,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { CategoriesEnum } from './const/categories.const';
 import { ParseCategoryPipe } from './pipe/category-pipe.pipe';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { PaginateCameraDto } from './camera/dto/paginate-camera.dto';
 
 @Controller('product')
 export class ProductsController {
@@ -60,5 +62,14 @@ export class ProductsController {
   ) {
     const product = await this.productsService.getProductById(id, category);
     return product;
+  }
+
+  @Get(':category')
+  @IsPublic()
+  async paginateProducts(
+    @Query() query: PaginateCameraDto,
+    @Param('category', ParseCategoryPipe) category: CategoriesEnum,
+  ) {
+    return this.productsService.paginateProduct(query, category);
   }
 }
