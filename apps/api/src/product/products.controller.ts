@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Get,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -19,6 +20,9 @@ import { CategoriesEnum } from './const/categories.const';
 import { ParseCategoryPipe } from './pipe/category-pipe.pipe';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { PaginateCameraDto } from './camera/dto/paginate-camera.dto';
+import { PaginateLensDto } from './lens/dto/paginate-lens.dto';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 
 @Controller('product')
 export class ProductsController {
@@ -67,9 +71,24 @@ export class ProductsController {
   @Get(':category')
   @IsPublic()
   async paginateProducts(
-    @Query() query: PaginateCameraDto,
+    @Query() query: Record<string, any>,
     @Param('category', ParseCategoryPipe) category: CategoriesEnum,
   ) {
-    return this.productsService.paginateProduct(query, category);
+    let dto: PaginateCameraDto | PaginateLensDto;
+
+    if (category === CategoriesEnum.CAMERA) {
+      dto = plainToInstance(PaginateCameraDto, query);
+    } else if (category === CategoriesEnum.LENS) {
+      dto = plainToInstance(PaginateLensDto, query);
+    } else {
+      throw new BadRequestException('유효하지 않은 카테고리입니다.');
+    }
+
+    const errors = await validate(dto);
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
+
+    return this.productsService.paginateProduct(dto, category);
   }
 }
