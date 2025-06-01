@@ -1,11 +1,12 @@
 import { IsNumber, IsOptional } from 'class-validator';
+import { DEFAULT_PAGE, DEFAULT_TAKE } from '../const/pagination.cont';
 
 export class BasePaginationDto {
   @IsNumber()
   @IsOptional()
-  page: number = 1;
+  page: number = DEFAULT_PAGE;
 
   @IsNumber()
   @IsOptional()
-  take: number = 2;
+  take: number = DEFAULT_TAKE;
 }

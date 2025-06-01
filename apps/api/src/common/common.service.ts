@@ -7,58 +7,94 @@ import {
   FindOptionsOrder,
   FindOptionsWhere,
   Repository,
+  SelectQueryBuilder,
 } from 'typeorm';
 import { FILTER_MAPPER } from './const/filter-mapper.const';
+import { DEFAULT_PAGE, DEFAULT_TAKE } from './const/pagination.cont';
 
 @Injectable()
 export class CommonService {
   constructor(private readonly configService: ConfigService) {}
 
-  paginate<T extends BaseModel>(
+  async paginate<T extends BaseModel>(
     dto: BasePaginationDto,
     repository: Repository<T>,
     overrideFindOptions: FindManyOptions<T> = {},
     defaultWhere: FindOptionsWhere<T> = {},
     defaultOrder: FindOptionsOrder<T> = {},
+    customWhereQueryBuilder?: (
+      qb: SelectQueryBuilder<T>,
+      dto: BasePaginationDto,
+    ) => void,
   ) {
-    return this.pagePaginate(
+    const { take, skip, where, order } = this.composeFindOptions<T>(
       dto,
-      repository,
-      overrideFindOptions,
       defaultWhere,
       defaultOrder,
     );
-  }
 
-  private async pagePaginate<T extends BaseModel>(
-    dto: BasePaginationDto,
-    repository: Repository<T>,
-    overrideFindOptions: FindManyOptions<T> = {},
-    defaultWhere: FindOptionsWhere<T> = {},
-    defaultOrder: FindOptionsOrder<T> = {},
-  ) {
-    const findOptions = this.composeFindOptions<T>(
-      dto,
-      defaultWhere,
-      defaultOrder,
-    );
+    if (this.hasCustomQueryFilters(dto) && customWhereQueryBuilder) {
+      return this.runWithCustomQueryBuilder(
+        dto,
+        repository,
+        take,
+        skip,
+        where,
+        overrideFindOptions,
+        customWhereQueryBuilder,
+      );
+    }
 
     const [data, count] = await repository.findAndCount({
-      ...findOptions,
+      ...{ where, order, take, skip },
       ...overrideFindOptions,
     });
 
-    return {
-      data,
-      total: count,
-    };
+    return { data, total: count };
+  }
+
+  private hasCustomQueryFilters(dto: BasePaginationDto): boolean {
+    return Object.entries(dto).some(
+      ([key, value]) =>
+        key.startsWith('_') && value !== undefined && value !== null,
+    );
+  }
+
+  private async runWithCustomQueryBuilder<T extends BaseModel>(
+    dto: BasePaginationDto,
+    repository: Repository<T>,
+    take: number,
+    skip: number,
+    where: FindOptionsWhere<T>,
+    overrideFindOptions: FindManyOptions<T>,
+    customWhereQueryBuilder: (
+      qb: SelectQueryBuilder<T>,
+      dto: BasePaginationDto,
+    ) => void,
+  ): Promise<{ data: T[]; total: number }> {
+    const qb = repository.createQueryBuilder('entity').take(take).skip(skip);
+
+    if (overrideFindOptions.relations) {
+      Object.keys(overrideFindOptions.relations).forEach((relation) => {
+        qb.leftJoinAndSelect(`entity.${relation}`, relation);
+      });
+    }
+
+    if (where) {
+      qb.andWhere(where);
+    }
+
+    customWhereQueryBuilder(qb, dto);
+
+    const [data, count] = await qb.getManyAndCount();
+    return { data, total: count };
   }
 
   private composeFindOptions<T extends BaseModel>(
     dto: BasePaginationDto,
     defaultWhere: FindOptionsWhere<T> = {},
     defaultOrder: FindOptionsOrder<T> = {},
-  ): FindManyOptions<T> {
+  ) {
     let where: FindOptionsWhere<T> = defaultWhere;
     let order: FindOptionsOrder<T> = defaultOrder;
 
@@ -82,9 +118,10 @@ export class CommonService {
           ...order,
           ...this.parseWhereFilter(key, value),
         };
+      } else if (key.startsWith('_')) {
+        continue;
       } else {
         const [relation] = key.split('__');
-
         where = {
           ...where,
           [relation]: {
@@ -97,8 +134,9 @@ export class CommonService {
       }
     }
 
-    const take = typeof dto.take === 'number' && dto.take > 0 ? dto.take : 2;
-    const page = typeof dto.page === 'number' && dto.page > 0 ? dto.page : 1;
+    const take =
+      typeof dto.take === 'number' && dto.take > 0 ? dto.take : DEFAULT_TAKE;
+    const page = Math.max(DEFAULT_PAGE, Number(dto.page) || DEFAULT_PAGE);
     const skip = take * (page - 1);
 
     return {

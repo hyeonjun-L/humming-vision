@@ -146,6 +146,23 @@ export class ProductsService {
       {
         categories: category,
       },
+      {},
+      (qb, dto) => {
+        if ('_camera__resolution__between' in dto) {
+          const [min, max] = dto._camera__resolution__between! as [
+            number,
+            number,
+          ];
+
+          qb.andWhere(
+            'camera.resolutionX * camera.resolutionY BETWEEN :min AND :max',
+            {
+              min,
+              max,
+            },
+          );
+        }
+      },
     );
   }
 
