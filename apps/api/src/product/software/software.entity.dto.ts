@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { ProductModel } from '../product.entity';
-import { SoftwareModelMaker } from './software.const';
+import { SoftwareModelMaker } from './software.const.dto';
 
 @Entity()
 export class SoftwareModel {

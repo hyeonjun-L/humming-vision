@@ -3,10 +3,10 @@ import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { CategoriesEnum } from './const/categories.const';
 import { LensModel } from './lens/lens.entity';
 import { FrameGrabberModel } from './frame-grabber/frame-grabber.entity';
-import { SoftwareModel } from './software/software.entity';
 import { LogModel } from 'src/admin/entity/log.entity';
 import { ImageModel } from './image/image.entity';
 import { CameraModel } from './camera/camera.entity';
+import { SoftwareModel } from './software/software.entity.dto';
 
 @Entity()
 export class ProductModel extends BaseModel {

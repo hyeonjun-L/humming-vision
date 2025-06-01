@@ -24,6 +24,7 @@ import { PaginateLensDto } from './lens/dto/paginate-lens.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
+import { PaginateSoftwareDto } from './software/dto/paginate-software';
 
 @Controller('product')
 export class ProductsController {
@@ -75,13 +76,19 @@ export class ProductsController {
     @Query() query: Record<string, any>,
     @Param('category', ParseCategoryPipe) category: CategoriesEnum,
   ) {
-    let dto: PaginateCameraDto | PaginateLensDto | PaginateFrameGrabberDto;
+    let dto:
+      | PaginateCameraDto
+      | PaginateLensDto
+      | PaginateFrameGrabberDto
+      | PaginateSoftwareDto;
 
     if (category === CategoriesEnum.CAMERA) {
       dto = plainToInstance(PaginateCameraDto, query);
     } else if (category === CategoriesEnum.LENS) {
       dto = plainToInstance(PaginateLensDto, query);
     } else if (category === CategoriesEnum.FRAMEGRABBER) {
+      dto = plainToInstance(PaginateFrameGrabberDto, query);
+    } else if (category === CategoriesEnum.SOFTWARE) {
       dto = plainToInstance(PaginateFrameGrabberDto, query);
     } else {
       throw new BadRequestException('유효하지 않은 카테고리입니다.');

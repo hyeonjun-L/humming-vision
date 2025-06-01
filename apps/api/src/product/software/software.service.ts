@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductModel } from '../product.entity';
 import { QueryRunner } from 'typeorm';
-import { SoftwareModel } from './software.entity';
 import { CreateSoftwareDto } from './dto/create-software';
 import { UpdateSoftwareDto } from './dto/update-software';
+import { SoftwareModel } from './software.entity.dto';
 
 @Injectable()
 export class SoftwareService {
