@@ -239,4 +239,22 @@ export class ProductsService {
       },
     });
   }
+
+  async deleteProduct(id: number, qr: QueryRunner) {
+    const productRepository =
+      qr.manager.getRepository<ProductModel>(ProductModel);
+
+    const product = await productRepository.findOne({
+      where: { id },
+      relations: {
+        images: true,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    await productRepository.remove(product);
+  }
 }

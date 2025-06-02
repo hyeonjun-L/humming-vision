@@ -8,7 +8,9 @@ export class FrameGrabberModel {
   @Column({ primary: true, generated: true })
   id: number;
 
-  @OneToOne(() => ProductModel, (product) => product.frameGrabber)
+  @OneToOne(() => ProductModel, (product) => product.frameGrabber, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   product: ProductModel;
 

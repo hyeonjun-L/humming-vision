@@ -12,7 +12,9 @@ export class CameraModel {
   @Column({ primary: true, generated: true })
   id: number;
 
-  @OneToOne(() => ProductModel, (product) => product.camera)
+  @OneToOne(() => ProductModel, (product) => product.camera, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   product: ProductModel;
 

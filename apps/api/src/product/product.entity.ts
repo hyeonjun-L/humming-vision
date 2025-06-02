@@ -6,7 +6,7 @@ import { FrameGrabberModel } from './frame-grabber/frame-grabber.entity';
 import { LogModel } from 'src/admin/entity/log.entity';
 import { ImageModel } from './image/image.entity';
 import { CameraModel } from './camera/camera.entity';
-import { SoftwareModel } from './software/software.entity.dto';
+import { SoftwareModel } from './software/software.entity';
 
 @Entity()
 export class ProductModel extends BaseModel {
@@ -34,21 +34,38 @@ export class ProductModel extends BaseModel {
   @Column()
   manualUrl: string;
 
-  @OneToMany(() => ImageModel, (image) => image.product)
+  @OneToMany(() => ImageModel, (image) => image.product, {
+    cascade: ['remove'],
+  })
   images: ImageModel[];
 
-  @OneToOne(() => CameraModel, (camera) => camera.product, { nullable: true })
+  @OneToOne(() => CameraModel, (camera) => camera.product, {
+    nullable: true,
+    cascade: ['remove'],
+  })
   camera?: CameraModel;
 
-  @OneToOne(() => LensModel, (lens) => lens.product, { nullable: true })
+  @OneToOne(() => LensModel, (lens) => lens.product, {
+    nullable: true,
+    cascade: ['remove'],
+  })
   lens?: LensModel;
 
-  @OneToOne(() => FrameGrabberModel, (fg) => fg.product, { nullable: true })
+  @OneToOne(() => FrameGrabberModel, (fg) => fg.product, {
+    nullable: true,
+    cascade: ['remove'],
+  })
   frameGrabber?: FrameGrabberModel;
 
-  @OneToOne(() => SoftwareModel, (sw) => sw.product, { nullable: true })
+  @OneToOne(() => SoftwareModel, (sw) => sw.product, {
+    nullable: true,
+    cascade: ['remove'],
+  })
   software?: SoftwareModel;
 
-  @OneToOne(() => LogModel, (log) => log.product, { nullable: true })
+  @OneToOne(() => LogModel, (log) => log.product, {
+    nullable: true,
+    cascade: ['remove'],
+  })
   log?: LogModel;
 }

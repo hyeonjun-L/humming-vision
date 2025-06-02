@@ -9,6 +9,7 @@ import {
   Get,
   Query,
   BadRequestException,
+  Delete,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -100,5 +101,14 @@ export class ProductsController {
     }
 
     return this.productsService.paginateProduct(dto, category);
+  }
+
+  @Delete(':productId')
+  @UseInterceptors(TransactionInterceptor)
+  async deleteProduct(
+    @Param('productId', ParseIntPipe) id: number,
+    @QueryRunner() qr: QR,
+  ) {
+    return await this.productsService.deleteProduct(id, qr);
   }
 }

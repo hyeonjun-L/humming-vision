@@ -25,7 +25,7 @@ import { RolesGuard } from './admin/guard/roles.guard';
 import { CommonModule } from './common/common.module';
 import { ImageModel } from './product/image/image.entity';
 import { CameraModel } from './product/camera/camera.entity';
-import { SoftwareModel } from './product/software/software.entity.dto';
+import { SoftwareModel } from './product/software/software.entity';
 
 @Module({
   imports: [

@@ -24,6 +24,8 @@ export class ImageModel extends BaseModel {
   @Column()
   path: string;
 
-  @ManyToOne(() => ProductModel, (product) => product.images)
+  @ManyToOne(() => ProductModel, (product) => product.images, {
+    onDelete: 'CASCADE',
+  })
   product?: ProductModel;
 }

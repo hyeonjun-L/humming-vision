@@ -40,7 +40,8 @@ export class AdminController {
   }
 
   @Post('register')
-  @Roles(RolesEnum.SUPER)
+  @IsPublic()
+  // @Roles(RolesEnum.SUPER)
   registerAdmin(@Body() registerAdminDto: RegisterAdminDto) {
     return this.adminService.registerAdminWithEmail(registerAdminDto);
   }
