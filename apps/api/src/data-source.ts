@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 import {
   ENV_DB_DATABASE_KEY,
   ENV_DB_HOST_KEY,
@@ -20,9 +21,10 @@ export const AppDataSource = new DataSource({
   database: process.env[ENV_DB_DATABASE_KEY],
   migrationsRun: false,
   logging: true,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl:
+    process.env[NODE_ENV_KEY] === 'development'
+      ? { rejectUnauthorized: false }
+      : { ca: fs.readFileSync(__dirname + '/global-bundle.pem').toString() },
   entities: ['dist/**/*.entity.js'],
   synchronize: process.env[NODE_ENV_KEY] === 'development' ? true : false,
   migrations: ['dist/database/migrations/*.js'],
