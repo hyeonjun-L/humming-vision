@@ -1,10 +1,10 @@
 import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
-import { InterfaceEnum } from '../const/interface.const';
+import { InterfaceEnum } from '../../const/interface.const';
 import {
   CameraModelColor,
   CameraModelMaker,
   CameraModelType,
-} from '../const/camera.const';
+} from '../camera.const';
 
 export class CreateCameraDto {
   @IsEnum(InterfaceEnum)

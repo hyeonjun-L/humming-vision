@@ -1,12 +1,20 @@
 export const ENV_PROTOCOL_KEY = 'PROTOCOL';
 export const ENV_HOST_KEY = 'HOST';
+
 export const ENV_JWT_SECRET_KEY = 'JWT_SECRET';
 export const ENV_JWT_ACCESS_EXPIRES = 'JWT_ACCESS_EXPIRES';
 export const ENV_JWT_REFRESH_EXPIRES = 'JWT_REFRESH_EXPIRES';
 export const ENV_HASH_ROUNDS_KEY = 'HASH_ROUNDS';
+
 export const ENV_DB_HOST_KEY = 'DB_HOST';
 export const ENV_DB_PORT_KEY = 'DB_PORT';
 export const ENV_DB_USERNAME_KEY = 'DB_USERNAME';
 export const ENV_DB_PASSWORD_KEY = 'DB_PASSWORD';
 export const ENV_DB_DATABASE_KEY = 'DB_DATABASE';
-export const EODE_ENV_KEY = 'NODE_ENV';
+
+export const ENV_AWS_REGION_KEY = 'AWS_REGION';
+export const ENV_AWS_ACCESS_KEY_ID_KEY = 'AWS_ACCESS_KEY_ID';
+export const ENV_AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY';
+export const ENV_AWS_S3_BUCKET_KEY = 'AWS_S3_BUCKET';
+
+export const NODE_ENV_KEY = 'NODE_ENV';

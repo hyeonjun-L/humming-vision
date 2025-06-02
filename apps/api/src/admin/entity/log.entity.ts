@@ -1,6 +1,6 @@
 import { BaseModel } from 'src/common/entity/base.entity';
 import { ContactModel } from 'src/contact/entity/contact.entity';
-import { ProductModel } from 'src/product/entity/product.entity';
+import { ProductModel } from 'src/product/product.entity';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { AdminModel } from './admin.entity';
 

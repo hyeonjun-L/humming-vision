@@ -5,12 +5,9 @@ import { AdminModel } from './admin/entity/admin.entity';
 import { LogModel } from './admin/entity/log.entity';
 import { SessionModel } from './admin/entity/session.entity';
 import { ContactModel } from './contact/entity/contact.entity';
-import { ProductModel } from './product/entity/product.entity';
-import { ImageModel } from './common/entity/image.entity';
-import { CameraModel } from './product/entity/camera.entity';
-import { LensModel } from './product/entity/lens.entity';
-import { SoftwareModel } from './product/entity/software.entity';
-import { FrameGrabberModel } from './product/entity/frame-grabber.entity';
+import { ProductModel } from './product/product.entity';
+import { LensModel } from './product/lens/lens.entity';
+import { FrameGrabberModel } from './product/frame-grabber/frame-grabber.entity';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
@@ -25,11 +22,16 @@ import { AdminModule } from './admin/admin.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AccessTokenGuard } from './admin/guard/bearer-token.guard';
 import { RolesGuard } from './admin/guard/roles.guard';
+import { CommonModule } from './common/common.module';
+import { ImageModel } from './product/image/image.entity';
+import { CameraModel } from './product/camera/camera.entity';
+import { SoftwareModel } from './product/software/software.entity';
 
 @Module({
   imports: [
     ProductsModule,
     AdminModule,
+    CommonModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
@@ -55,7 +57,7 @@ import { RolesGuard } from './admin/guard/roles.guard';
       ],
       synchronize: process.env.NODE_ENV === 'development',
       ssl: {
-        rejectUnauthorized: process.env.NODE_ENV === 'development',
+        rejectUnauthorized: process.env.NODE_ENV !== 'development',
       },
     }),
   ],

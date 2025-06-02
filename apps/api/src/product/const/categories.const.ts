@@ -1,6 +1,13 @@
-export enum CatagoriesEnum {
+export enum CategoriesEnum {
   SOFTWARE = 'SOFTWARE',
   FRAMEGRABBER = 'FRAMEGRABBER',
   CAMERA = 'CAMERA',
-  LENSES = 'LENSES',
+  LENS = 'LENS',
+}
+
+export enum CategoryRelationMap {
+  SOFTWARE = 'software',
+  FRAMEGRABBER = 'frameGrabber',
+  CAMERA = 'camera',
+  LENS = 'lens',
 }

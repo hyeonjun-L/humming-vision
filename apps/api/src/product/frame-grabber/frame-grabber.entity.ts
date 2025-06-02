@@ -1,20 +1,17 @@
-import { Column, Entity, OneToOne } from 'typeorm';
-import { ProductModel } from './product.entity';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { ProductModel } from '../product.entity';
 import { InterfaceEnum } from '../const/interface.const';
-
-enum FrameGrabberModelMaker {
-  MATROX = 'MATROX',
-  EURESYS = 'EURESYS',
-  ADLINK = 'ADLINK',
-  BASLER = 'BASLER',
-}
+import { FrameGrabberModelMaker } from './frame-grabber.const';
 
 @Entity()
 export class FrameGrabberModel {
   @Column({ primary: true, generated: true })
   id: number;
 
-  @OneToOne(() => ProductModel, (product) => product.frameGrabber)
+  @OneToOne(() => ProductModel, (product) => product.frameGrabber, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
   product: ProductModel;
 
   @Column({ enum: Object.values(FrameGrabberModelMaker), nullable: false })

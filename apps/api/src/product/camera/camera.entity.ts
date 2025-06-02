@@ -1,18 +1,20 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { ProductModel } from './product.entity';
 import { InterfaceEnum } from '../const/interface.const';
+import { ProductModel } from '../product.entity';
 import {
   CameraModelColor,
   CameraModelMaker,
   CameraModelType,
-} from '../const/camera.const';
+} from './camera.const';
 
 @Entity()
 export class CameraModel {
   @Column({ primary: true, generated: true })
   id: number;
 
-  @OneToOne(() => ProductModel, (product) => product.camera)
+  @OneToOne(() => ProductModel, (product) => product.camera, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   product: ProductModel;
 

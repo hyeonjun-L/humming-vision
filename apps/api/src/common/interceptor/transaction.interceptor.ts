@@ -37,7 +37,9 @@ export class TransactionInterceptor implements NestInterceptor {
       }),
       finalize(() => {
         void (async () => {
-          await qr.commitTransaction();
+          if (qr.isTransactionActive) {
+            await qr.commitTransaction();
+          }
           await qr.release();
         })();
       }),

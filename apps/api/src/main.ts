@@ -1,6 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  ValidationError,
+  ValidationPipe,
+} from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { AppDataSource } from './data-source';
 
@@ -10,12 +14,8 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   if (process.env.NODE_ENV === 'production') {
-    console.log('NODE_ENV is production');
-    await AppDataSource.initialize()
-      .then(() => console.log('DataSource initialized'))
-      .then(() => AppDataSource.runMigrations())
-      .then(() => console.log('Migrations executed'))
-      .catch((err) => console.error('Migration error:', err));
+    await AppDataSource.initialize();
+    await AppDataSource.runMigrations();
   }
 
   app.useGlobalPipes(
@@ -26,16 +26,14 @@ async function bootstrap() {
       },
       whitelist: true,
       forbidNonWhitelisted: true,
+      validateCustomDecorators: true,
       exceptionFactory: (errors) => {
-        const formattedErrors = errors.map((error) => ({
-          field: error.property,
-          message: Object.values(error.constraints ?? {}).join(', '),
-        }));
+        const allErrors = errors.flatMap((error) => extractErrors(error));
 
         return new BadRequestException({
           statusCode: 400,
           message: 'Validation failed',
-          errors: formattedErrors,
+          errors: allErrors,
         });
       },
     }),
@@ -45,3 +43,29 @@ async function bootstrap() {
 }
 
 void bootstrap();
+
+function extractErrors(
+  error: ValidationError,
+  parentPath = '',
+): { field: string; message: string }[] {
+  const fieldPath = parentPath
+    ? `${parentPath}.${error.property}`
+    : error.property;
+
+  const messages: { field: string; message: string }[] = [];
+
+  if (error.constraints) {
+    messages.push({
+      field: fieldPath,
+      message: Object.values(error.constraints).join(', '),
+    });
+  }
+
+  if (error.children && error.children.length > 0) {
+    error.children.forEach((childError) => {
+      messages.push(...extractErrors(childError, fieldPath));
+    });
+  }
+
+  return messages;
+}

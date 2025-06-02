@@ -1,24 +1,16 @@
-import { Column, Entity, OneToOne } from 'typeorm';
-import { ProductModel } from './product.entity';
-
-enum LensModelType {
-  CCTV = 'CCTV',
-  TCL = 'TCL',
-}
-
-enum LensModelMount {
-  C = 'C',
-  CS = 'CS',
-  F = 'F',
-  M = 'M',
-}
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { ProductModel } from '../product.entity';
+import { LensModelMount, LensModelType } from './lens.const';
 
 @Entity()
 export class LensModel {
   @Column({ primary: true, generated: true })
   id: number;
 
-  @OneToOne(() => ProductModel, (product) => product.lens)
+  @OneToOne(() => ProductModel, (product) => product.lens, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
   product: ProductModel;
 
   @Column({

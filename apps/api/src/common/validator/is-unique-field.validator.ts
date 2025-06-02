@@ -19,11 +19,18 @@ export class IsUniqueFieldConstraint implements ValidatorConstraintInterface {
 
     const repo = this.dataSource.getRepository(EntityClass);
 
-    const exists = await repo.findOne({
+    const object = args.object as { id?: number };
+
+    const existing = await repo.findOne({
       where: { [field]: value } as Record<string, unknown>,
     });
 
-    return !exists;
+    if (!existing) return true;
+
+    if (object?.id && (existing as { id?: number }).id === object.id)
+      return true;
+
+    return false;
   }
 
   defaultMessage(args: ValidationArguments): string {
