@@ -12,3 +12,5 @@ services:
     restart: always
     env_file:
       - .env.api
+    volumes:
+      - ./global-bundle.pem:/app/dist/global-bundle.pem:ro
