@@ -16,6 +16,7 @@ import {
   ENV_DB_PASSWORD_KEY,
   ENV_DB_PORT_KEY,
   ENV_DB_USERNAME_KEY,
+  NODE_ENV_KEY,
 } from './common/const/env-kets.const';
 import { ProductsModule } from './product/products.module';
 import { AdminModule } from './admin/admin.module';
@@ -26,6 +27,7 @@ import { CommonModule } from './common/common.module';
 import { ImageModel } from './product/image/image.entity';
 import { CameraModel } from './product/camera/camera.entity';
 import { SoftwareModel } from './product/software/software.entity';
+import * as fs from 'fs';
 
 @Module({
   imports: [
@@ -56,9 +58,12 @@ import { SoftwareModel } from './product/software/software.entity';
         FrameGrabberModel,
       ],
       synchronize: process.env.NODE_ENV === 'development',
-      ssl: {
-        rejectUnauthorized: process.env.NODE_ENV !== 'development',
-      },
+      ssl:
+        process.env[NODE_ENV_KEY] === 'development'
+          ? { rejectUnauthorized: false }
+          : {
+              ca: fs.readFileSync(__dirname + '/global-bundle.pem').toString(),
+            },
     }),
   ],
   controllers: [AppController],
