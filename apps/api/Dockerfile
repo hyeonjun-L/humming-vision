@@ -54,7 +54,7 @@ COPY --from=installer --chown=nestjs:nodejs /app/node_modules ./node_modules
 COPY --from=installer --chown=nestjs:nodejs /app/apps/api/package.json ./package.json
 
 # 인증서 복사
-COPY --chown=nestjs:nodejs ./global-bundle.pem ./dist/global-bundle.pem
+COPY --chown=nestjs:nodejs ./global-bundle.pem dist/global-bundle.pem
 
 EXPOSE 4000
 CMD ["node", "dist/main"]
