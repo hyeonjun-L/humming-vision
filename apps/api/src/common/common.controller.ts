@@ -6,6 +6,8 @@ import {
   Req,
   UploadedFiles,
   BadRequestException,
+  Delete,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { AwsService } from 'src/common/aws/aws.service';
@@ -56,5 +58,19 @@ export class CommonController {
       files.map((file) => this.awsService.uploadFile(file, file.fileType)),
     );
     return { urls };
+  }
+
+  @Delete('asset/delete')
+  async deleteFileByUrl(@Query('url') fileUrl: string) {
+    if (!fileUrl) {
+      throw new BadRequestException('삭제할 파일의 URL을 입력해주세요.');
+    }
+
+    await this.awsService.deleteFileByUrl(fileUrl);
+
+    return {
+      message: '파일이 성공적으로 삭제되었습니다.',
+      url: fileUrl,
+    };
   }
 }
