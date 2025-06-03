@@ -16,6 +16,10 @@ import {
   ENV_DB_PASSWORD_KEY,
   ENV_DB_PORT_KEY,
   ENV_DB_USERNAME_KEY,
+  ENV_SES_SMTP_HOST_KEY,
+  ENV_SES_SMTP_PASS_KEY,
+  ENV_SES_SMTP_PORT_KEY,
+  ENV_SES_SMTP_USER_KEY,
   NODE_ENV_KEY,
 } from './common/const/env-kets.const';
 import { ProductsModule } from './product/products.module';
@@ -29,6 +33,7 @@ import { CameraModel } from './product/camera/camera.entity';
 import { SoftwareModel } from './product/software/software.entity';
 import * as fs from 'fs';
 import { ContactModule } from './contact/contact.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -66,6 +71,20 @@ import { ContactModule } from './contact/contact.module';
           : {
               ca: fs.readFileSync(__dirname + '/global-bundle.pem').toString(),
             },
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env[ENV_SES_SMTP_HOST_KEY],
+        port: parseInt(process.env[ENV_SES_SMTP_PORT_KEY] ?? '587', 10),
+        secure: false,
+        auth: {
+          user: process.env[ENV_SES_SMTP_USER_KEY],
+          pass: process.env[ENV_SES_SMTP_PASS_KEY],
+        },
+      },
+      defaults: {
+        from: '"HummingVision" <no-reply@hummingvision.com>',
+      },
     }),
   ],
   controllers: [AppController],

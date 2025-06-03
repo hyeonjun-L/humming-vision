@@ -14,7 +14,7 @@ export class CreateContactDto {
   @IsString()
   @IsOptional()
   @MaxLength(100)
-  company: string;
+  company?: string;
 
   @IsEmail()
   @MaxLength(100)
@@ -22,11 +22,11 @@ export class CreateContactDto {
 
   @IsString()
   @IsOptional()
-  @MaxLength(150)
-  subject: string;
+  @MaxLength(180)
+  subject?: string;
 
   @IsString()
-  @MaxLength(1500)
+  @MaxLength(2000)
   message: string;
 
   @IsBoolean()
