@@ -28,12 +28,14 @@ import { ImageModel } from './product/image/image.entity';
 import { CameraModel } from './product/camera/camera.entity';
 import { SoftwareModel } from './product/software/software.entity';
 import * as fs from 'fs';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
     ProductsModule,
     AdminModule,
     CommonModule,
+    ContactModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
