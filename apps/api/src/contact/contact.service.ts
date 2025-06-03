@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContactModel } from './entity/contact.entity';
@@ -16,16 +16,30 @@ export class ContactService {
     private readonly configService: ConfigService,
   ) {}
 
-  async createContact(contactData: CreateContactDto) {
+  private readonly rateLimitMap = new Map<
+    string,
+    { count: number; date: string }
+  >();
+
+  checkLimit(ipOrEmail: string) {
+    const today = new Date().toISOString().slice(0, 10);
+    const record = this.rateLimitMap.get(ipOrEmail);
+
+    if (record?.date === today) {
+      if (record.count >= 1) throw new ForbiddenException('하루 5회 초과');
+      record.count++;
+    } else {
+      this.rateLimitMap.set(ipOrEmail, { count: 1, date: today });
+    }
+  }
+
+  async createContact(contactData: CreateContactDto, ip?: string) {
+    this.checkLimit(ip || contactData.email);
     const contact = this.contactRepository.create(contactData);
 
     await this.contactRepository.save(contact);
 
-    try {
-      await this.sendContactEmail(contactData);
-    } catch (err) {
-      console.error('이메일 전송 실패:', err);
-    }
+    await this.sendContactEmail(contactData);
 
     return {
       message: '문의가 성공적으로 전송되었습니다.',

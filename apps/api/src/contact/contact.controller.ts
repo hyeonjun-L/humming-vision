@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
@@ -9,7 +10,13 @@ export class ContactController {
 
   @Post()
   @IsPublic()
-  async createContact(@Body() contactData: CreateContactDto) {
-    return await this.contactService.createContact(contactData);
+  async createContact(
+    @Body() contactData: CreateContactDto,
+    @Req() req: Request,
+  ) {
+    const ip =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+      req.ip;
+    return await this.contactService.createContact(contactData, ip);
   }
 }
