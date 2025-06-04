@@ -10,6 +10,7 @@ import {
   Query,
   BadRequestException,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -105,6 +106,7 @@ export class ProductsController {
 
   @Delete(':productId')
   @UseInterceptors(TransactionInterceptor)
+  @HttpCode(204)
   async deleteProduct(
     @Param('productId', ParseIntPipe) id: number,
     @QueryRunner() qr: QR,

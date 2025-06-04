@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Param,
   ParseIntPipe,
   Patch,
@@ -39,5 +41,11 @@ export class ContactController {
   @Patch(':id')
   async readContact(@Param('id', ParseIntPipe) id: number) {
     return await this.contactService.readContact(id);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteContact(@Param('id', ParseIntPipe) id: number) {
+    return await this.contactService.deleteContact(id);
   }
 }

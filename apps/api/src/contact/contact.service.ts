@@ -115,7 +115,7 @@ export class ContactService {
     });
 
     if (!contact) {
-      throw new ForbiddenException('존재하지 않는 문의입니다.');
+      throw new ForbiddenException('Contact not found');
     }
 
     return contact;
@@ -125,5 +125,10 @@ export class ContactService {
     const contact = await this.getContactById(id);
     contact.isRead = true;
     return this.contactRepository.save(contact);
+  }
+
+  async deleteContact(id: number) {
+    const contact = await this.getContactById(id);
+    await this.contactRepository.remove(contact);
   }
 }
