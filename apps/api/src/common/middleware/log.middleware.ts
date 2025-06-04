@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { LogModel } from 'src/admin/entity/log.entity';
 import { actionEnum } from 'src/admin/const/log.const';
 import { AdminService } from 'src/admin/admin.service';
-import { ACTION_MAP } from '../const/log.const';
+import { ACTION_MAP, EXCLUDED_URLS } from '../const/log.const';
 
 interface RequestBody {
   id?: string;
@@ -22,14 +22,14 @@ export class LogMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     try {
+      const action = this.extractAction(req);
+      if (!action) return next();
+
       const rawToken = req.headers['authorization'];
       if (!rawToken) return next();
 
       const token = this.adminService.extractTokenFromHeader(rawToken, true);
       const result = await this.adminService.verifyToken(token);
-
-      const action = this.extractAction(req);
-      if (!action) return next();
 
       const body = req.body as RequestBody;
 
@@ -49,6 +49,11 @@ export class LogMiddleware implements NestMiddleware {
   }
   private extractAction(req: Request): actionEnum | undefined {
     const { method, url } = req;
+
+    if (EXCLUDED_URLS.some((excludedUrl) => url.includes(excludedUrl))) {
+      return undefined;
+    }
+
     return ACTION_MAP.find(
       (item) => item.method === method && url.includes(item.urlIncludes),
     )?.action;

@@ -5,6 +5,9 @@ import {
   Headers,
   UseGuards,
   Delete,
+  Param,
+  ParseIntPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { RegisterAdminDto } from './dto/register-admin.dto';
@@ -66,14 +69,19 @@ export class AdminController {
     return { accessToken, refreshToken, admin };
   }
 
-  @Post('logout')
-  postLogout(@Admin() admin: AdminModel) {
+  @Delete('logout')
+  @HttpCode(204)
+  postLogout(@Admin() admin: Pick<AdminModel, 'id'>) {
     return this.adminService.deleteSessionByAdminId(admin.id);
   }
 
-  // @Delete('delete')
-  // @Roles(RolesEnum.SUPER)
-  // deleteAdmin(@Body('id') id: number, @Admin() admin: AdminModel) {
-  //   return this.adminService.deleteAdminById(id, admin.id);
-  // }
+  @Delete(':id')
+  @Roles(RolesEnum.SUPER)
+  @HttpCode(204)
+  deleteAdmin(
+    @Admin() admin: Pick<AdminModel, 'id'>,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.deleteAdminById(id, admin.id);
+  }
 }

@@ -1,5 +1,7 @@
 import { actionEnum } from 'src/admin/const/log.const';
 
+export const EXCLUDED_URLS = ['/logout'];
+
 export const ACTION_MAP: {
   action: actionEnum;
   method: string;
