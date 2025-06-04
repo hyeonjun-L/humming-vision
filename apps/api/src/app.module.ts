@@ -1,4 +1,10 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdminModel } from './admin/entity/admin.entity';
@@ -34,6 +40,7 @@ import { SoftwareModel } from './product/software/software.entity';
 import * as fs from 'fs';
 import { ContactModule } from './contact/contact.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { LogMiddleware } from './common/middleware/log.middleware';
 
 @Module({
   imports: [
@@ -45,6 +52,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       envFilePath: '.env',
       isGlobal: true,
     }),
+    TypeOrmModule.forFeature([LogModel]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env[ENV_DB_HOST_KEY],
@@ -104,4 +112,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LogMiddleware).forRoutes({
+      path: '*',
+      method: RequestMethod.ALL,
+    });
+  }
+}

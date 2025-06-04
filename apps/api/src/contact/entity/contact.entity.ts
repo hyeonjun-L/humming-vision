@@ -1,6 +1,5 @@
-import { LogModel } from 'src/admin/entity/log.entity';
 import { BaseModel } from 'src/common/entity/base.entity';
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity()
 export class ContactModel extends BaseModel {
@@ -21,7 +20,4 @@ export class ContactModel extends BaseModel {
 
   @Column({ type: 'boolean', default: false })
   isRead: boolean;
-
-  @OneToOne(() => LogModel, (log) => log.contact, { nullable: true })
-  log?: LogModel;
 }

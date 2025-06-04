@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Headers, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Headers,
+  UseGuards,
+  Delete,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import { BasicTokenGuard } from './guard/basic-token.guard';
@@ -63,4 +70,10 @@ export class AdminController {
   postLogout(@Admin() admin: AdminModel) {
     return this.adminService.deleteSessionByAdminId(admin.id);
   }
+
+  // @Delete('delete')
+  // @Roles(RolesEnum.SUPER)
+  // deleteAdmin(@Body('id') id: number, @Admin() admin: AdminModel) {
+  //   return this.adminService.deleteAdminById(id, admin.id);
+  // }
 }
