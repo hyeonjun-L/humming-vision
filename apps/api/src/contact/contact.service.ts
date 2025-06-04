@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ENV_TO_EMAIL_KEY } from 'src/common/const/env-kets.const';
 import { ConfigService } from '@nestjs/config';
+import { CommonService } from 'src/common/common.service';
+import { BasePaginateContactDto } from './dto/paginate-contact.dto';
 
 @Injectable()
 export class ContactService {
@@ -14,6 +16,7 @@ export class ContactService {
     private readonly contactRepository: Repository<ContactModel>,
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService,
+    private readonly commonService: CommonService,
   ) {}
 
   private readonly rateLimitMap = new Map<
@@ -21,12 +24,12 @@ export class ContactService {
     { count: number; date: string }
   >();
 
-  checkLimit(ipOrEmail: string) {
+  private checkLimit(ipOrEmail: string) {
     const today = new Date().toISOString().slice(0, 10);
     const record = this.rateLimitMap.get(ipOrEmail);
 
     if (record?.date === today) {
-      if (record.count >= 1) throw new ForbiddenException('하루 5회 초과');
+      if (record.count >= 5) throw new ForbiddenException('하루 5회 초과');
       record.count++;
     } else {
       this.rateLimitMap.set(ipOrEmail, { count: 1, date: today });
@@ -100,5 +103,9 @@ export class ContactService {
       message: '문의가 성공적으로 전송되었습니다.',
       contactData,
     };
+  }
+
+  async paginateContact(dto: BasePaginateContactDto) {
+    return this.commonService.paginate(dto, this.contactRepository);
   }
 }

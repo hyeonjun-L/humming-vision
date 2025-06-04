@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
+import { BasePaginateContactDto } from './dto/paginate-contact.dto';
 
 @Controller('contact')
 export class ContactController {
@@ -19,4 +20,14 @@ export class ContactController {
       req.ip;
     return await this.contactService.createContact(contactData, ip);
   }
+
+  @Get()
+  async getContacts(@Query() dto: BasePaginateContactDto) {
+    return await this.contactService.paginateContact(dto);
+  }
+
+  // @Get(':id')
+  // async getContact(@Query('id') id: number) {
+  //   return await this.contactService.getContactById(id);
+  // }
 }
