@@ -30,6 +30,10 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException(`토큰을 제공 해주세요!`);
     }
 
+    if (admin.role === RolesEnum.SUPER) {
+      return true;
+    }
+
     if (admin.role !== requiredRole) {
       throw new ForbiddenException(
         `이 작업을 수행할 권한이 없습니다. ${requiredRole} 권한이 필요합니다.`,
