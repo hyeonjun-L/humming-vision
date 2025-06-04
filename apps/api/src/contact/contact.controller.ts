@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
@@ -26,8 +36,8 @@ export class ContactController {
     return await this.contactService.paginateContact(dto);
   }
 
-  // @Get(':id')
-  // async getContact(@Query('id') id: number) {
-  //   return await this.contactService.getContactById(id);
-  // }
+  @Patch(':id')
+  async readContact(@Param('id', ParseIntPipe) id: number) {
+    return await this.contactService.readContact(id);
+  }
 }

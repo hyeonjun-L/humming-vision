@@ -108,4 +108,22 @@ export class ContactService {
   async paginateContact(dto: BasePaginateContactDto) {
     return this.commonService.paginate(dto, this.contactRepository);
   }
+
+  async getContactById(id: number) {
+    const contact = await this.contactRepository.findOne({
+      where: { id },
+    });
+
+    if (!contact) {
+      throw new ForbiddenException('존재하지 않는 문의입니다.');
+    }
+
+    return contact;
+  }
+
+  async readContact(id: number) {
+    const contact = await this.getContactById(id);
+    contact.isRead = true;
+    return this.contactRepository.save(contact);
+  }
 }
