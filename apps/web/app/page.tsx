@@ -1,3 +1,9 @@
+import MainBanner from "./_components/main-banner";
+
 export default function Home() {
-  return <div className="h-4 w-full"></div>;
+  return (
+    <main>
+      <MainBanner />
+    </main>
+  );
 }

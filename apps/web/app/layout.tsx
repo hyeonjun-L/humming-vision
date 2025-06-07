@@ -8,7 +8,6 @@ const ralewayFont = Raleway({
 });
 
 const notoSansKRFont = Noto_Sans_KR({
-  subsets: ["latin"], // 타입 에러 없이 사용하려면 "latin"만 지정
   display: "fallback",
   variable: "--font-sans",
 });
