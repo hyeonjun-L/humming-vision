@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Noto_Sans_KR } from "next/font/google";
 import localFont from "next/font/local";
+import Header from "./_components/header/header";
 
 const notoSansKRFont = Noto_Sans_KR({
   display: "fallback",
@@ -14,7 +15,7 @@ const gothamBookFont = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "허밍비전(주) | 혁신적인 머신비전·AI 시각 솔루션",
+  title: "허밍비전(주) | 혁신적인 머신비전 시각 솔루션",
   description:
     "허밍비전(주)은 산업용 머신비전 분야에 혁신적인 시각 솔루션을 제공합니다. 고객 맞춤형 시스템, 신뢰할 수 있는 기술력, 차별화된 서비스를 경험하세요.",
   keywords: [
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://hummingvision.co.kr"),
   openGraph: {
-    title: "허밍비전(주) | 혁신적인 머신비전·AI 시각 솔루션",
+    title: "허밍비전(주) | 혁신적인 머신비전 시각 솔루션",
     description: "산업용 머신비전 분야에 혁신적인 시각 솔루션을 제공합니다.",
     url: "https://hummingvision.co.kr/",
     type: "website",
@@ -75,6 +76,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${gothamBookFont.variable} ${notoSansKRFont.variable}`}>
+        <Header />
         {children}
       </body>
     </html>
