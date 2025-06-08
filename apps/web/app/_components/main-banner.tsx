@@ -14,10 +14,10 @@ function MainBanner() {
     <section className="relative h-[300px] w-full text-white md:h-[600px] lg:h-[812px]">
       <EmblaCarousel slides={SLIDES} options={OPTIONS}>
         <div className="mb-16 flex w-full flex-col items-center gap-2 overflow-hidden">
-          <p className="text-gray100 font-raleway animate-fade-in-up motion-safe:animate-fade-in-up text-[22px] tracking-widest opacity-0 transition-all duration-700 [animation-delay:0.1s] [animation-fill-mode:forwards] motion-reduce:animate-none">
+          <p className="text-gray100 font-gotham animate-fade-in-up motion-safe:animate-fade-in-up text-[22px] tracking-widest opacity-0 transition-all duration-700 [animation-delay:0.1s] [animation-fill-mode:forwards] motion-reduce:animate-none">
             HUMMING VISION
           </p>
-          <p className="font-raleway animate-fade-in-up motion-safe:animate-fade-in-up text-[50px] font-bold opacity-0 transition-all duration-700 [animation-delay:0.3s] [animation-fill-mode:forwards] motion-reduce:animate-none">
+          <p className="font-gotham animate-fade-in-up motion-safe:animate-fade-in-up text-[50px] font-bold opacity-0 transition-all duration-700 [animation-delay:0.3s] [animation-fill-mode:forwards] motion-reduce:animate-none">
             We enjoy MORE than vision
           </p>
           <p className="animate-fade-in-up motion-safe:animate-fade-in-up text-4xl font-bold opacity-0 transition-all duration-700 [animation-delay:0.5s] [animation-fill-mode:forwards] motion-reduce:animate-none">

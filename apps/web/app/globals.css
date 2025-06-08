@@ -21,7 +21,7 @@
   --color-gray100: var(--gray100);
   --container-8xl: 1920px;
   --font-default: var(--font-sans);
-  --font-raleway: var(--font-raleway);
+  --font-gotham: var(--font-gotham-book);
 }
 
 @layer base {

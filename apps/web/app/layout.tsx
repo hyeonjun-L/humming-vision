@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Raleway, Noto_Sans_KR } from "next/font/google";
-
-const ralewayFont = Raleway({
-  subsets: ["latin"],
-  variable: "--font-raleway",
-});
+import { Noto_Sans_KR } from "next/font/google";
+import localFont from "next/font/local";
 
 const notoSansKRFont = Noto_Sans_KR({
   display: "fallback",
   variable: "--font-sans",
+});
+
+const gothamBookFont = localFont({
+  src: "./font/gotham-book.otf",
+  variable: "--font-gotham-book",
 });
 
 export const metadata: Metadata = {
@@ -73,7 +74,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${ralewayFont.variable} ${notoSansKRFont.variable}`}>
+      <body className={`${gothamBookFont.variable} ${notoSansKRFont.variable}`}>
         {children}
       </body>
     </html>
