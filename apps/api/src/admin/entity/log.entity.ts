@@ -1,34 +1,19 @@
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseModel } from 'src/common/entity/base.entity';
-import { ContactModel } from 'src/contact/entity/contact.entity';
-import { ProductModel } from 'src/product/product.entity';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { AdminModel } from './admin.entity';
-
-enum actionEnum {
-  CREATE_PRODUCT = 'CREATE_PRODUCT',
-  UPDATE_PRODUCT = 'UPDATE_PRODUCT',
-  DELETE_PRODUCT = 'DELETE_PRODUCT',
-  VIEW_CONTACT = 'VIEW_CONTACT',
-  DELECT_CONTACT = 'DELECT_CONTACT',
-  CREATE_ADMIN = 'CREATE_ADMIN',
-  UPDATE_ADMIN = 'UPDATE_ADMIN',
-  DELETE_ADMIN = 'DELETE_ADMIN',
-}
+import { actionEnum } from '../const/log.const';
 
 @Entity()
 export class LogModel extends BaseModel {
-  @Column({ enum: Object.values(actionEnum), nullable: false })
+  @Column({ type: 'enum', enum: actionEnum })
   action: actionEnum;
 
-  @OneToOne(() => ProductModel, (product) => product.log)
-  @JoinColumn()
-  product: ProductModel;
+  @Column()
+  path: string;
 
-  @OneToOne(() => ContactModel, (contact) => contact.log)
-  @JoinColumn()
-  contact: ContactModel;
-
-  @OneToOne(() => AdminModel, (admin) => admin.log)
-  @JoinColumn()
+  @ManyToOne(() => AdminModel)
   admin: AdminModel;
+
+  @Column({ type: 'text', nullable: true })
+  target: string | null;
 }

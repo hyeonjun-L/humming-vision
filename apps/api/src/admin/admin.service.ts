@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
@@ -196,9 +200,17 @@ export class AdminService {
   }
 
   async deleteSessionByAdminId(adminId: number) {
-    return await this.sessionRepository.delete({
+    const result = await this.sessionRepository.delete({
       admin: { id: adminId },
     });
+
+    if (result.affected === 0) {
+      throw new BadRequestException(
+        '이미 로그아웃 되었거나 세션이 존재하지 않습니다.',
+      );
+    }
+
+    return;
   }
 
   async updateSessionByAdminId(token: string) {
@@ -230,5 +242,19 @@ export class AdminService {
     }
 
     return true;
+  }
+
+  async deleteAdminById(id: number, adminId: number) {
+    if (id === adminId) {
+      throw new UnauthorizedException('자신의 계정을 삭제할 수 없습니다.');
+    }
+
+    const result = await this.adminRepository.delete({ id });
+
+    if (result.affected === 0) {
+      throw new BadRequestException('존재하지 않는 관리자입니다.');
+    }
+
+    return;
   }
 }

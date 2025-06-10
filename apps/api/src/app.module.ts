@@ -1,4 +1,10 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdminModel } from './admin/entity/admin.entity';
@@ -16,6 +22,10 @@ import {
   ENV_DB_PASSWORD_KEY,
   ENV_DB_PORT_KEY,
   ENV_DB_USERNAME_KEY,
+  ENV_SES_SMTP_HOST_KEY,
+  ENV_SES_SMTP_PASS_KEY,
+  ENV_SES_SMTP_PORT_KEY,
+  ENV_SES_SMTP_USER_KEY,
   NODE_ENV_KEY,
 } from './common/const/env-kets.const';
 import { ProductsModule } from './product/products.module';
@@ -28,16 +38,21 @@ import { ImageModel } from './product/image/image.entity';
 import { CameraModel } from './product/camera/camera.entity';
 import { SoftwareModel } from './product/software/software.entity';
 import * as fs from 'fs';
+import { ContactModule } from './contact/contact.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { LogMiddleware } from './common/middleware/log.middleware';
 
 @Module({
   imports: [
     ProductsModule,
     AdminModule,
     CommonModule,
+    ContactModule,
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
     }),
+    TypeOrmModule.forFeature([LogModel]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env[ENV_DB_HOST_KEY],
@@ -65,6 +80,20 @@ import * as fs from 'fs';
               ca: fs.readFileSync(__dirname + '/global-bundle.pem').toString(),
             },
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env[ENV_SES_SMTP_HOST_KEY],
+        port: parseInt(process.env[ENV_SES_SMTP_PORT_KEY] ?? '587', 10),
+        secure: false,
+        auth: {
+          user: process.env[ENV_SES_SMTP_USER_KEY],
+          pass: process.env[ENV_SES_SMTP_PASS_KEY],
+        },
+      },
+      defaults: {
+        from: '"HummingVision" <no-reply@hummingvision.com>',
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -83,4 +112,11 @@ import * as fs from 'fs';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LogMiddleware).forRoutes({
+      path: '*',
+      method: RequestMethod.ALL,
+    });
+  }
+}

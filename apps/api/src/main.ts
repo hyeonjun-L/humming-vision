@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { AppDataSource } from './data-source';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { writeFileSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +18,15 @@ async function bootstrap() {
   if (process.env.NODE_ENV === 'production') {
     await AppDataSource.initialize();
     await AppDataSource.runMigrations();
+  } else {
+    const config = new DocumentBuilder()
+      .setTitle('Todo API')
+      .setDescription('Todo CRUD API documentation')
+      .setVersion('1.0')
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    writeFileSync('./openapi.json', JSON.stringify(document, null, 2));
   }
 
   app.useGlobalPipes(

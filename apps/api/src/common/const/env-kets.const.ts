@@ -18,3 +18,9 @@ export const ENV_AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY';
 export const ENV_AWS_S3_BUCKET_KEY = 'AWS_S3_BUCKET';
 
 export const NODE_ENV_KEY = 'NODE_ENV';
+
+export const ENV_TO_EMAIL_KEY = 'SES_TO_EMAIL';
+export const ENV_SES_SMTP_HOST_KEY = 'SES_SMTP_HOST';
+export const ENV_SES_SMTP_PORT_KEY = 'SES_SMTP_PORT';
+export const ENV_SES_SMTP_USER_KEY = 'SES_SMTP_USER';
+export const ENV_SES_SMTP_PASS_KEY = 'SES_SMTP_PASS';

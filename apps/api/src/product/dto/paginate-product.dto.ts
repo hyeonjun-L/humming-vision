@@ -8,5 +8,9 @@ export class BasePaginateProductDto extends BasePaginationDto {
 
   @IsIn(['ASC', 'DESC'])
   @IsOptional()
-  order__name: 'ASC' | 'DESC' = 'ASC';
+  order__name?: 'ASC' | 'DESC';
+
+  @IsIn(['ASC', 'DESC'])
+  @IsOptional()
+  order__createdAt?: 'ASC' | 'DESC';
 }

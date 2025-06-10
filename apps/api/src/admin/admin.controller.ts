@@ -1,4 +1,14 @@
-import { Body, Controller, Post, Headers, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Headers,
+  UseGuards,
+  Delete,
+  Param,
+  ParseIntPipe,
+  HttpCode,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import { BasicTokenGuard } from './guard/basic-token.guard';
@@ -40,8 +50,7 @@ export class AdminController {
   }
 
   @Post('register')
-  @IsPublic()
-  // @Roles(RolesEnum.SUPER)
+  @Roles(RolesEnum.SUPER)
   registerAdmin(@Body() registerAdminDto: RegisterAdminDto) {
     return this.adminService.registerAdminWithEmail(registerAdminDto);
   }
@@ -60,8 +69,19 @@ export class AdminController {
     return { accessToken, refreshToken, admin };
   }
 
-  @Post('logout')
-  postLogout(@Admin() admin: AdminModel) {
+  @Delete('logout')
+  @HttpCode(204)
+  postLogout(@Admin() admin: Pick<AdminModel, 'id'>) {
     return this.adminService.deleteSessionByAdminId(admin.id);
+  }
+
+  @Delete(':id')
+  @Roles(RolesEnum.SUPER)
+  @HttpCode(204)
+  deleteAdmin(
+    @Admin() admin: Pick<AdminModel, 'id'>,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.adminService.deleteAdminById(id, admin.id);
   }
 }

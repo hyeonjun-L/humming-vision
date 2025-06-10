@@ -35,7 +35,7 @@ RUN npm install --frozen-lockfile
 COPY --from=builder /app/out/full/ .
 
 # 빌드
-RUN npx turbo run build --filter=web
+RUN npx turbo run build --filter=packages/shared --filter=web
 
 
 # ======================

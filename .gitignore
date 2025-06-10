@@ -38,3 +38,4 @@ yarn-error.log*
 *.pem
 
 humming-vision-data
+tsconfig.tsbuildinfo
