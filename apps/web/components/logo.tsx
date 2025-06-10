@@ -1,13 +1,13 @@
+import { RoutePath } from "consts/route.const";
+import Link from "next/link";
 import { LogoSVG } from "public/svg";
 
 function Logo() {
   return (
-    <div className="flex items-center gap-2.5">
+    <Link href={RoutePath.HOME} className="flex items-center gap-2.5">
       <LogoSVG className="h-16" />
-      <h1 className="font-gotham text-xl tracking-[1rem] text-white">
-        HUMMING VISION
-      </h1>
-    </div>
+      <h1 className="font-gotham text-xl tracking-[0.8rem]">HUMMING VISION</h1>
+    </Link>
   );
 }
 
