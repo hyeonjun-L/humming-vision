@@ -7,6 +7,7 @@ import Header from "./_components/header/header";
 const notoSansKRFont = Noto_Sans_KR({
   display: "fallback",
   variable: "--font-sans",
+  subsets: ["latin"],
 });
 
 const gothamBookFont = localFont({
