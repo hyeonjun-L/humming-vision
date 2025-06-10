@@ -1,5 +1,5 @@
 import Logo from "components/logo";
-import { RoutePath } from "consts/route";
+import { ProductEntity, RoutePath } from "consts/route.const";
 
 function Header() {
   // const NAV_ITEMS = [
@@ -10,6 +10,7 @@ function Header() {
   //   { name: "ETC", href: RoutePath.HOME },
   //   { name: "제품문의", href: RoutePath.HOME },
   // ];
+  const test: ProductEntity["categories"] = "SOFTWARE";
 
   return (
     <header className="fixed top-0 z-(--z-header) w-full py-10.5">

@@ -16,12 +16,14 @@ import { CreateFrameGrabberDto } from '../frame-grabber/dto/create-frame-grabber
 import { CreateLensDto } from '../lens/dto/create-lens.dto';
 import { CreateSoftwareDto } from '../software/dto/create-software';
 import { IsCategoryFieldConsistent } from '../decorator/is-category-field.decorator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateProductDto {
   @IsEnum(CategoriesEnum)
   @IsCategoryFieldConsistent({
     message: '선택된 카테고리와 부적절한 필드가 같이 사용되었습니다.',
   })
+  @ApiProperty({ enum: CategoriesEnum, example: CategoriesEnum.CAMERA })
   categories: CategoriesEnum;
 
   @IsNotEmpty()
