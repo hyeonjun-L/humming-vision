@@ -27,7 +27,8 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
 import { PaginateSoftwareDto } from './software/dto/paginate-software';
-import { CreateLightProductDto } from './light/dto/create-light-product.dto';
+import { CreateLightDto } from './light/dto/create-light.dto';
+import { UpdateLightDto } from './light/dto/update-light.dto';
 
 @Controller('product')
 export class ProductsController {
@@ -49,11 +50,26 @@ export class ProductsController {
   @Post('create/light')
   @UseInterceptors(TransactionInterceptor)
   async createLightProduct(
-    @Body() createLightProductDto: CreateLightProductDto,
+    @Body() createLightProductDto: CreateLightDto,
     @QueryRunner() qr: QR,
   ) {
     const product = await this.productsService.createLightProduct(
       createLightProductDto,
+      qr,
+    );
+    return product;
+  }
+
+  @Patch('update/light/:productId')
+  @UseInterceptors(TransactionInterceptor)
+  async updateLightProduct(
+    @Param('productId', ParseIntPipe) id: number,
+    @Body() updateLightProductDto: UpdateLightDto,
+    @QueryRunner() qr: QR,
+  ) {
+    const product = await this.productsService.updateLightProduct(
+      id,
+      updateLightProductDto,
       qr,
     );
     return product;

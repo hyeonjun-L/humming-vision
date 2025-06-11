@@ -12,8 +12,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommonService } from 'src/common/common.service';
 import { BasePaginateProductDto } from './dto/paginate-product.dto';
-import { CreateLightProductDto } from './light/dto/create-light-product.dto';
+import { CreateLightDto } from './light/dto/create-light.dto';
 import { LightService } from './light/light.service';
+import { UpdateLightDto } from './light/dto/update-light.dto';
 
 @Injectable()
 export class ProductsService {
@@ -243,10 +244,7 @@ export class ProductsService {
     });
   }
 
-  async createLightProduct(
-    createProductDto: CreateLightProductDto,
-    qr: QueryRunner,
-  ) {
+  async createLightProduct(createProductDto: CreateLightDto, qr: QueryRunner) {
     const productRepository =
       qr.manager.getRepository<ProductModel>(ProductModel);
 
@@ -258,6 +256,38 @@ export class ProductsService {
     const savedProduct = await productRepository.save(product);
 
     await this.lightService.createLight(createProductDto, savedProduct, qr);
+
+    return productRepository.findOne({
+      where: { id: savedProduct.id },
+      relations: {
+        light: true,
+      },
+    });
+  }
+
+  async updateLightProduct(
+    id: number,
+    updateProductDto: UpdateLightDto,
+    qr: QueryRunner,
+  ) {
+    const productRepository =
+      qr.manager.getRepository<ProductModel>(ProductModel);
+
+    const product = await productRepository.findOne({
+      where: { id },
+      relations: {
+        light: true,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const updatedProduct = productRepository.merge(product, updateProductDto);
+    const savedProduct = await productRepository.save(updatedProduct);
+
+    await this.lightService.updateLight(updateProductDto, savedProduct.id, qr);
 
     return productRepository.findOne({
       where: { id: savedProduct.id },
