@@ -41,6 +41,7 @@ import * as fs from 'fs';
 import { ContactModule } from './contact/contact.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { LogMiddleware } from './common/middleware/log.middleware';
+import { LightModel } from './product/light/light.entity';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { LogMiddleware } from './common/middleware/log.middleware';
         ImageModel,
         CameraModel,
         LensModel,
+        LightModel,
         SoftwareModel,
         FrameGrabberModel,
       ],

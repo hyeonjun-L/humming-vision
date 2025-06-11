@@ -27,6 +27,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
 import { PaginateSoftwareDto } from './software/dto/paginate-software';
+import { CreateLightProductDto } from './light/dto/create-light-product.dto';
 
 @Controller('product')
 export class ProductsController {
@@ -40,6 +41,19 @@ export class ProductsController {
   ) {
     const product = await this.productsService.createProduct(
       createProductDto,
+      qr,
+    );
+    return product;
+  }
+
+  @Post('create/light')
+  @UseInterceptors(TransactionInterceptor)
+  async createLightProduct(
+    @Body() createLightProductDto: CreateLightProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    const product = await this.productsService.createLightProduct(
+      createLightProductDto,
       qr,
     );
     return product;

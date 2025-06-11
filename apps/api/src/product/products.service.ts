@@ -12,6 +12,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommonService } from 'src/common/common.service';
 import { BasePaginateProductDto } from './dto/paginate-product.dto';
+import { CreateLightProductDto } from './light/dto/create-light-product.dto';
+import { LightService } from './light/light.service';
 
 @Injectable()
 export class ProductsService {
@@ -22,6 +24,7 @@ export class ProductsService {
     private readonly lensService: LensService,
     private readonly softwareService: SoftwareService,
     private readonly commonService: CommonService,
+    private readonly lightService: LightService,
     @InjectRepository(ProductModel)
     private readonly productRepository: Repository<ProductModel>,
   ) {}
@@ -236,6 +239,30 @@ export class ProductsService {
       relations: {
         [CategoryRelationMap[createProductDto.categories]]: true,
         images: true,
+      },
+    });
+  }
+
+  async createLightProduct(
+    createProductDto: CreateLightProductDto,
+    qr: QueryRunner,
+  ) {
+    const productRepository =
+      qr.manager.getRepository<ProductModel>(ProductModel);
+
+    const product = productRepository.create({
+      categories: CategoriesEnum.LIGHT,
+      name: createProductDto.name,
+    });
+
+    const savedProduct = await productRepository.save(product);
+
+    await this.lightService.createLight(createProductDto, savedProduct, qr);
+
+    return productRepository.findOne({
+      where: { id: savedProduct.id },
+      relations: {
+        light: true,
       },
     });
   }

@@ -3,6 +3,7 @@ export enum CategoriesEnum {
   FRAMEGRABBER = 'FRAMEGRABBER',
   CAMERA = 'CAMERA',
   LENS = 'LENS',
+  LIGHT = 'LIGHT',
 }
 
 export enum CategoryRelationMap {
@@ -10,4 +11,5 @@ export enum CategoryRelationMap {
   FRAMEGRABBER = 'frameGrabber',
   CAMERA = 'camera',
   LENS = 'lens',
+  LIGHT = 'light',
 }
