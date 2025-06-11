@@ -5,7 +5,6 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { UpdateProductDto } from 'src/product/dto/update-product.dto';
 import { ImageModel } from '../image/image.entity';
 import { UpdateImageDto } from '../image/dto/update-image.dto';
 
@@ -20,7 +19,7 @@ export class IsValidImageOrderGloballyConstraint
     images: UpdateImageDto[],
     args: ValidationArguments,
   ): Promise<boolean> {
-    const dto = args.object as UpdateProductDto;
+    const dto = args.object as UpdateImageDto;
 
     if (!images || images.length === 0) return true;
 

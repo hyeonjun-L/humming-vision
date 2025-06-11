@@ -1,16 +1,45 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductModel } from '../product.entity';
-import { QueryRunner } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { CameraModel } from './camera.entity';
-import { UpdateCameraDto } from './dto/update-camera.dto';
-import { CreateCameraDto } from './dto/create-camera.dto';
+import { AbstractProductService } from '../service/abstract-product.service';
+import { ProductImagesService } from '../image/images.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateCameraProductDto } from './dto/update-camera-product.dto';
+import { CreateCameraProductDto } from './dto/create-camera-product.dto';
+import { BaseCameraDto } from './dto/base-camera.dto';
 
 @Injectable()
-export class CameraService {
-  constructor() {}
+export class CameraService extends AbstractProductService<
+  CreateCameraProductDto,
+  UpdateCameraProductDto
+> {
+  constructor(
+    imagesService: ProductImagesService,
+    @InjectRepository(ProductModel)
+    repo: Repository<ProductModel>,
+  ) {
+    super(repo, imagesService);
+  }
+
+  protected async createCategorySpecific(
+    dto: CreateCameraProductDto,
+    product: ProductModel,
+    qr: QueryRunner,
+  ) {
+    await this.createCamera(dto.camera, product, qr);
+  }
+
+  protected async updateCategorySpecific(
+    dto: UpdateCameraProductDto,
+    product: ProductModel,
+    qr: QueryRunner,
+  ) {
+    await this.updateCamera(dto, product.id, qr);
+  }
 
   async createCamera(
-    cameraDto: CreateCameraDto,
+    cameraDto: BaseCameraDto,
     product: ProductModel,
     qr: QueryRunner,
   ) {
@@ -24,11 +53,15 @@ export class CameraService {
     return cameraRepo.save(camera);
   }
 
-  async updateCamera(cameraDto: UpdateCameraDto, id: number, qr: QueryRunner) {
+  async updateCamera(
+    cameraDto: UpdateCameraProductDto,
+    productId: number,
+    qr: QueryRunner,
+  ) {
     const cameraRepo = qr.manager.getRepository(CameraModel);
 
     const camera = await cameraRepo.findOne({
-      where: { id: cameraDto.id, product: { id } },
+      where: { id: cameraDto.id, product: { id: productId } },
     });
     if (!camera) {
       throw new NotFoundException('Camera not found');

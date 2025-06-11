@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ProductsService } from './products.service';
+// import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModel } from './product.entity';
@@ -21,7 +21,7 @@ import { LightService } from './light/light.service';
     LightService,
     CameraService,
     FrameGrabberService,
-    ProductsService,
+    // ProductsService,
     IsUniqueFieldConstraint,
     ProductImagesService,
     IsValidImageOrderGloballyConstraint,
