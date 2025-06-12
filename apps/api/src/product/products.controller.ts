@@ -30,12 +30,17 @@ import { UpdateLightDto } from './light/dto/update-light.dto';
 import { CreateCameraProductDto } from './camera/dto/create-camera-product.dto';
 import { CameraService } from './camera/camera.service';
 import { UpdateCameraProductDto } from './camera/dto/update-camera-product.dto';
+import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
+import { UpdateFrameGrabberDto } from './frame-grabber/dto/update-frame-grabber.dto';
+import { UpdateFrameGrabberProductDto } from './frame-grabber/dto/update-fame-grabber-product.dto';
+import { CreateFrameGrabberProductDto } from './frame-grabber/dto/create-frame-grabber-product.dto';
 
 @Controller('product')
 export class ProductsController {
   constructor(
     // private readonly productsService: ProductsService,
     private readonly cameraService: CameraService,
+    private readonly frameGrabberService: FrameGrabberService,
   ) {}
 
   // @Post('create')
@@ -85,6 +90,34 @@ export class ProductsController {
       productId,
       CategoriesEnum.CAMERA,
       updateCameraProductDto,
+      qr,
+    );
+  }
+
+  @Post('frame-grabber')
+  @UseInterceptors(TransactionInterceptor)
+  createFrameGrabber(
+    @Body() dto: CreateFrameGrabberProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    return this.frameGrabberService.createProduct(
+      dto,
+      CategoriesEnum.FRAMEGRABBER,
+      qr,
+    );
+  }
+
+  @Patch('frame-grabber/:productId')
+  @UseInterceptors(TransactionInterceptor)
+  async updateFrameGrabber(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Body() updateFrameGrabberDto: UpdateFrameGrabberProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    return this.frameGrabberService.updateProduct(
+      productId,
+      CategoriesEnum.FRAMEGRABBER,
+      updateFrameGrabberDto,
       qr,
     );
   }

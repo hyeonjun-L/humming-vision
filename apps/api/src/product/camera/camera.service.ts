@@ -61,13 +61,13 @@ export class CameraService extends AbstractProductService<
     const cameraRepo = qr.manager.getRepository(CameraModel);
 
     const camera = await cameraRepo.findOne({
-      where: { product: { id: productId } },
+      where: { id: cameraDto.camera?.id, product: { id: productId } },
     });
     if (!camera) {
       throw new NotFoundException('Camera not found');
     }
 
-    const updatedCamera = cameraRepo.merge(camera, cameraDto);
+    const updatedCamera = cameraRepo.merge({ ...camera, ...cameraDto });
     return cameraRepo.save(updatedCamera);
   }
 }
