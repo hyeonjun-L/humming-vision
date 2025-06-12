@@ -96,11 +96,7 @@ export abstract class AbstractProductService<
     const savedProduct = await productRepository.save(updatedProduct);
 
     if ('images' in updateProductDto && updateProductDto.images) {
-      await Promise.all(
-        updateProductDto.images.map((image) =>
-          this.imagesService.updateImage(image, id, qr),
-        ),
-      );
+      await this.imagesService.replaceImages(updateProductDto.images, id, qr);
     }
 
     await this.updateCategorySpecific(updateProductDto, savedProduct, qr);

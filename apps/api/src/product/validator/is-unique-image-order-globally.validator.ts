@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Not } from 'typeorm';
+import { DataSource, In, Not } from 'typeorm';
 import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
@@ -29,7 +29,9 @@ export class IsValidImageOrderGloballyConstraint
           product: { id: dto.id },
           type: image.type,
           order: image.order,
-          id: Not(image.id),
+          id: Not(
+            In([image.id, ...images.map((img) => img.id).filter(Boolean)]),
+          ),
         },
       });
 
