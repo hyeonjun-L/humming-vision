@@ -61,8 +61,6 @@ export class FrameGrabberService extends AbstractProductService<
   ) {
     const frameGrabberRepo = qr.manager.getRepository(FrameGrabberModel);
 
-    console.log(frameGrabberDto);
-
     const frameGrabber = await frameGrabberRepo.findOne({
       where: { id: frameGrabberDto.id },
     });
