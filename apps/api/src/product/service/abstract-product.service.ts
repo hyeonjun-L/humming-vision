@@ -90,7 +90,7 @@ export abstract class AbstractProductService<
     const productRepository =
       qr.manager.getRepository<ProductModel>(ProductModel);
 
-    const product = await this.getProductOrFail(id, category);
+    const product = await this.getProductOrFail(id, category, qr);
 
     const updatedProduct = productRepository.merge(product, updateProductDto);
     const savedProduct = await productRepository.save(updatedProduct);
@@ -105,14 +105,11 @@ export abstract class AbstractProductService<
 
     await this.updateCategorySpecific(updateProductDto, savedProduct, qr);
 
-    return this.getProductOrFail(savedProduct.id, category);
+    return this.getProductOrFail(savedProduct.id, category, qr);
   }
 
-  async deleteProduct(id: number, qr: QueryRunner): Promise<void> {
-    const productRepository =
-      qr.manager.getRepository<ProductModel>(ProductModel);
-
-    const product = await productRepository.findOne({
+  async deleteProduct(id: number): Promise<void> {
+    const product = await this.productRepository.findOne({
       where: { id },
       relations: {
         images: true,
@@ -123,6 +120,6 @@ export abstract class AbstractProductService<
       throw new NotFoundException('Product not found');
     }
 
-    await productRepository.remove(product);
+    await this.productRepository.remove(product);
   }
 }

@@ -29,6 +29,7 @@ import { CreateLightDto } from './light/dto/create-light.dto';
 import { UpdateLightDto } from './light/dto/update-light.dto';
 import { CreateCameraProductDto } from './camera/dto/create-camera-product.dto';
 import { CameraService } from './camera/camera.service';
+import { UpdateCameraProductDto } from './camera/dto/update-camera-product.dto';
 
 @Controller('product')
 export class ProductsController {
@@ -71,6 +72,27 @@ export class ProductsController {
   @UseInterceptors(TransactionInterceptor)
   createCamera(@Body() dto: CreateCameraProductDto, @QueryRunner() qr: QR) {
     return this.cameraService.createProduct(dto, CategoriesEnum.CAMERA, qr);
+  }
+
+  @Patch('camera/:productId')
+  @UseInterceptors(TransactionInterceptor)
+  async updateCamera(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Body() updateCameraProductDto: UpdateCameraProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    return this.cameraService.updateProduct(
+      productId,
+      CategoriesEnum.CAMERA,
+      updateCameraProductDto,
+      qr,
+    );
+  }
+
+  @Delete(':productId')
+  @HttpCode(204)
+  async deleteCamera(@Param('productId', ParseIntPipe) productId: number) {
+    return this.cameraService.deleteProduct(productId);
   }
 
   // @Post('create/light')
