@@ -7,7 +7,7 @@ import { NotFoundException } from '@nestjs/common';
 import { BaseUpdateProductDto } from '../dto/base-update-product.dto';
 
 export abstract class AbstractProductService<
-  CreateDto extends BaseProductDto,
+  CreateDto extends Partial<BaseProductDto>,
   UpdateDto extends BaseUpdateProductDto,
 > {
   constructor(
@@ -69,7 +69,7 @@ export abstract class AbstractProductService<
 
     const saved = await productRepository.save(product);
 
-    if ('images' in dto) {
+    if ('images' in dto && dto.images) {
       await Promise.all(
         dto.images.map((img) => this.imagesService.createImage(img, saved, qr)),
       );

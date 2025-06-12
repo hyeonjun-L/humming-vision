@@ -1,10 +1,4 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsUrl,
-  ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUrl, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsUnique } from 'src/common/decorator/is-unique-field.decotator';
 import { ProductModel } from '../product.entity';

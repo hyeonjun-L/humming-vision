@@ -1,16 +1,57 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductModel } from '../product.entity';
-import { QueryRunner } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { LightModel } from './light.entity';
-import { CreateLightDto } from './dto/create-light.dto';
-import { UpdateLightDto } from './dto/update-light.dto';
+import { BaseLightDto } from './dto/base-light.dto';
+import { AbstractProductService } from '../service/abstract-product.service';
+import { ProductImagesService } from '../image/images.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateLightProductDto } from './dto/create-light-product.dto';
+import { UpdateLightProductDto } from './dto/update-light-product.dto';
 
 @Injectable()
-export class LightService {
-  constructor() {}
+export class LightService extends AbstractProductService<
+  CreateLightProductDto,
+  UpdateLightProductDto
+> {
+  constructor(
+    imagesService: ProductImagesService,
+    @InjectRepository(ProductModel)
+    repo: Repository<ProductModel>,
+  ) {
+    super(repo, imagesService);
+  }
+
+  protected async createCategorySpecific(
+    dto: CreateLightProductDto,
+    product: ProductModel,
+    qr: QueryRunner,
+  ) {
+    await this.createLight(dto.light, product, qr);
+  }
+
+  protected async updateCategorySpecific(
+    dto: UpdateLightProductDto,
+    product: ProductModel,
+    qr: QueryRunner,
+  ) {
+    await this.updateLight(dto, product.id, qr);
+  }
+
+  async getLightById(id: number, qr: QueryRunner) {
+    const lightRepo = qr.manager.getRepository(LightModel);
+    const light = await lightRepo.findOne({
+      where: { id },
+      relations: ['product'],
+    });
+    if (!light) {
+      throw new NotFoundException('Light not found');
+    }
+    return light;
+  }
 
   async createLight(
-    lightDto: CreateLightDto,
+    lightDto: BaseLightDto,
     product: ProductModel,
     qr: QueryRunner,
   ) {
@@ -24,18 +65,22 @@ export class LightService {
     return lightRepo.save(light);
   }
 
-  async updateLight(lightDto: UpdateLightDto, id: number, qr: QueryRunner) {
+  async updateLight(
+    lightDto: UpdateLightProductDto,
+    id: number,
+    qr: QueryRunner,
+  ) {
     const lightRepo = qr.manager.getRepository(LightModel);
 
     const ligth = await lightRepo.findOne({
-      where: { id: lightDto.id, product: { id } },
+      where: { id: lightDto.light?.id, product: { id } },
     });
 
     if (!ligth) {
       throw new NotFoundException('Light not found');
     }
 
-    const updatedLens = lightRepo.merge(ligth, lightDto);
+    const updatedLens = lightRepo.merge({ ...ligth, ...lightDto });
     return lightRepo.save(updatedLens);
   }
 }

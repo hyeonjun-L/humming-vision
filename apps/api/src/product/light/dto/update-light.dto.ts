@@ -1,8 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { IsInt, IsNotEmpty } from 'class-validator';
-import { CreateLightDto } from './create-light.dto';
+import { PartialType } from '@nestjs/mapped-types';
+import { BaseLightDto } from './base-light.dto';
 
-export class UpdateLightDto extends PartialType(CreateLightDto) {
+export class UpdateLightDto extends PartialType(BaseLightDto) {
   @IsNotEmpty()
   @IsInt()
   id: number;

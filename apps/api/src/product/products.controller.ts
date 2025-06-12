@@ -25,7 +25,6 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
 import { PaginateSoftwareDto } from './software/dto/paginate-software.dto';
-import { CreateLightDto } from './light/dto/create-light.dto';
 import { CreateCameraProductDto } from './camera/dto/create-camera-product.dto';
 import { CameraService } from './camera/camera.service';
 import { UpdateCameraProductDto } from './camera/dto/update-camera-product.dto';
@@ -39,6 +38,11 @@ import { UpdateLensProductDto } from './lens/dto/update-lens-product.dto';
 import { SoftwareService } from './software/software.service';
 import { CreateSoftwareProductDto } from './software/dto/create-software-product.dto';
 import { UpdateSoftwareProductDto } from './software/dto/update-software-product.dto';
+import { BaseLightDto } from './light/dto/base-light.dto';
+import { LightService } from './light/light.service';
+import { UpdateLightDto } from './light/dto/update-light.dto';
+import { CreateLightProductDto } from './light/dto/create-light-product.dto';
+import { UpdateLightProductDto } from './light/dto/update-light-product.dto';
 
 @Controller('product')
 export class ProductsController {
@@ -48,6 +52,7 @@ export class ProductsController {
     private readonly frameGrabberService: FrameGrabberService,
     private readonly lensService: LensService,
     private readonly softwareService: SoftwareService,
+    private readonly lightService: LightService,
   ) {}
 
   // @Post('create')
@@ -170,6 +175,34 @@ export class ProductsController {
       productId,
       CategoriesEnum.SOFTWARE,
       dto,
+      qr,
+    );
+  }
+
+  @Post('light')
+  @UseInterceptors(TransactionInterceptor)
+  async createLightProduct(
+    @Body() createLightProductDto: CreateLightProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    return this.lightService.createProduct(
+      createLightProductDto,
+      CategoriesEnum.LIGHT,
+      qr,
+    );
+  }
+
+  @Patch('light/:productId')
+  @UseInterceptors(TransactionInterceptor)
+  async updateLightProduct(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Body() updateLightProductDto: UpdateLightProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    return this.lightService.updateProduct(
+      productId,
+      CategoriesEnum.LIGHT,
+      updateLightProductDto,
       qr,
     );
   }
