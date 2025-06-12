@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-// import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModel } from './product.entity';
@@ -13,6 +12,7 @@ import { SoftwareService } from './software/software.service';
 import { IsValidImageOrderGloballyConstraint } from './validator/is-unique-image-order-globally.validator';
 import { CommonService } from 'src/common/common.service';
 import { LightService } from './light/light.service';
+import { ProductsService } from './products.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProductModel, ImageModel])],
@@ -21,7 +21,7 @@ import { LightService } from './light/light.service';
     LightService,
     CameraService,
     FrameGrabberService,
-    // ProductsService,
+    ProductsService,
     IsUniqueFieldConstraint,
     ProductImagesService,
     IsValidImageOrderGloballyConstraint,

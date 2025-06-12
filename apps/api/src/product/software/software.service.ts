@@ -60,13 +60,23 @@ export class SoftwareService extends AbstractProductService<
   ) {
     const softwareRepo = qr.manager.getRepository(SoftwareModel);
 
+    console.log('Software DTO to update:', id);
+
     const software = await softwareRepo.findOne({
       where: { id: softwareDto.software?.id, product: { id } },
     });
+
+    console.log('Software to update:', software);
+
     if (!software) {
       throw new NotFoundException('Software not found');
     }
-    const updatedSoftware = softwareRepo.merge({ ...software, ...softwareDto });
-    return softwareRepo.save(updatedSoftware);
+    if (softwareDto.software) {
+      const updatedSoftware = softwareRepo.merge(
+        software,
+        softwareDto.software,
+      );
+      return softwareRepo.save(updatedSoftware);
+    }
   }
 }

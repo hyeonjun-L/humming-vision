@@ -107,19 +107,4 @@ export abstract class AbstractProductService<
 
     return this.getProductOrFail(savedProduct.id, category, qr);
   }
-
-  async deleteProduct(id: number): Promise<void> {
-    const product = await this.productRepository.findOne({
-      where: { id },
-      relations: {
-        images: true,
-      },
-    });
-
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-
-    await this.productRepository.remove(product);
-  }
 }
