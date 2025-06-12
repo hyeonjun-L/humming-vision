@@ -8,6 +8,7 @@ import { ProductImagesService } from '../image/images.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseFrameGrabberDto } from './dto/base-frame-grabber.dto';
 import { UpdateFrameGrabberProductDto } from './dto/update-fame-grabber-product.dto';
+import { UpdateFrameGrabberDto } from './dto/update-frame-grabber.dto';
 
 @Injectable()
 export class FrameGrabberService extends AbstractProductService<
@@ -32,10 +33,11 @@ export class FrameGrabberService extends AbstractProductService<
 
   protected async updateCategorySpecific(
     dto: UpdateFrameGrabberProductDto,
-    product: ProductModel,
     qr: QueryRunner,
   ) {
-    await this.updateFrameGrabber(dto, product.id, qr);
+    if (dto.frameGrabber) {
+      await this.updateFrameGrabber(dto.frameGrabber, qr);
+    }
   }
 
   async createFrameGrabber(
@@ -54,24 +56,25 @@ export class FrameGrabberService extends AbstractProductService<
   }
 
   async updateFrameGrabber(
-    frameGrabberDto: UpdateFrameGrabberProductDto,
-    id: number,
+    frameGrabberDto: UpdateFrameGrabberDto,
     qr: QueryRunner,
   ) {
     const frameGrabberRepo = qr.manager.getRepository(FrameGrabberModel);
 
+    console.log(frameGrabberDto);
+
     const frameGrabber = await frameGrabberRepo.findOne({
-      where: { id: frameGrabberDto.frameGrabber?.id, product: { id } },
+      where: { id: frameGrabberDto.id },
     });
 
     if (!frameGrabber) {
       throw new NotFoundException('Frame Grabber not found');
     }
 
-    const updatedFrameGrabber = frameGrabberRepo.create({
-      ...frameGrabber,
-      ...frameGrabberDto.frameGrabber,
-    });
+    const updatedFrameGrabber = frameGrabberRepo.merge(
+      frameGrabber,
+      frameGrabberDto,
+    );
 
     return frameGrabberRepo.save(updatedFrameGrabber);
   }

@@ -40,6 +40,7 @@ export class CommonService {
         take,
         skip,
         where,
+        order,
         overrideFindOptions,
         customWhereQueryBuilder,
       );
@@ -66,6 +67,7 @@ export class CommonService {
     take: number,
     skip: number,
     where: FindOptionsWhere<T>,
+    order: FindOptionsOrder<T> = {},
     overrideFindOptions: FindManyOptions<T>,
     customWhereQueryBuilder: (
       qb: SelectQueryBuilder<T>,

@@ -23,7 +23,6 @@ export abstract class AbstractProductService<
 
   protected abstract updateCategorySpecific(
     dto: UpdateDto,
-    product: ProductModel,
     qr: QueryRunner,
   ): Promise<void>;
 
@@ -99,7 +98,7 @@ export abstract class AbstractProductService<
       await this.imagesService.replaceImages(updateProductDto.images, id, qr);
     }
 
-    await this.updateCategorySpecific(updateProductDto, savedProduct, qr);
+    await this.updateCategorySpecific(updateProductDto, qr);
 
     return this.getProductOrFail(savedProduct.id, category, qr);
   }

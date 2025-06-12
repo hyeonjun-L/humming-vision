@@ -8,6 +8,7 @@ import { CreateLensProductDto } from './dto/create-lens-product.dto';
 import { UpdateLensProductDto } from './dto/update-lens-product.dto';
 import { ProductImagesService } from '../image/images.service';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateLensDto } from './dto/update-lens.dto';
 @Injectable()
 export class LensService extends AbstractProductService<
   CreateLensProductDto,
@@ -31,10 +32,11 @@ export class LensService extends AbstractProductService<
 
   protected async updateCategorySpecific(
     dto: UpdateLensProductDto,
-    product: ProductModel,
     qr: QueryRunner,
   ) {
-    await this.updateLens(dto, product.id, qr);
+    if (dto.lens) {
+      await this.updateLens(dto.lens, qr);
+    }
   }
 
   async createLens(
@@ -52,17 +54,17 @@ export class LensService extends AbstractProductService<
     return lensRepo.save(lens);
   }
 
-  async updateLens(lensDto: UpdateLensProductDto, id: number, qr: QueryRunner) {
+  async updateLens(lensDto: UpdateLensDto, qr: QueryRunner) {
     const lensRepo = qr.manager.getRepository(LensModel);
 
     const lens = await lensRepo.findOne({
-      where: { id: lensDto.lens?.id, product: { id } },
+      where: { id: lensDto.id },
     });
     if (!lens) {
       throw new NotFoundException('Lens not found');
     }
 
-    const updatedLens = lensRepo.merge({ ...lens, ...lensDto });
+    const updatedLens = lensRepo.merge(lens, lensDto);
     return lensRepo.save(updatedLens);
   }
 }

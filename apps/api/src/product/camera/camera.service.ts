@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateCameraProductDto } from './dto/update-camera-product.dto';
 import { CreateCameraProductDto } from './dto/create-camera-product.dto';
 import { BaseCameraDto } from './dto/base-camera.dto';
+import { UpdateCameraDto } from './dto/update-camera.dto';
 
 @Injectable()
 export class CameraService extends AbstractProductService<
@@ -32,10 +33,11 @@ export class CameraService extends AbstractProductService<
 
   protected async updateCategorySpecific(
     dto: UpdateCameraProductDto,
-    product: ProductModel,
     qr: QueryRunner,
   ) {
-    await this.updateCamera(dto, product.id, qr);
+    if (dto.camera) {
+      await this.updateCamera(dto.camera, qr);
+    }
   }
 
   async createCamera(
@@ -53,21 +55,17 @@ export class CameraService extends AbstractProductService<
     return cameraRepo.save(camera);
   }
 
-  async updateCamera(
-    cameraDto: UpdateCameraProductDto,
-    productId: number,
-    qr: QueryRunner,
-  ) {
+  async updateCamera(cameraDto: UpdateCameraDto, qr: QueryRunner) {
     const cameraRepo = qr.manager.getRepository(CameraModel);
 
     const camera = await cameraRepo.findOne({
-      where: { id: cameraDto.camera?.id, product: { id: productId } },
+      where: { id: cameraDto.id },
     });
     if (!camera) {
       throw new NotFoundException('Camera not found');
     }
 
-    const updatedCamera = cameraRepo.merge({ ...camera, ...cameraDto });
+    const updatedCamera = cameraRepo.merge(camera, cameraDto);
     return cameraRepo.save(updatedCamera);
   }
 }

@@ -8,6 +8,7 @@ import { UpdateSoftwareProductDto } from './dto/update-software-product.dto';
 import { ProductImagesService } from '../image/images.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseSoftwareDto } from './dto/base-software.dto';
+import { UpdateSoftwareDto } from './dto/update-software';
 
 @Injectable()
 export class SoftwareService extends AbstractProductService<
@@ -32,10 +33,11 @@ export class SoftwareService extends AbstractProductService<
 
   protected async updateCategorySpecific(
     dto: UpdateSoftwareProductDto,
-    product: ProductModel,
     qr: QueryRunner,
   ) {
-    await this.updateSoftware(dto, product.id, qr);
+    if (dto.software) {
+      await this.updateSoftware(dto.software, qr);
+    }
   }
 
   async createSoftware(
@@ -53,30 +55,18 @@ export class SoftwareService extends AbstractProductService<
     return softwareRepo.save(software);
   }
 
-  async updateSoftware(
-    softwareDto: UpdateSoftwareProductDto,
-    id: number,
-    qr: QueryRunner,
-  ) {
+  async updateSoftware(softwareDto: UpdateSoftwareDto, qr: QueryRunner) {
     const softwareRepo = qr.manager.getRepository(SoftwareModel);
 
-    console.log('Software DTO to update:', id);
-
     const software = await softwareRepo.findOne({
-      where: { id: softwareDto.software?.id, product: { id } },
+      where: { id: softwareDto.id },
     });
-
-    console.log('Software to update:', software);
 
     if (!software) {
       throw new NotFoundException('Software not found');
     }
-    if (softwareDto.software) {
-      const updatedSoftware = softwareRepo.merge(
-        software,
-        softwareDto.software,
-      );
-      return softwareRepo.save(updatedSoftware);
-    }
+
+    const updatedSoftware = softwareRepo.merge(software, softwareDto);
+    return softwareRepo.save(updatedSoftware);
   }
 }

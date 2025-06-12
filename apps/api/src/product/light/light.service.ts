@@ -8,6 +8,7 @@ import { ProductImagesService } from '../image/images.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateLightProductDto } from './dto/create-light-product.dto';
 import { UpdateLightProductDto } from './dto/update-light-product.dto';
+import { UpdateLightDto } from './dto/update-light.dto';
 
 @Injectable()
 export class LightService extends AbstractProductService<
@@ -32,10 +33,11 @@ export class LightService extends AbstractProductService<
 
   protected async updateCategorySpecific(
     dto: UpdateLightProductDto,
-    product: ProductModel,
     qr: QueryRunner,
   ) {
-    await this.updateLight(dto, product.id, qr);
+    if (dto.light) {
+      await this.updateLight(dto, qr);
+    }
   }
 
   async getLightById(id: number, qr: QueryRunner) {
@@ -65,22 +67,18 @@ export class LightService extends AbstractProductService<
     return lightRepo.save(light);
   }
 
-  async updateLight(
-    lightDto: UpdateLightProductDto,
-    id: number,
-    qr: QueryRunner,
-  ) {
+  async updateLight(lightDto: UpdateLightDto, qr: QueryRunner) {
     const lightRepo = qr.manager.getRepository(LightModel);
 
     const ligth = await lightRepo.findOne({
-      where: { id: lightDto.light?.id, product: { id } },
+      where: { id: lightDto.id },
     });
 
     if (!ligth) {
       throw new NotFoundException('Light not found');
     }
 
-    const updatedLens = lightRepo.merge({ ...ligth, ...lightDto });
+    const updatedLens = lightRepo.merge(ligth, lightDto);
     return lightRepo.save(updatedLens);
   }
 }
