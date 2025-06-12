@@ -24,9 +24,8 @@ import { PaginateLensDto } from './lens/dto/paginate-lens.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
-import { PaginateSoftwareDto } from './software/dto/paginate-software';
+import { PaginateSoftwareDto } from './software/dto/paginate-software.dto';
 import { CreateLightDto } from './light/dto/create-light.dto';
-import { UpdateLightDto } from './light/dto/update-light.dto';
 import { CreateCameraProductDto } from './camera/dto/create-camera-product.dto';
 import { CameraService } from './camera/camera.service';
 import { UpdateCameraProductDto } from './camera/dto/update-camera-product.dto';
@@ -34,6 +33,12 @@ import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
 import { UpdateFrameGrabberDto } from './frame-grabber/dto/update-frame-grabber.dto';
 import { UpdateFrameGrabberProductDto } from './frame-grabber/dto/update-fame-grabber-product.dto';
 import { CreateFrameGrabberProductDto } from './frame-grabber/dto/create-frame-grabber-product.dto';
+import { CreateLensProductDto } from './lens/dto/create-lens-product.dto';
+import { LensService } from './lens/lens.service';
+import { UpdateLensProductDto } from './lens/dto/update-lens-product.dto';
+import { SoftwareService } from './software/software.service';
+import { CreateSoftwareProductDto } from './software/dto/create-software-product.dto';
+import { UpdateSoftwareProductDto } from './software/dto/update-software-product.dto';
 
 @Controller('product')
 export class ProductsController {
@@ -41,6 +46,8 @@ export class ProductsController {
     // private readonly productsService: ProductsService,
     private readonly cameraService: CameraService,
     private readonly frameGrabberService: FrameGrabberService,
+    private readonly lensService: LensService,
+    private readonly softwareService: SoftwareService,
   ) {}
 
   // @Post('create')
@@ -83,13 +90,13 @@ export class ProductsController {
   @UseInterceptors(TransactionInterceptor)
   async updateCamera(
     @Param('productId', ParseIntPipe) productId: number,
-    @Body() updateCameraProductDto: UpdateCameraProductDto,
+    @Body() dto: UpdateCameraProductDto,
     @QueryRunner() qr: QR,
   ) {
     return this.cameraService.updateProduct(
       productId,
       CategoriesEnum.CAMERA,
-      updateCameraProductDto,
+      dto,
       qr,
     );
   }
@@ -111,13 +118,58 @@ export class ProductsController {
   @UseInterceptors(TransactionInterceptor)
   async updateFrameGrabber(
     @Param('productId', ParseIntPipe) productId: number,
-    @Body() updateFrameGrabberDto: UpdateFrameGrabberProductDto,
+    @Body() dto: UpdateFrameGrabberProductDto,
     @QueryRunner() qr: QR,
   ) {
     return this.frameGrabberService.updateProduct(
       productId,
       CategoriesEnum.FRAMEGRABBER,
-      updateFrameGrabberDto,
+      dto,
+      qr,
+    );
+  }
+
+  @Post('lens')
+  @UseInterceptors(TransactionInterceptor)
+  async createLens(@Body() dto: CreateLensProductDto, @QueryRunner() qr: QR) {
+    return this.lensService.createProduct(dto, CategoriesEnum.LENS, qr);
+  }
+
+  @Patch('lens/:productId')
+  @UseInterceptors(TransactionInterceptor)
+  async updateLens(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Body() dto: UpdateLensProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    return this.lensService.updateProduct(
+      productId,
+      CategoriesEnum.LENS,
+      dto,
+      qr,
+    );
+  }
+
+  @Post('software')
+  @UseInterceptors(TransactionInterceptor)
+  async createSoftware(
+    @Body() dto: CreateSoftwareProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    return this.softwareService.createProduct(dto, CategoriesEnum.SOFTWARE, qr);
+  }
+
+  @Patch('software/:productId')
+  @UseInterceptors(TransactionInterceptor)
+  async updateSoftware(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Body() dto: UpdateSoftwareProductDto,
+    @QueryRunner() qr: QR,
+  ) {
+    return this.softwareService.updateProduct(
+      productId,
+      CategoriesEnum.SOFTWARE,
+      dto,
       qr,
     );
   }

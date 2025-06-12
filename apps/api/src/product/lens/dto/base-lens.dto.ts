@@ -1,7 +1,7 @@
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { LensModelMount, LensModelType } from '../lens.const';
 
-export class CreateLensDto {
+export class BaseLensDto {
   @IsEnum(LensModelType)
   type: LensModelType;
 
