@@ -8,10 +8,10 @@ import {
   ParseIntPipe,
   Get,
   Query,
-  BadRequestException,
   Delete,
   HttpCode,
   ValidationPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -30,6 +30,7 @@ import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
 import { PaginateSoftwareDto } from './software/dto/paginate-software.dto';
 import { CreateCategoryDtoMap } from './types/category-dto.type';
+import { ManualValidationBadRequestException } from 'src/common/exception/manual-validation-bad-request.exception';
 
 @Controller('product')
 export class ProductsController {
@@ -39,7 +40,8 @@ export class ProductsController {
   @UseInterceptors(TransactionInterceptor)
   async createProduct<K extends CategoriesEnum>(
     @Param('category', ParseCategoryPipe) category: K,
-    @Body(new ValidationPipe({ transform: false })) dto: unknown,
+    @Body(new ValidationPipe({ transform: false }))
+    dto: unknown,
     @QueryRunner() qr: QR,
   ) {
     const DtoClass = CREATE_CATEGORY_DTO_MAPPING[
@@ -49,8 +51,9 @@ export class ProductsController {
     const mappedDto = plainToInstance(DtoClass, dto);
 
     const errors = await validate(mappedDto);
+
     if (errors.length > 0) {
-      throw new BadRequestException(errors);
+      throw new ManualValidationBadRequestException(errors);
     }
 
     return this.productsService.createGenericProduct(category, mappedDto, qr);
@@ -218,8 +221,9 @@ export class ProductsController {
     }
 
     const errors = await validate(dto);
+
     if (errors.length > 0) {
-      throw new BadRequestException(errors);
+      throw new ManualValidationBadRequestException(errors);
     }
 
     return this.productsService.paginateProduct(dto, category);
