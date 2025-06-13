@@ -1,8 +1,9 @@
 import Logo from "components/logo";
 import { RoutePath, RoutePathWithCategory } from "consts/route.const";
 import Link from "next/link";
+import HeaderWrapper from "./header-wrapper.client";
 
-function Header({ pathName }: { pathName: string }) {
+function Header() {
   const NAV_ITEMS = [
     {
       name: "Camera",
@@ -81,7 +82,7 @@ function Header({ pathName }: { pathName: string }) {
   ];
 
   return (
-    <header className="group/header fixed top-0 z-(--z-header) flex w-full flex-col text-white hover:bg-white hover:text-black">
+    <HeaderWrapper>
       <nav className="relative mx-auto mb-10.5 flex w-full items-start justify-evenly pt-10.5">
         <Logo />
         <div className="relative flex items-start gap-13 text-xl">
@@ -118,7 +119,7 @@ function Header({ pathName }: { pathName: string }) {
           })}
         </div>
       </nav>
-    </header>
+    </HeaderWrapper>
   );
 }
 
