@@ -11,12 +11,16 @@ import {
   BadRequestException,
   Delete,
   HttpCode,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { QueryRunner as QR } from 'typeorm';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
-import { CategoriesEnum } from './const/categories.const';
+import {
+  CategoriesEnum,
+  CREATE_CATEGORY_DTO_MAPPING,
+} from './const/categories.const';
 import { ParseCategoryPipe } from './pipe/category-pipe.pipe';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { PaginateCameraDto } from './camera/dto/paginate-camera.dto';
@@ -25,149 +29,159 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
 import { PaginateSoftwareDto } from './software/dto/paginate-software.dto';
-import { CreateCameraProductDto } from './camera/dto/create-camera-product.dto';
-import { CameraService } from './camera/camera.service';
-import { UpdateCameraProductDto } from './camera/dto/update-camera-product.dto';
-import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
-import { UpdateFrameGrabberProductDto } from './frame-grabber/dto/update-fame-grabber-product.dto';
-import { CreateFrameGrabberProductDto } from './frame-grabber/dto/create-frame-grabber-product.dto';
-import { CreateLensProductDto } from './lens/dto/create-lens-product.dto';
-import { LensService } from './lens/lens.service';
-import { UpdateLensProductDto } from './lens/dto/update-lens-product.dto';
-import { SoftwareService } from './software/software.service';
-import { CreateSoftwareProductDto } from './software/dto/create-software-product.dto';
-import { UpdateSoftwareProductDto } from './software/dto/update-software-product.dto';
-import { LightService } from './light/light.service';
-import { CreateLightProductDto } from './light/dto/create-light-product.dto';
-import { UpdateLightProductDto } from './light/dto/update-light-product.dto';
+import { CreateCategoryDtoMap } from './types/category-dto.type';
 
 @Controller('product')
 export class ProductsController {
-  constructor(
-    private readonly productsService: ProductsService,
-    private readonly cameraService: CameraService,
-    private readonly frameGrabberService: FrameGrabberService,
-    private readonly lensService: LensService,
-    private readonly softwareService: SoftwareService,
-    private readonly lightService: LightService,
-  ) {}
+  constructor(private readonly productsService: ProductsService) {}
 
-  @Post('camera')
+  @Post(':category')
   @UseInterceptors(TransactionInterceptor)
-  createCamera(@Body() dto: CreateCameraProductDto, @QueryRunner() qr: QR) {
-    return this.cameraService.createProduct(dto, CategoriesEnum.CAMERA, qr);
-  }
-
-  @Patch('camera/:productId')
-  @UseInterceptors(TransactionInterceptor)
-  async updateCamera(
-    @Param('productId', ParseIntPipe) productId: number,
-    @Body() dto: UpdateCameraProductDto,
+  async createProduct<K extends CategoriesEnum>(
+    @Param('category', ParseCategoryPipe) category: K,
+    @Body(new ValidationPipe({ transform: false })) dto: unknown,
     @QueryRunner() qr: QR,
   ) {
-    return this.cameraService.updateProduct(
-      dto.id,
-      CategoriesEnum.CAMERA,
-      dto,
-      qr,
-    );
+    const DtoClass = CREATE_CATEGORY_DTO_MAPPING[
+      category
+    ] as new () => CreateCategoryDtoMap[K];
+
+    const mappedDto = plainToInstance(DtoClass, dto);
+
+    const errors = await validate(mappedDto);
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
+
+    return this.productsService.createGenericProduct(category, mappedDto, qr);
   }
 
-  @Post('frame-grabber')
+  @Patch(':category/:productId')
   @UseInterceptors(TransactionInterceptor)
-  createFrameGrabber(
-    @Body() dto: CreateFrameGrabberProductDto,
+  updateProduct(
+    @Param('category', ParseCategoryPipe) category: CategoriesEnum,
+    @Body() dto: any,
     @QueryRunner() qr: QR,
   ) {
-    return this.frameGrabberService.createProduct(
-      dto,
-      CategoriesEnum.FRAMEGRABBER,
-      qr,
-    );
+    return this.productsService.updateGenericProduct(category, dto, qr);
   }
 
-  @Patch('frame-grabber/:productId')
-  @UseInterceptors(TransactionInterceptor)
-  async updateFrameGrabber(
-    @Param('productId', ParseIntPipe) productId: number,
-    @Body() dto: UpdateFrameGrabberProductDto,
-    @QueryRunner() qr: QR,
-  ) {
-    return this.frameGrabberService.updateProduct(
-      dto.id,
-      CategoriesEnum.FRAMEGRABBER,
-      dto,
-      qr,
-    );
-  }
+  // @Post('camera')
+  // @UseInterceptors(TransactionInterceptor)
+  // createCamera(@Body() dto: CreateCameraProductDto, @QueryRunner() qr: QR) {
+  //   return this.cameraService.createProduct(dto, CategoriesEnum.CAMERA, qr);
+  // }
 
-  @Post('lens')
-  @UseInterceptors(TransactionInterceptor)
-  async createLens(@Body() dto: CreateLensProductDto, @QueryRunner() qr: QR) {
-    return this.lensService.createProduct(dto, CategoriesEnum.LENS, qr);
-  }
+  // @Patch('camera/:productId')
+  // @UseInterceptors(TransactionInterceptor)
+  // async updateCamera(
+  //   @Param('productId', ParseIntPipe) productId: number,
+  //   @Body() dto: UpdateCameraProductDto,
+  //   @QueryRunner() qr: QR,
+  // ) {
+  //   return this.cameraService.updateProduct(
+  //     dto.id,
+  //     CategoriesEnum.CAMERA,
+  //     dto,
+  //     qr,
+  //   );
+  // }
 
-  @Patch('lens/:productId')
-  @UseInterceptors(TransactionInterceptor)
-  async updateLens(
-    @Param('productId', ParseIntPipe) productId: number,
-    @Body() dto: UpdateLensProductDto,
-    @QueryRunner() qr: QR,
-  ) {
-    return this.lensService.updateProduct(dto.id, CategoriesEnum.LENS, dto, qr);
-  }
+  // @Post('frame-grabber')
+  // @UseInterceptors(TransactionInterceptor)
+  // createFrameGrabber(
+  //   @Body() dto: CreateFrameGrabberProductDto,
+  //   @QueryRunner() qr: QR,
+  // ) {
+  //   return this.frameGrabberService.createProduct(
+  //     dto,
+  //     CategoriesEnum.FRAMEGRABBER,
+  //     qr,
+  //   );
+  // }
 
-  @Post('software')
-  @UseInterceptors(TransactionInterceptor)
-  async createSoftware(
-    @Body() dto: CreateSoftwareProductDto,
-    @QueryRunner() qr: QR,
-  ) {
-    return this.softwareService.createProduct(dto, CategoriesEnum.SOFTWARE, qr);
-  }
+  // @Patch('frame-grabber/:productId')
+  // @UseInterceptors(TransactionInterceptor)
+  // async updateFrameGrabber(
+  //   @Param('productId', ParseIntPipe) productId: number,
+  //   @Body() dto: UpdateFrameGrabberProductDto,
+  //   @QueryRunner() qr: QR,
+  // ) {
+  //   return this.frameGrabberService.updateProduct(
+  //     dto.id,
+  //     CategoriesEnum.FRAMEGRABBER,
+  //     dto,
+  //     qr,
+  //   );
+  // }
 
-  @Patch('software/:productId')
-  @UseInterceptors(TransactionInterceptor)
-  async updateSoftware(
-    @Param('productId', ParseIntPipe) productId: number,
-    @Body() dto: UpdateSoftwareProductDto,
-    @QueryRunner() qr: QR,
-  ) {
-    return this.softwareService.updateProduct(
-      dto.id,
-      CategoriesEnum.SOFTWARE,
-      dto,
-      qr,
-    );
-  }
+  // @Post('lens')
+  // @UseInterceptors(TransactionInterceptor)
+  // async createLens(@Body() dto: CreateLensProductDto, @QueryRunner() qr: QR) {
+  //   return this.lensService.createProduct(dto, CategoriesEnum.LENS, qr);
+  // }
 
-  @Post('light')
-  @UseInterceptors(TransactionInterceptor)
-  async createLightProduct(
-    @Body() createLightProductDto: CreateLightProductDto,
-    @QueryRunner() qr: QR,
-  ) {
-    return this.lightService.createProduct(
-      createLightProductDto,
-      CategoriesEnum.LIGHT,
-      qr,
-    );
-  }
+  // @Patch('lens/:productId')
+  // @UseInterceptors(TransactionInterceptor)
+  // async updateLens(
+  //   @Param('productId', ParseIntPipe) productId: number,
+  //   @Body() dto: UpdateLensProductDto,
+  //   @QueryRunner() qr: QR,
+  // ) {
+  //   return this.lensService.updateProduct(dto.id, CategoriesEnum.LENS, dto, qr);
+  // }
 
-  @Patch('light/:productId')
-  @UseInterceptors(TransactionInterceptor)
-  async updateLightProduct(
-    @Param('productId', ParseIntPipe) productId: number,
-    @Body() dto: UpdateLightProductDto,
-    @QueryRunner() qr: QR,
-  ) {
-    return this.lightService.updateProduct(
-      dto.id,
-      CategoriesEnum.LIGHT,
-      dto,
-      qr,
-    );
-  }
+  // @Post('software')
+  // @UseInterceptors(TransactionInterceptor)
+  // async createSoftware(
+  //   @Body() dto: CreateSoftwareProductDto,
+  //   @QueryRunner() qr: QR,
+  // ) {
+  //   return this.softwareService.createProduct(dto, CategoriesEnum.SOFTWARE, qr);
+  // }
+
+  // @Patch('software/:productId')
+  // @UseInterceptors(TransactionInterceptor)
+  // async updateSoftware(
+  //   @Param('productId', ParseIntPipe) productId: number,
+  //   @Body() dto: UpdateSoftwareProductDto,
+  //   @QueryRunner() qr: QR,
+  // ) {
+  //   return this.softwareService.updateProduct(
+  //     dto.id,
+  //     CategoriesEnum.SOFTWARE,
+  //     dto,
+  //     qr,
+  //   );
+  // }
+
+  // @Post('light')
+  // @UseInterceptors(TransactionInterceptor)
+  // async createLightProduct(
+  //   @Body() createLightProductDto: CreateLightProductDto,
+  //   @QueryRunner() qr: QR,
+  // ) {
+  //   return this.lightService.createProduct(
+  //     createLightProductDto,
+  //     CategoriesEnum.LIGHT,
+  //     qr,
+  //   );
+  // }
+
+  // @Patch('light/:productId')
+  // @UseInterceptors(TransactionInterceptor)
+  // async updateLightProduct(
+  //   @Param('productId', ParseIntPipe) productId: number,
+  //   @Body() dto: UpdateLightProductDto,
+  //   @QueryRunner() qr: QR,
+  // ) {
+  //   return this.lightService.updateProduct(
+  //     dto.id,
+  //     CategoriesEnum.LIGHT,
+  //     dto,
+  //     qr,
+  //   );
+  // }
 
   @Get(':category/:productId')
   @IsPublic()

@@ -5,14 +5,68 @@ import { CategoriesEnum, CategoryRelationMap } from './const/categories.const';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommonService } from 'src/common/common.service';
 import { BasePaginateProductDto } from './dto/paginate-product.dto';
+import { CameraService } from './camera/camera.service';
+import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
+import { LensService } from './lens/lens.service';
+import { SoftwareService } from './software/software.service';
+import { LightService } from './light/light.service';
+import { QueryRunner as QR } from 'typeorm';
+import { AbstractProductService } from './service/abstract-product.service';
+import {
+  CreateCategoryDtoMap,
+  UpdateCategoryDtoMap,
+} from './types/category-dto.type';
 
 @Injectable()
 export class ProductsService {
   constructor(
+    private readonly cameraService: CameraService,
+    private readonly frameGrabberService: FrameGrabberService,
+    private readonly lensService: LensService,
+    private readonly softwareService: SoftwareService,
+    private readonly lightService: LightService,
     private readonly commonService: CommonService,
     @InjectRepository(ProductModel)
     private readonly productRepository: Repository<ProductModel>,
   ) {}
+
+  private getCategoryServiceMap() {
+    return {
+      [CategoriesEnum.CAMERA]: this.cameraService,
+      [CategoriesEnum.FRAMEGRABBER]: this.frameGrabberService,
+      [CategoriesEnum.LENS]: this.lensService,
+      [CategoriesEnum.SOFTWARE]: this.softwareService,
+      [CategoriesEnum.LIGHT]: this.lightService,
+    };
+  }
+
+  async createGenericProduct<K extends CategoriesEnum>(
+    category: K,
+    dto: CreateCategoryDtoMap[K],
+    qr: QR,
+  ) {
+    const serviceMap = this.getCategoryServiceMap();
+    const service = serviceMap[category] as AbstractProductService<
+      CreateCategoryDtoMap[K],
+      any
+    >;
+
+    return service.createProduct(dto, category, qr);
+  }
+
+  async updateGenericProduct<K extends CategoriesEnum>(
+    category: K,
+    dto: UpdateCategoryDtoMap[K],
+    qr: QR,
+  ) {
+    const serviceMap = this.getCategoryServiceMap();
+    const service = serviceMap[category] as AbstractProductService<
+      any,
+      UpdateCategoryDtoMap[K]
+    >;
+
+    return service.updateProduct(dto.id, category, dto, qr);
+  }
 
   async getProductById(
     id: number,

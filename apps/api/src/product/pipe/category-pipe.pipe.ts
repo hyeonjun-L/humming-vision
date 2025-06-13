@@ -10,6 +10,7 @@ export class ParseCategoryPipe
     camera: CategoriesEnum.CAMERA,
     'frame-grabber': CategoriesEnum.FRAMEGRABBER,
     lens: CategoriesEnum.LENS,
+    light: CategoriesEnum.LIGHT,
   };
 
   transform(value: string): CategoriesEnum {
