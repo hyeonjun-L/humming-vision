@@ -36,12 +36,13 @@ export class LightService extends AbstractProductService<
     qr: QueryRunner,
   ) {
     if (dto.light) {
-      await this.updateLight(dto, qr);
+      await this.updateLight(dto.light, qr);
     }
   }
 
   async getLightById(id: number, qr: QueryRunner) {
     const lightRepo = qr.manager.getRepository(LightModel);
+
     const light = await lightRepo.findOne({
       where: { id },
       relations: ['product'],

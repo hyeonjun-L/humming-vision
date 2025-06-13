@@ -20,6 +20,7 @@ import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import {
   CategoriesEnum,
   CREATE_CATEGORY_DTO_MAPPING,
+  UPDATE_CATEGORY_DTO_MAPPING,
 } from './const/categories.const';
 import { ParseCategoryPipe } from './pipe/category-pipe.pipe';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
@@ -29,7 +30,10 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
 import { PaginateSoftwareDto } from './software/dto/paginate-software.dto';
-import { CreateCategoryDtoMap } from './types/category-dto.type';
+import {
+  CreateCategoryDtoMap,
+  UpdateCategoryDtoMap,
+} from './types/category-dto.type';
 import { ManualValidationBadRequestException } from 'src/common/exception/manual-validation-bad-request.exception';
 
 @Controller('product')
@@ -40,7 +44,7 @@ export class ProductsController {
   @UseInterceptors(TransactionInterceptor)
   async createProduct<K extends CategoriesEnum>(
     @Param('category', ParseCategoryPipe) category: K,
-    @Body(new ValidationPipe({ transform: false }))
+    @Body(new ValidationPipe({ transform: true }))
     dto: unknown,
     @QueryRunner() qr: QR,
   ) {
@@ -48,9 +52,14 @@ export class ProductsController {
       category
     ] as new () => CreateCategoryDtoMap[K];
 
-    const mappedDto = plainToInstance(DtoClass, dto);
+    const mappedDto = plainToInstance(DtoClass, dto, {
+      enableImplicitConversion: true,
+    });
 
-    const errors = await validate(mappedDto);
+    const errors = await validate(mappedDto, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
 
     if (errors.length > 0) {
       throw new ManualValidationBadRequestException(errors);
@@ -61,130 +70,30 @@ export class ProductsController {
 
   @Patch(':category/:productId')
   @UseInterceptors(TransactionInterceptor)
-  updateProduct(
-    @Param('category', ParseCategoryPipe) category: CategoriesEnum,
+  async updateProduct<K extends CategoriesEnum>(
+    @Param('category', ParseCategoryPipe) category: K,
     @Body() dto: any,
     @QueryRunner() qr: QR,
   ) {
-    return this.productsService.updateGenericProduct(category, dto, qr);
+    const DtoClass = UPDATE_CATEGORY_DTO_MAPPING[
+      category
+    ] as new () => UpdateCategoryDtoMap[K];
+
+    const mappedDto = plainToInstance(DtoClass, dto, {
+      enableImplicitConversion: true,
+    });
+
+    const errors = await validate(mappedDto, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
+
+    if (errors.length > 0) {
+      throw new ManualValidationBadRequestException(errors);
+    }
+
+    return this.productsService.updateGenericProduct(category, mappedDto, qr);
   }
-
-  // @Post('camera')
-  // @UseInterceptors(TransactionInterceptor)
-  // createCamera(@Body() dto: CreateCameraProductDto, @QueryRunner() qr: QR) {
-  //   return this.cameraService.createProduct(dto, CategoriesEnum.CAMERA, qr);
-  // }
-
-  // @Patch('camera/:productId')
-  // @UseInterceptors(TransactionInterceptor)
-  // async updateCamera(
-  //   @Param('productId', ParseIntPipe) productId: number,
-  //   @Body() dto: UpdateCameraProductDto,
-  //   @QueryRunner() qr: QR,
-  // ) {
-  //   return this.cameraService.updateProduct(
-  //     dto.id,
-  //     CategoriesEnum.CAMERA,
-  //     dto,
-  //     qr,
-  //   );
-  // }
-
-  // @Post('frame-grabber')
-  // @UseInterceptors(TransactionInterceptor)
-  // createFrameGrabber(
-  //   @Body() dto: CreateFrameGrabberProductDto,
-  //   @QueryRunner() qr: QR,
-  // ) {
-  //   return this.frameGrabberService.createProduct(
-  //     dto,
-  //     CategoriesEnum.FRAMEGRABBER,
-  //     qr,
-  //   );
-  // }
-
-  // @Patch('frame-grabber/:productId')
-  // @UseInterceptors(TransactionInterceptor)
-  // async updateFrameGrabber(
-  //   @Param('productId', ParseIntPipe) productId: number,
-  //   @Body() dto: UpdateFrameGrabberProductDto,
-  //   @QueryRunner() qr: QR,
-  // ) {
-  //   return this.frameGrabberService.updateProduct(
-  //     dto.id,
-  //     CategoriesEnum.FRAMEGRABBER,
-  //     dto,
-  //     qr,
-  //   );
-  // }
-
-  // @Post('lens')
-  // @UseInterceptors(TransactionInterceptor)
-  // async createLens(@Body() dto: CreateLensProductDto, @QueryRunner() qr: QR) {
-  //   return this.lensService.createProduct(dto, CategoriesEnum.LENS, qr);
-  // }
-
-  // @Patch('lens/:productId')
-  // @UseInterceptors(TransactionInterceptor)
-  // async updateLens(
-  //   @Param('productId', ParseIntPipe) productId: number,
-  //   @Body() dto: UpdateLensProductDto,
-  //   @QueryRunner() qr: QR,
-  // ) {
-  //   return this.lensService.updateProduct(dto.id, CategoriesEnum.LENS, dto, qr);
-  // }
-
-  // @Post('software')
-  // @UseInterceptors(TransactionInterceptor)
-  // async createSoftware(
-  //   @Body() dto: CreateSoftwareProductDto,
-  //   @QueryRunner() qr: QR,
-  // ) {
-  //   return this.softwareService.createProduct(dto, CategoriesEnum.SOFTWARE, qr);
-  // }
-
-  // @Patch('software/:productId')
-  // @UseInterceptors(TransactionInterceptor)
-  // async updateSoftware(
-  //   @Param('productId', ParseIntPipe) productId: number,
-  //   @Body() dto: UpdateSoftwareProductDto,
-  //   @QueryRunner() qr: QR,
-  // ) {
-  //   return this.softwareService.updateProduct(
-  //     dto.id,
-  //     CategoriesEnum.SOFTWARE,
-  //     dto,
-  //     qr,
-  //   );
-  // }
-
-  // @Post('light')
-  // @UseInterceptors(TransactionInterceptor)
-  // async createLightProduct(
-  //   @Body() createLightProductDto: CreateLightProductDto,
-  //   @QueryRunner() qr: QR,
-  // ) {
-  //   return this.lightService.createProduct(
-  //     createLightProductDto,
-  //     CategoriesEnum.LIGHT,
-  //     qr,
-  //   );
-  // }
-
-  // @Patch('light/:productId')
-  // @UseInterceptors(TransactionInterceptor)
-  // async updateLightProduct(
-  //   @Param('productId', ParseIntPipe) productId: number,
-  //   @Body() dto: UpdateLightProductDto,
-  //   @QueryRunner() qr: QR,
-  // ) {
-  //   return this.lightService.updateProduct(
-  //     dto.id,
-  //     CategoriesEnum.LIGHT,
-  //     dto,
-  //     qr,
-  //   );
-  // }
 
   @Get(':category/:productId')
   @IsPublic()
