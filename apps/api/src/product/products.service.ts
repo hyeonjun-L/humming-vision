@@ -46,7 +46,11 @@ export class ProductsService {
       {
         categories: category,
       },
-      {},
+      {
+        images: {
+          order: 'ASC',
+        },
+      },
       (qb, dto) => {
         if ('_camera__resolution__between' in dto) {
           const [min, max] = dto._camera__resolution__between! as [

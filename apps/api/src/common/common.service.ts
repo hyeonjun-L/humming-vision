@@ -86,6 +86,14 @@ export class CommonService {
       qb.andWhere(where);
     }
 
+    if (order) {
+      Object.entries(order).forEach(([field, value]) => {
+        if (value !== undefined) {
+          qb.addOrderBy(`entity.${field}`, value as 'ASC' | 'DESC');
+        }
+      });
+    }
+
     customWhereQueryBuilder(qb, dto);
 
     const [data, count] = await qb.getManyAndCount();
