@@ -4,7 +4,9 @@ import { IsUnique } from 'src/common/decorator/is-unique-field.decotator';
 import { RolesEnum } from '../const/role.const';
 
 export class RegisterAdminDto {
-  @IsUnique(AdminModel, 'email', { message: '이미 존재하는 이메일입니다.' })
+  @IsUnique(() => AdminModel, 'email', {
+    message: '이미 존재하는 이메일입니다.',
+  })
   @IsString()
   @IsEmail()
   email: string;

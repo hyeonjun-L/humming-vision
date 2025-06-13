@@ -12,10 +12,12 @@ export class IsUniqueFieldConstraint implements ValidatorConstraintInterface {
   constructor(private readonly dataSource: DataSource) {}
 
   async validate(value: unknown, args: ValidationArguments): Promise<boolean> {
-    const [EntityClass, field] = args.constraints as [
-      EntityTarget<object>,
+    const [entityGetter, field] = args.constraints as [
+      () => EntityTarget<object>,
       string,
     ];
+
+    const EntityClass = entityGetter();
 
     const repo = this.dataSource.getRepository(EntityClass);
 

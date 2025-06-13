@@ -7,7 +7,9 @@ import { IsUniqueImageOrderInArray } from '../decorator/is-unique-image-order-in
 
 export class BaseProductDto {
   @IsNotEmpty()
-  @IsUnique(ProductModel, 'name', { message: '이미 존재하는 제품명입니다.' })
+  @IsUnique(() => ProductModel, 'name', {
+    message: '이미 존재하는 제품명입니다.',
+  })
   name: string;
 
   @IsNotEmpty()
