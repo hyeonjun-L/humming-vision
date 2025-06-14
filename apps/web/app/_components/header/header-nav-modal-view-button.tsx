@@ -4,13 +4,12 @@ import { useModalStore } from "stores/use-modal.store";
 import { ModalEnum } from "types/modal.type";
 
 function HeaderNavModalViewButton() {
-  const openModal = useModalStore((state) => state.openModal);
+  const handleClick = () => {
+    useModalStore.getState().openModal(ModalEnum.HEADER_NAV);
+  };
 
   return (
-    <button
-      className="lg:hidden"
-      onClick={() => openModal(ModalEnum.HEADER_NAV)}
-    >
+    <button className="lg:hidden" onClick={handleClick}>
       <HambugerSVG />
     </button>
   );
