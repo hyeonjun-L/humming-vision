@@ -29,7 +29,7 @@
 
 @layer base {
   body {
-    @apply bg-background font-default text-foreground max-w-8xl mx-auto size-full;
+    @apply bg-background font-default text-foreground max-w-8xl mx-auto size-full overflow-x-hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
