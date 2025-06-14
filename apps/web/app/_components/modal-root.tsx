@@ -9,10 +9,18 @@ export default function ModalRoot() {
 
   if (!modalType) return null;
 
-  switch (modalType) {
-    case ModalEnum.HEADER_NAV:
-      return <HeaderNavModal {...modalProps} />;
-    default:
-      return null;
-  }
+  const renderModal = () => {
+    switch (modalType) {
+      case ModalEnum.HEADER_NAV:
+        return <HeaderNavModal {...modalProps} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="text-foreground max-w-8xl absolute z-(--z-modal) mx-auto size-full bg-black/50 lg:hidden">
+      {renderModal()}
+    </div>
+  );
 }

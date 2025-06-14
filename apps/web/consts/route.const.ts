@@ -1,5 +1,3 @@
-import { components, paths } from "@humming-vision/shared";
-
 export enum RoutePath {
   HOME = "/",
   CAMERA = "/camera",
@@ -24,5 +22,79 @@ export enum RoutePathWithCategory {
   ACCESSORY = "/accessory",
 }
 
-export type ProductEntity = components["schemas"]["CreateProductDto"];
-export type CreateProductDto = components["schemas"]["CreateProductDto"];
+export const NAV_ITEMS = [
+  {
+    name: "Camera",
+    hrefs: [
+      {
+        name: "Area Camera",
+        href: `${RoutePath.CAMERA}${RoutePathWithCategory.AREA}`,
+      },
+      {
+        name: "Line Scan Camera",
+        href: `${RoutePath.CAMERA}${RoutePathWithCategory.LINE}`,
+      },
+    ],
+  },
+  {
+    name: "Lens",
+    hrefs: [
+      {
+        name: "CCTV Lens",
+        href: `${RoutePath.LENS}${RoutePathWithCategory.CCTV}`,
+      },
+      {
+        name: "TCL Lens",
+        href: `${RoutePath.LENS}${RoutePathWithCategory.TCL}`,
+      },
+    ],
+  },
+  {
+    name: "Frame Grabber",
+    hrefs: [
+      {
+        name: "CoaXPress",
+        href: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.COAXPRESS}`,
+      },
+      {
+        name: "Cammera Link",
+        href: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.LINK}`,
+      },
+      {
+        name: "GigE",
+        href: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.GIGE}`,
+      },
+      {
+        name: "USB",
+        href: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.USB}`,
+      },
+    ],
+  },
+  {
+    name: "Light",
+    hrefs: [
+      {
+        name: "Light",
+        href: RoutePath.LIGHT,
+      },
+      {
+        name: "Download",
+        href: `${RoutePath.LIGHT}${RoutePathWithCategory.DOWNLOAD}`,
+      },
+    ],
+  },
+  {
+    name: "ETC",
+    hrefs: [
+      {
+        name: "Software",
+        href: `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
+      },
+      {
+        name: "Accessory",
+        href: `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
+      },
+    ],
+  },
+  { name: "Contact", href: RoutePath.CONTACT },
+];

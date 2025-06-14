@@ -1,89 +1,30 @@
+"use client";
 import Logo from "components/logo";
-import { RoutePath, RoutePathWithCategory } from "consts/route.const";
+import { NAV_ITEMS } from "consts/route.const";
 import Link from "next/link";
-import HeaderWrapper from "./header-wrapper";
 import HeaderNavModalViewButton from "./header-nav-modal-view-button";
+import { usePathname } from "next/navigation";
+import cn from "utils/cn";
+import { useEffect, useState } from "react";
 
 function Header() {
-  const NAV_ITEMS = [
-    {
-      name: "Camera",
-      hrefs: [
-        {
-          name: "Area Camera",
-          href: `${RoutePath.CAMERA}${RoutePathWithCategory.AREA}`,
-        },
-        {
-          name: "Line Scan Camera",
-          href: `${RoutePath.CAMERA}${RoutePathWithCategory.LINE}`,
-        },
-      ],
-    },
-    {
-      name: "Lens",
-      hrefs: [
-        {
-          name: "CCTV Lens",
-          href: `${RoutePath.LENS}${RoutePathWithCategory.CCTV}`,
-        },
-        {
-          name: "TCL Lens",
-          href: `${RoutePath.LENS}${RoutePathWithCategory.TCL}`,
-        },
-      ],
-    },
-    {
-      name: "Frame Grabber",
-      hrefs: [
-        {
-          name: "CoaXPress",
-          href: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.COAXPRESS}`,
-        },
-        {
-          name: "Cammera Link",
-          href: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.LINK}`,
-        },
-        {
-          name: "GigE",
-          href: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.GIGE}`,
-        },
-        {
-          name: "USB",
-          href: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.USB}`,
-        },
-      ],
-    },
-    {
-      name: "Light",
-      hrefs: [
-        {
-          name: "Light",
-          href: RoutePath.LIGHT,
-        },
-        {
-          name: "Download",
-          href: `${RoutePath.LIGHT}${RoutePathWithCategory.DOWNLOAD}`,
-        },
-      ],
-    },
-    {
-      name: "ETC",
-      hrefs: [
-        {
-          name: "Software",
-          href: `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
-        },
-        {
-          name: "Accessory",
-          href: `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
-        },
-      ],
-    },
-    { name: "Contact", href: RoutePath.CONTACT },
-  ];
+  const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
-    <HeaderWrapper>
+    <header
+      className={cn(
+        "group/header fixed top-0 z-(--z-header) flex w-full flex-col",
+        isClient && {
+          "bg-white text-black": pathname !== "/",
+          "text-white lg:hover:bg-white lg:hover:text-black": pathname === "/",
+        },
+      )}
+    >
       <nav className="relative mb-10.5 flex w-full items-center justify-between px-5 pt-10.5 sm:px-10 lg:mx-auto lg:items-start lg:justify-evenly lg:px-0">
         <Logo />
         <HeaderNavModalViewButton />
@@ -94,6 +35,9 @@ function Header() {
                 ? (hrefs[0]?.href ?? "#")
                 : (href ?? "#");
 
+            const isPathActive =
+              isClient && pathname.startsWith(`/${name.toLowerCase()}`);
+
             return (
               <div
                 key={name}
@@ -101,16 +45,24 @@ function Header() {
               >
                 <Link
                   href={mainHref}
-                  className="decoration-main w-fit whitespace-nowrap underline-offset-8 group-hover/path:underline"
+                  className={cn(
+                    "decoration-main w-fit whitespace-nowrap underline-offset-8 group-hover/path:underline",
+                    isPathActive && "text-main font-bold",
+                  )}
                 >
                   {name}
                 </Link>
-                <div className="invisible flex h-0 max-w-28 min-w-20 flex-col gap-5 group-hover/header:visible group-hover/header:h-auto">
+                <div className="group/sub invisible flex h-0 max-w-28 min-w-20 flex-col gap-5 group-hover/header:visible group-hover/header:h-auto">
                   {hrefs?.map(({ name: subName, href: subHref }) => (
                     <Link
                       key={subName}
                       href={subHref}
-                      className="hover:text-main w-full min-w-max text-base hover:font-bold"
+                      className={cn(
+                        "hover:text-main w-full min-w-max text-base hover:font-bold",
+                        isClient &&
+                          pathname === subHref &&
+                          "text-main font-bold group-hover/sub:font-normal group-hover/sub:text-black",
+                      )}
                     >
                       {subName}
                     </Link>
@@ -121,7 +73,7 @@ function Header() {
           })}
         </div>
       </nav>
-    </HeaderWrapper>
+    </header>
   );
 }
 

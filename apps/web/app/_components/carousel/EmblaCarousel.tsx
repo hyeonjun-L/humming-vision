@@ -8,7 +8,7 @@ import { StaticImageData } from "next/image";
 import Fade from "embla-carousel-fade";
 import Autoplay from "embla-carousel-autoplay";
 import { useAutoplay } from "./EmblaCarouselAutoplay";
-import { ArrowSVG, PlaySVG, StopSVG } from "public/svg";
+import { ArrowSVG, PlaySVG, StopSVG } from "public/svg/index";
 import cn from "utils/cn";
 
 type PropType = {

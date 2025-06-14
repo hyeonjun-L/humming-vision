@@ -9,7 +9,8 @@
   --gray200: #d9d9d9;
   --gray100: #f5f5f5;
 
-  --z-header: 1000;
+  --z-header: 50;
+  --z-modal: 1000;
 }
 
 @theme inline {
