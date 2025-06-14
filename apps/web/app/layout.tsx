@@ -3,6 +3,7 @@ import "./globals.css";
 import { Noto_Sans_KR } from "next/font/google";
 import localFont from "next/font/local";
 import Header from "./_components/header/header";
+import ModalRoot from "./_components/modal-root";
 
 const notoSansKRFont = Noto_Sans_KR({
   display: "fallback",
@@ -77,6 +78,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${gothamBookFont.variable} ${notoSansKRFont.variable}`}>
+        <ModalRoot />
         <Header />
         {children}
       </body>

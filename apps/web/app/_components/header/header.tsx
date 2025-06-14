@@ -1,8 +1,8 @@
 import Logo from "components/logo";
 import { RoutePath, RoutePathWithCategory } from "consts/route.const";
 import Link from "next/link";
-import HeaderWrapper from "./header-wrapper.client";
-import { HambugerSVG } from "public/svg";
+import HeaderWrapper from "./header-wrapper";
+import HeaderNavModalViewButton from "./header-nav-modal-view-button";
 
 function Header() {
   const NAV_ITEMS = [
@@ -86,9 +86,7 @@ function Header() {
     <HeaderWrapper>
       <nav className="relative mb-10.5 flex w-full items-center justify-between px-5 pt-10.5 sm:px-10 lg:mx-auto lg:items-start lg:justify-evenly lg:px-0">
         <Logo />
-        <button className="lg:hidden">
-          <HambugerSVG />
-        </button>
+        <HeaderNavModalViewButton />
         <div className="relative hidden items-start lg:flex lg:gap-9 lg:text-lg xl:text-xl 2xl:gap-13">
           {NAV_ITEMS.map(({ name, href, hrefs }) => {
             const mainHref =
