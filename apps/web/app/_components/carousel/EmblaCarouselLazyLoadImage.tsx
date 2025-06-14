@@ -13,10 +13,9 @@ export const LazyLoadImage = (props: PropType) => {
       <div className="relative size-full">
         <Image
           src={imgSrc}
-          alt=""
+          alt="main-banner-image"
           fill
           className="object-cover"
-          data-src={imgSrc}
           priority={index === 0}
         />
       </div>

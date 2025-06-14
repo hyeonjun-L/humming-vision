@@ -1,11 +1,11 @@
 "use client";
 import Logo from "components/logo";
-import { NAV_ITEMS } from "consts/route.const";
 import Link from "next/link";
 import HeaderNavModalViewButton from "./header-nav-modal-view-button";
 import { usePathname } from "next/navigation";
 import cn from "utils/cn";
 import { useEffect, useState } from "react";
+import { NAV_ITEMS } from "consts/route.const";
 
 function Header() {
   const pathname = usePathname();
@@ -61,7 +61,7 @@ function Header() {
                         "hover:text-main w-full min-w-max text-base hover:font-bold",
                         isClient &&
                           pathname === subHref &&
-                          "text-main font-bold group-hover/sub:font-normal group-hover/sub:text-black",
+                          "text-main roup-hover/sub:font-normal group-hover/sub:text-blacgk font-bold",
                       )}
                     >
                       {subName}
