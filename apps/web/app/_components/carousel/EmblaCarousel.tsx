@@ -46,10 +46,10 @@ const EmblaCarousel = ({ slides, options, children }: PropType) => {
         </div>
       </div>
 
-      <div className="fill-gray100 stroke-gray100 absolute top-1/2 left-1/2 z-10 flex w-full -translate-x-1/2 -translate-y-1/2 flex-col">
+      <div className="fill-gray100 stroke-gray100 absolute top-1/2 left-1/2 z-10 flex w-full -translate-1/3 -translate-x-1/2 flex-col lg:-translate-y-1/2">
         {children}
         <div className="flex w-full justify-center">
-          <div className="flex gap-4">
+          <div className="flex gap-2 md:gap-4">
             <button onClick={toggleAutoplay} type="button">
               {autoplayIsPlaying ? (
                 <StopSVG className="size-6" />
@@ -62,7 +62,7 @@ const EmblaCarousel = ({ slides, options, children }: PropType) => {
               onClick={() => onAutoplayButtonClick(onPrevButtonClick)}
               disabled={prevBtnDisabled}
             >
-              <ArrowSVG className="size-5 rotate-180" />
+              <ArrowSVG className="hidden size-5 rotate-180 md:block" />
             </NavButton>
 
             <div className="flex flex-1 items-center justify-center gap-4">
@@ -82,7 +82,7 @@ const EmblaCarousel = ({ slides, options, children }: PropType) => {
               onClick={() => onAutoplayButtonClick(onNextButtonClick)}
               disabled={nextBtnDisabled}
             >
-              <ArrowSVG className="size-5" />
+              <ArrowSVG className="hidden size-5 md:block" />
             </NavButton>
           </div>
         </div>

@@ -16,7 +16,7 @@ function HeaderWrapper({ children }: PropType) {
         "group/header fixed top-0 z-(--z-header) flex w-full flex-col",
         {
           "bg-white text-black": pathname !== "/",
-          "text-white hover:bg-white hover:text-black": pathname === "/",
+          "text-white lg:hover:bg-white lg:hover:text-black": pathname === "/",
         },
       )}
     >

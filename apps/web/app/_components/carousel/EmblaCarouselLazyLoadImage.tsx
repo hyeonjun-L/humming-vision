@@ -6,7 +6,7 @@ type PropType = {
 };
 
 export const LazyLoadImage = (props: PropType) => {
-  const { imgSrc } = props;
+  const { imgSrc, index } = props;
 
   return (
     <div className="min-w-0 flex-[0_0_100%] transform-gpu">
@@ -17,6 +17,7 @@ export const LazyLoadImage = (props: PropType) => {
           fill
           className="object-cover"
           data-src={imgSrc}
+          priority={index === 0}
         />
       </div>
     </div>
