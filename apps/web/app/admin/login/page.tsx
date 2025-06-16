@@ -22,19 +22,53 @@ export default function AdminLoginPage() {
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async ({ email, password }: LoginFormData) => {
     setIsLoading(true);
 
-    console.log("Login attempt:", data);
+    try {
+      const response = await fetch(
+        `/api/admin/login?email=${email}&password=${password}`,
+        {
+          method: "POST",
+          credentials: "include",
+        },
+      );
 
-    setTimeout(() => {
+      const result = await response.json();
+
+      if (!response.ok) {
+        const errorMessage =
+          result.message ||
+          (result.status === 401
+            ? "로그인 실패: 잘못된 이메일 또는 비밀번호입니다."
+            : "로그인에 실패했습니다.");
+
+        setError("root", {
+          type: "server",
+          message: errorMessage,
+        });
+
+        return;
+      }
+
+      console.log("로그인 성공:", result.admin);
+      // TODO: 로그인 성공 후 로직
+    } catch (error) {
+      console.error("네트워크 에러:", error);
+      setError("root", {
+        type: "network",
+        message: "네트워크 에러가 발생했습니다. 다시 시도해주세요.",
+      });
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -63,7 +97,9 @@ export default function AdminLoginPage() {
                 <input
                   id="email"
                   type="email"
-                  {...register("email")}
+                  {...register("email", {
+                    onChange: () => clearErrors("root"),
+                  })}
                   className={`focus:ring-main block w-full rounded-lg border py-3 pr-3 pl-10 transition-colors focus:border-transparent focus:ring-2 focus:outline-none ${
                     errors.email ? "border-red-500" : "border-gray200"
                   }`}
@@ -91,7 +127,9 @@ export default function AdminLoginPage() {
                 <input
                   id="password"
                   type="password"
-                  {...register("password")}
+                  {...register("password", {
+                    onChange: () => clearErrors("root"),
+                  })}
                   className={`focus:ring-main block w-full rounded-lg border py-3 pr-3 pl-10 transition-colors focus:border-transparent focus:ring-2 focus:outline-none ${
                     errors.password ? "border-red-500" : "border-gray200"
                   }`}
@@ -102,8 +140,14 @@ export default function AdminLoginPage() {
                 <p className="mt-1 text-sm text-red-600">
                   {errors.password.message}
                 </p>
-              )}
+              )}{" "}
             </div>
+
+            {errors.root && (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+                <p className="text-sm text-red-600">{errors.root.message}</p>
+              </div>
+            )}
 
             <button
               type="submit"
