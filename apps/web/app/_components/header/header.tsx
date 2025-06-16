@@ -5,11 +5,18 @@ import HeaderNavModalViewButton from "./header-nav-modal-view-button";
 import { usePathname } from "next/navigation";
 import cn from "utils/cn";
 import { useEffect, useState } from "react";
-import { NAV_ITEMS } from "consts/route.const";
+import {
+  ADMIN_ROUTE_PATH,
+  AdminRoutePath,
+  NAV_ITEMS,
+} from "consts/route.const";
 
 function Header() {
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
+
+  const isAdminLoginPage =
+    pathname === `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
 
   useEffect(() => {
     setIsClient(true);
@@ -23,6 +30,7 @@ function Header() {
           "bg-white text-black": pathname !== "/",
           "text-white lg:hover:bg-white lg:hover:text-black": pathname === "/",
         },
+        isAdminLoginPage && "hidden",
       )}
     >
       <nav className="relative mb-10.5 flex w-full items-center justify-between px-5 pt-10.5 sm:px-10 lg:mx-auto lg:items-start lg:justify-evenly lg:px-0">

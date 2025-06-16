@@ -1,6 +1,6 @@
 import { RoutePath } from "consts/route.const";
 import Link from "next/link";
-import { LogoSVG } from "public/svg";
+import { LogoSVG } from "public/svg/index";
 
 function Logo() {
   return (

@@ -1,0 +1,130 @@
+"use client";
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { EmailSVG, LockSVG, SpinnerSVG } from "public/svg/index";
+
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, "이메일을 입력해주세요")
+    .email("올바른 이메일 형식을 입력해주세요"),
+  password: z.string().min(1, "비밀번호를 입력해주세요"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+export default function AdminLoginPage() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+
+    console.log("Login attempt:", data);
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  };
+
+  return (
+    <main className="flex min-h-screen items-center justify-center">
+      <section className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <h1 className="text-gray600 mb-2 text-3xl font-bold">
+            관리자 로그인
+          </h1>
+          <p className="text-gray400">관리자 계정으로 로그인해주세요</p>
+        </div>
+
+        <div className="border-gray200 rounded-2xl bg-white p-8 sm:border sm:shadow-xl">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div>
+              <label
+                htmlFor="email"
+                className="text-gray500 mb-2 block text-sm font-medium"
+              >
+                이메일
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <EmailSVG className="text-gray300 size-5" />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  {...register("email")}
+                  className={`focus:ring-main block w-full rounded-lg border py-3 pr-3 pl-10 transition-colors focus:border-transparent focus:ring-2 focus:outline-none ${
+                    errors.email ? "border-red-500" : "border-gray200"
+                  }`}
+                  placeholder="admin@example.com"
+                />
+              </div>
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="text-gray500 mb-2 block text-sm font-medium"
+              >
+                비밀번호
+              </label>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <LockSVG className="fill-gray300 size-5" />
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                  className={`focus:ring-main block w-full rounded-lg border py-3 pr-3 pl-10 transition-colors focus:border-transparent focus:ring-2 focus:outline-none ${
+                    errors.password ? "border-red-500" : "border-gray200"
+                  }`}
+                  placeholder="••••••••"
+                />
+              </div>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-main hover:bg-main focus:ring-main flex w-full items-center justify-center rounded-lg px-4 py-3 font-medium text-white transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isLoading ? (
+                <>
+                  <SpinnerSVG className="mr-3 -ml-1 size-5 animate-spin text-white" />
+                  로그인 중...
+                </>
+              ) : (
+                "로그인"
+              )}
+            </button>
+          </form>
+        </div>
+        <div className="text-gray300 mt-8 text-center text-sm">
+          <p>© 2025 Humming Vision. 관리자 전용 페이지입니다.</p>
+        </div>
+      </section>
+    </main>
+  );
+}

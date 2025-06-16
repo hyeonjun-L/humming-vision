@@ -4,3 +4,6 @@ export { default as StopSVG } from "./stop.svg";
 export { default as LogoSVG } from "./logo.svg";
 export { default as HambugerSVG } from "./hambuger.svg";
 export { default as PluseSVG } from "./plus.svg";
+export { default as EmailSVG } from "./email.svg";
+export { default as LockSVG } from "./lock.svg";
+export { default as SpinnerSVG } from "./spiner.svg";

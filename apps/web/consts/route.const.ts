@@ -22,6 +22,12 @@ export enum RoutePathWithCategory {
   ACCESSORY = "/accessory",
 }
 
+export const ADMIN_ROUTE_PATH = "/admin";
+
+export enum AdminRoutePath {
+  LOGIN = "/login",
+}
+
 export const NAV_ITEMS = [
   {
     name: "Camera",
