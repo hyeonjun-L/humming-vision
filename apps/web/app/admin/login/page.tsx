@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { EmailSVG, LockSVG, SpinnerSVG } from "public/svg/index";
+import { useRouter } from "next/navigation";
+import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 
 const loginSchema = z.object({
   email: z
@@ -17,6 +19,8 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -58,8 +62,9 @@ export default function AdminLoginPage() {
         return;
       }
 
-      console.log("로그인 성공:", result.admin);
-      // TODO: 로그인 성공 후 로직
+      router.push(`${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`, {
+        scroll: false,
+      });
     } catch (error) {
       console.error("네트워크 에러:", error);
       setError("root", {

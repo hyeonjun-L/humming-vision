@@ -26,6 +26,7 @@ export const ADMIN_ROUTE_PATH = "/admin";
 
 export enum AdminRoutePath {
   LOGIN = "/login",
+  CONTACT = "/contact",
 }
 
 export const NAV_ITEMS = [
