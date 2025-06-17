@@ -27,9 +27,24 @@ export const ADMIN_ROUTE_PATH = "/admin";
 export enum AdminRoutePath {
   LOGIN = "/login",
   CONTACT = "/contact",
+  PRODUCTS = "/products",
+  PRODUCT_CREATE = "/products/create",
 }
 
-export const NAV_ITEMS = [
+// Navigation item types
+export interface NavItemWithSubmenu {
+  name: string;
+  hrefs: { name: string; href: string }[];
+}
+
+export interface NavItemWithLink {
+  name: string;
+  href: string;
+}
+
+export type NavItem = NavItemWithSubmenu | NavItemWithLink;
+
+export const NAV_ITEMS: NavItem[] = [
   {
     name: "Camera",
     hrefs: [
@@ -104,4 +119,19 @@ export const NAV_ITEMS = [
     ],
   },
   { name: "Contact", href: RoutePath.CONTACT },
+];
+
+export const ADMIN_NAV_ITEMS: NavItemWithLink[] = [
+  {
+    name: "제품문의",
+    href: `${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`,
+  },
+  {
+    name: "제품관리",
+    href: `${ADMIN_ROUTE_PATH}${AdminRoutePath.PRODUCTS}`,
+  },
+  {
+    name: "제품등록",
+    href: `${ADMIN_ROUTE_PATH}${AdminRoutePath.PRODUCT_CREATE}`,
+  },
 ];
