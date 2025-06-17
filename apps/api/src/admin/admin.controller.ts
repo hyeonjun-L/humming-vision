@@ -14,10 +14,10 @@ import { RegisterAdminDto } from './dto/register-admin.dto';
 import { BasicTokenGuard } from './guard/basic-token.guard';
 import { IsPublic } from 'src/common/decorator/is-public.decorator';
 import { Roles } from './decorator/roles.decorator';
-import { RolesEnum } from './const/role.const';
 import { RefreshTokenGuard } from './guard/bearer-token.guard';
 import { Admin } from './decorator/admin.decorator';
 import { AdminModel } from './entity/admin.entity';
+import { RolesEnum } from '@humming-vision/shared';
 
 @Controller('admin')
 export class AdminController {

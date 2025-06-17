@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorator/roles.decorator';
-import { RolesEnum } from '../const/role.const';
+import { RolesEnum } from '@humming-vision/shared';
 import { AdminRequest } from '../types/interfaces.types';
 
 @Injectable()

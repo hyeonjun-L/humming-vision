@@ -1,10 +1,22 @@
 "use client";
-import { NAV_ITEMS } from "consts/route.const";
+import { NAV_ITEMS, type NavItem } from "consts/route.const";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowSVG } from "public/svg/index";
 import { useModalStore } from "stores/use-modal.store";
 import cn from "utils/cn";
+
+const hasSubmenu = (
+  item: NavItem,
+): item is { name: string; hrefs: { name: string; href: string }[] } => {
+  return "hrefs" in item;
+};
+
+const hasDirectLink = (
+  item: NavItem,
+): item is { name: string; href: string } => {
+  return "href" in item;
+};
 
 function HeaderNavModal() {
   const pathname = usePathname();
@@ -25,9 +37,9 @@ function HeaderNavModal() {
         </div>
       </div>
       <ul className="flex w-full flex-col">
-        {NAV_ITEMS.map(({ name, href, hrefs }) => {
+        {NAV_ITEMS.map((item) => {
+          const { name } = item;
           const isContact = name === "Contact";
-
           const isPathActive = pathname.startsWith(`/${name.toLowerCase()}`);
 
           return (
@@ -38,9 +50,9 @@ function HeaderNavModal() {
                 isContact && "mb-0 border-b-0",
               )}
             >
-              {isContact ? (
+              {hasDirectLink(item) ? (
                 <Link
-                  href={href!}
+                  href={item.href}
                   className={cn(
                     "text-gray600 w-40 font-semibold",
                     isPathActive && "text-main font-bold",
@@ -59,19 +71,20 @@ function HeaderNavModal() {
                 </div>
               )}
               <div className="group flex flex-col gap-5">
-                {hrefs?.map(({ name: subName, href: subHref }) => (
-                  <Link
-                    key={subName}
-                    href={subHref}
-                    className={cn(
-                      "hover:text-main w-full min-w-max text-base hover:font-bold",
-                      pathname === subHref &&
-                        "text-main font-bold group-hover:font-normal group-hover:text-black",
-                    )}
-                  >
-                    {subName}
-                  </Link>
-                ))}
+                {hasSubmenu(item) &&
+                  item.hrefs.map(({ name: subName, href: subHref }) => (
+                    <Link
+                      key={subName}
+                      href={subHref}
+                      className={cn(
+                        "hover:text-main w-full min-w-max text-base hover:font-bold",
+                        pathname === subHref &&
+                          "text-main font-bold group-hover:font-normal group-hover:text-black",
+                      )}
+                    >
+                      {subName}
+                    </Link>
+                  ))}
               </div>
             </li>
           );

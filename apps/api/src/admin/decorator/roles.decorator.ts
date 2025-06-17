@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { RolesEnum } from '../const/role.const';
+import { RolesEnum } from '@humming-vision/shared';
 
 export const ROLES_KEY = 'user_roles';
 
