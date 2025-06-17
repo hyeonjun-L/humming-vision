@@ -13,9 +13,9 @@ function Header() {
     <header className={getHeaderClassName(state)}>
       <nav className={getNavClassName(state)}>
         <Logo />
+        <Navigation navItems={state.navItems} state={state} />
         <AdminActions state={state} />
         <HeaderNavModalViewButton />
-        <Navigation navItems={state.navItems} state={state} />
       </nav>
     </header>
   );

@@ -12,6 +12,8 @@ import {
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 
 export async function middleware(request: NextRequest) {
+  console.log("Middleware for admin route");
+
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
 
   const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
