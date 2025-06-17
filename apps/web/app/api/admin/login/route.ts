@@ -1,9 +1,9 @@
+import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import {
-  ENV_API_END_POINT_KEY,
-  ENV_JWT_ACCESS_EXPIRES,
-  ENV_JWT_REFRESH_EXPIRES,
-  NODE_ENV_KEY,
-} from "consts/env-keys.const";
+  ACCESS_TOKEN_COOKIE_OPTIONS,
+  REFRESH_TOKEN_COOKIE_OPTIONS,
+  COOKIE_NAMES,
+} from "consts/cookie.const";
 import { NextResponse, type NextRequest } from "next/server";
 
 export const POST = async (request: NextRequest) => {
@@ -49,29 +49,20 @@ export const POST = async (request: NextRequest) => {
       { status: response.status },
     );
   }
-
   const result = await response.json();
   const responseWithCookies = NextResponse.json({ admin: result.admin });
 
-  responseWithCookies.cookies.set("accessToken", result.accessToken, {
-    httpOnly: true,
-    secure: process.env[NODE_ENV_KEY] === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: process.env[ENV_JWT_ACCESS_EXPIRES]
-      ? parseInt(process.env[ENV_JWT_ACCESS_EXPIRES], 10)
-      : undefined,
-  });
+  responseWithCookies.cookies.set(
+    COOKIE_NAMES.ACCESS_TOKEN,
+    result.accessToken,
+    ACCESS_TOKEN_COOKIE_OPTIONS,
+  );
 
-  responseWithCookies.cookies.set("refreshToken", result.refreshToken, {
-    httpOnly: true,
-    secure: process.env[NODE_ENV_KEY] === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: process.env[ENV_JWT_REFRESH_EXPIRES]
-      ? parseInt(process.env[ENV_JWT_REFRESH_EXPIRES], 10)
-      : undefined,
-  });
+  responseWithCookies.cookies.set(
+    COOKIE_NAMES.REFRESH_TOKEN,
+    result.refreshToken,
+    REFRESH_TOKEN_COOKIE_OPTIONS,
+  );
 
   return responseWithCookies;
 };
