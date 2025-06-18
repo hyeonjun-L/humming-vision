@@ -16,11 +16,11 @@ import {
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
-  console.log("Middleware for admin route");
-
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
 
   const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
+
+  const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
 
   const pathname = request.nextUrl.pathname;
 
@@ -35,7 +35,9 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
       );
     }
 
-    return NextResponse.next();
+    if (!refreshToken) {
+      return NextResponse.next();
+    }
   }
 
   const redirectResponse = NextResponse.redirect(
@@ -53,7 +55,6 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
       redirectResponse.cookies.delete(COOKIE_NAMES.ACCESS_TOKEN);
     }
   }
-  const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
 
   if (!refreshToken) {
     return redirectResponse;
@@ -76,7 +77,15 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
         await refreshResponse.json();
 
-      const response = NextResponse.next();
+      const response =
+        pathname === `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`
+          ? NextResponse.redirect(
+              new URL(
+                `${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`,
+                request.url,
+              ),
+            )
+          : NextResponse.next();
 
       response.cookies.set(
         COOKIE_NAMES.ACCESS_TOKEN,
