@@ -1,4 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import {
+  type NextFetchEvent,
+  type NextRequest,
+  NextResponse,
+} from "next/server";
 import { jwtVerify } from "jose";
 import {
   ENV_API_END_POINT_KEY,
@@ -11,7 +15,7 @@ import {
 } from "consts/cookie.const";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest, event: NextFetchEvent) {
   console.log("Middleware for admin route");
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
@@ -49,14 +53,13 @@ export async function middleware(request: NextRequest) {
       redirectResponse.cookies.delete(COOKIE_NAMES.ACCESS_TOKEN);
     }
   }
-
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
 
   if (!refreshToken) {
     return redirectResponse;
   }
 
-  const refreshResponse = await fetch(`${END_POINT}/admin/token/access`, {
+  const refreshPromise = fetch(`${END_POINT}/admin/token/access`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${refreshToken}`,
@@ -64,25 +67,33 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  if (refreshResponse.ok) {
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-      await refreshResponse.json();
+  event.waitUntil(refreshPromise);
 
-    const response = NextResponse.next();
+  try {
+    const refreshResponse = await refreshPromise;
 
-    response.cookies.set(
-      COOKIE_NAMES.ACCESS_TOKEN,
-      newAccessToken,
-      ACCESS_TOKEN_COOKIE_OPTIONS,
-    );
+    if (refreshResponse.ok) {
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+        await refreshResponse.json();
 
-    response.cookies.set(
-      COOKIE_NAMES.REFRESH_TOKEN,
-      newRefreshToken,
-      REFRESH_TOKEN_COOKIE_OPTIONS,
-    );
+      const response = NextResponse.next();
 
-    return response;
+      response.cookies.set(
+        COOKIE_NAMES.ACCESS_TOKEN,
+        newAccessToken,
+        ACCESS_TOKEN_COOKIE_OPTIONS,
+      );
+
+      response.cookies.set(
+        COOKIE_NAMES.REFRESH_TOKEN,
+        newRefreshToken,
+        REFRESH_TOKEN_COOKIE_OPTIONS,
+      );
+
+      return response;
+    }
+  } catch (error) {
+    console.error("Token refresh failed:", error);
   }
 
   redirectResponse.cookies.delete(COOKIE_NAMES.REFRESH_TOKEN);
