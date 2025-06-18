@@ -1,5 +1,5 @@
 import cn from "utils/cn";
-import { HeaderState } from "../hooks/use-header-state";
+import { HeaderState } from "../hooks/use-header-state.hook";
 
 export function getHeaderClassName(state: HeaderState): string {
   const { isClient, isAdminLoginPage, headerVariant } = state;

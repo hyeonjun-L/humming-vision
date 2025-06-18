@@ -2,7 +2,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import cn from "utils/cn";
 import { type NavItem, type NavItemWithSubmenu } from "consts/route.const";
-import { HeaderState } from "./hooks/use-header-state";
+import { HeaderState } from "./hooks/use-header-state.hook";
 
 interface NavigationProps {
   navItems: NavItem[];

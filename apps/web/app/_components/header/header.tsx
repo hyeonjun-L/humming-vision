@@ -1,7 +1,7 @@
 "use client";
 import Logo from "components/logo";
 import HeaderNavModalViewButton from "./header-nav-modal-view-button";
-import { useHeaderState } from "./hooks/use-header-state";
+import { useHeaderState } from "./hooks/use-header-state.hook";
 import { getHeaderClassName, getNavClassName } from "./utils/header-styles";
 import { Navigation } from "./navigation";
 import { AdminActions } from "./admin-actions";

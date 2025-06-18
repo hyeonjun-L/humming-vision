@@ -3,17 +3,14 @@ import {
   type NextRequest,
   NextResponse,
 } from "next/server";
-import { jwtVerify } from "jose";
-import {
-  ENV_API_END_POINT_KEY,
-  ENV_JWT_SECRET_KEY,
-} from "consts/env-keys.const";
+import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import {
   ACCESS_TOKEN_COOKIE_OPTIONS,
   REFRESH_TOKEN_COOKIE_OPTIONS,
   COOKIE_NAMES,
 } from "consts/cookie.const";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
+import verifyAccessToken from "utils/verify-access-token";
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
@@ -46,10 +43,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 
   if (accessToken) {
     try {
-      await jwtVerify(
-        accessToken,
-        new TextEncoder().encode(process.env[ENV_JWT_SECRET_KEY]),
-      );
+      await verifyAccessToken(accessToken);
       return NextResponse.next();
     } catch {
       redirectResponse.cookies.delete(COOKIE_NAMES.ACCESS_TOKEN);

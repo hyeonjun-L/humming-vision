@@ -7,9 +7,8 @@ import {
 
 export const createCookieOptions = (
   maxAgeEnvKey?: string,
-  httpOnly = true,
 ): Partial<ResponseCookie> => ({
-  httpOnly,
+  httpOnly: true,
   secure: process.env[NODE_ENV_KEY] === "production",
   sameSite: "strict",
   path: "/",
@@ -21,7 +20,6 @@ export const createCookieOptions = (
 
 export const ACCESS_TOKEN_COOKIE_OPTIONS = createCookieOptions(
   ENV_JWT_ACCESS_EXPIRES,
-  false,
 );
 
 export const REFRESH_TOKEN_COOKIE_OPTIONS = createCookieOptions(

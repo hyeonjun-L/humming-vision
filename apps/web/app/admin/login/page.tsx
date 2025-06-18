@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
 import { EmailSVG, LockSVG, SpinnerSVG } from "public/svg/index";
 import { useRouter } from "next/navigation";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
+import { useAdminStore } from "stores/use-admin.store";
 
 const loginSchema = z.object({
   email: z
@@ -20,8 +21,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
   const router = useRouter();
-
-  const [isLoading, setIsLoading] = useState(false);
+  const { setAdmin } = useAdminStore();
 
   const {
     register,
@@ -33,10 +33,8 @@ export default function AdminLoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async ({ email, password }: LoginFormData) => {
-    setIsLoading(true);
-
-    try {
+  const loginMutation = useMutation({
+    mutationFn: async ({ email, password }: LoginFormData) => {
       const response = await fetch(
         `/api/admin/login?email=${email}&password=${password}`,
         {
@@ -53,27 +51,30 @@ export default function AdminLoginPage() {
           (result.status === 401
             ? "로그인 실패: 잘못된 이메일 또는 비밀번호입니다."
             : "로그인에 실패했습니다.");
-
-        setError("root", {
-          type: "server",
-          message: errorMessage,
-        });
-
-        return;
+        throw new Error(errorMessage);
       }
 
+      return result;
+    },
+    onSuccess: (data) => {
+      // Zustand 스토어에 관리자 정보 저장
+      setAdmin(data.admin);
+
+      // 관리자 페이지로 이동
       router.push(`${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`, {
         scroll: false,
       });
-    } catch (error) {
-      console.error("네트워크 에러:", error);
+    },
+    onError: (error: Error) => {
       setError("root", {
-        type: "network",
-        message: "네트워크 에러가 발생했습니다. 다시 시도해주세요.",
+        type: "server",
+        message: error.message,
       });
-    } finally {
-      setIsLoading(false);
-    }
+    },
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    loginMutation.mutate(data);
   };
 
   return (
@@ -117,7 +118,6 @@ export default function AdminLoginPage() {
                 </p>
               )}
             </div>
-
             <div>
               <label
                 htmlFor="password"
@@ -147,19 +147,17 @@ export default function AdminLoginPage() {
                 </p>
               )}{" "}
             </div>
-
             {errors.root && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-3">
                 <p className="text-sm text-red-600">{errors.root.message}</p>
               </div>
-            )}
-
+            )}{" "}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
               className="bg-main hover:bg-main focus:ring-main flex w-full items-center justify-center rounded-lg px-4 py-3 font-medium text-white transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isLoading ? (
+              {loginMutation.isPending ? (
                 <>
                   <SpinnerSVG className="mr-3 -ml-1 size-5 animate-spin text-white" />
                   로그인 중...
