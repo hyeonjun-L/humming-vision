@@ -19,6 +19,7 @@ const nextConfig = {
       },
     },
   },
+  transpilePackages: ["@humming-vision/shared"],
 };
 
 export default nextConfig;

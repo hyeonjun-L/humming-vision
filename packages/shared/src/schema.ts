@@ -4,164 +4,20 @@
  */
 
 export interface paths {
-    "/product/camera": {
+    "/product/{category}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["ProductsController_paginateProducts"];
         put?: never;
-        post: operations["ProductsController_createCamera"];
+        post: operations["ProductsController_createProduct"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/product/camera/{productId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ProductsController_updateCamera"];
-        trace?: never;
-    };
-    "/product/frame-grabber": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ProductsController_createFrameGrabber"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/product/frame-grabber/{productId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ProductsController_updateFrameGrabber"];
-        trace?: never;
-    };
-    "/product/lens": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ProductsController_createLens"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/product/lens/{productId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ProductsController_updateLens"];
-        trace?: never;
-    };
-    "/product/software": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ProductsController_createSoftware"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/product/software/{productId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ProductsController_updateSoftware"];
-        trace?: never;
-    };
-    "/product/light": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ProductsController_createLightProduct"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/product/light/{productId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ProductsController_updateLightProduct"];
         trace?: never;
     };
     "/product/{category}/{productId}": {
@@ -177,23 +33,7 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/product/{category}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ProductsController_paginateProducts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
+        patch: operations["ProductsController_updateProduct"];
         trace?: never;
     };
     "/product/{productId}": {
@@ -392,42 +232,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        BaseCameraDto: {
-            /** @enum {string} */
-            interface: "GIGE" | "USB" | "CAMERA_LINK" | "COAXPRESS";
-            /** @enum {string} */
-            type: "AREA" | "LINE";
-            /** @enum {string} */
-            color: "MONO" | "COLOR";
-            /** @enum {string} */
-            maker: "CREVIS" | "VIEWORKS" | "BASLER" | "HIK" | "HUARAY" | "JAI";
-            resolutionX: number;
-            resolutionY: number;
-            speed: number;
-            pixelSize?: number;
-            formatSize: string;
-            mountType: string;
-            sensor: string;
-        };
-        CreateImageDto: {
-            order: number;
-            /** @enum {string} */
-            type: "SPEC" | "PRODUCT";
-            /** Format: uri */
-            path: string;
-        };
-        CreateCameraProductDto: {
-            camera: components["schemas"]["BaseCameraDto"];
-            name: string;
-            mainFeature: string;
-            /** Format: uri */
-            datasheetUrl?: string;
-            /** Format: uri */
-            drawingUrl?: string;
-            /** Format: uri */
-            manualUrl?: string;
-            images: components["schemas"]["CreateImageDto"][];
-        };
         CameraModel: {
             id: number;
             product: components["schemas"]["ProductModel"];
@@ -515,113 +319,6 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
-        UpdateCameraDto: {
-            id: number;
-        };
-        UpdateImageDto: {
-            id: number;
-        };
-        UpdateCameraProductDto: {
-            camera?: components["schemas"]["UpdateCameraDto"];
-            id: number;
-            images?: components["schemas"]["UpdateImageDto"][];
-        };
-        BaseFrameGrabberDto: {
-            /** @enum {string} */
-            interface: "GIGE" | "USB" | "CAMERA_LINK" | "COAXPRESS";
-            /** @enum {string} */
-            maker: "MATROX" | "EURESYS" | "ADLINK" | "BASLER";
-            memory: number;
-            pcSlot: string;
-            connector: string;
-        };
-        CreateFrameGrabberProductDto: {
-            frameGrabber: components["schemas"]["BaseFrameGrabberDto"];
-            name: string;
-            mainFeature: string;
-            /** Format: uri */
-            datasheetUrl?: string;
-            /** Format: uri */
-            drawingUrl?: string;
-            /** Format: uri */
-            manualUrl?: string;
-            images: components["schemas"]["CreateImageDto"][];
-        };
-        UpdateFrameGrabberDto: {
-            id: number;
-        };
-        UpdateFrameGrabberProductDto: {
-            frameGrabber?: components["schemas"]["UpdateFrameGrabberDto"];
-            id: number;
-            images?: components["schemas"]["UpdateImageDto"][];
-        };
-        BaseLensDto: {
-            /** @enum {string} */
-            type: "CCTV" | "TCL";
-            /** @enum {string} */
-            mount: "C" | "CS" | "F" | "M";
-            maker: string;
-            resolution: number;
-            numericAperture: string;
-            fNumnber: string;
-            focalLength: number;
-            formatSize: number;
-        };
-        CreateLensProductDto: {
-            lens: components["schemas"]["BaseLensDto"];
-            name: string;
-            mainFeature: string;
-            /** Format: uri */
-            datasheetUrl?: string;
-            /** Format: uri */
-            drawingUrl?: string;
-            /** Format: uri */
-            manualUrl?: string;
-            images: components["schemas"]["CreateImageDto"][];
-        };
-        UpdateLensDto: {
-            id: number;
-        };
-        UpdateLensProductDto: {
-            lens?: components["schemas"]["UpdateLensDto"];
-            id: number;
-            images?: components["schemas"]["UpdateImageDto"][];
-        };
-        BaseSoftwareDto: {
-            /** @enum {string} */
-            maker: "MATROX" | "EURESYS";
-        };
-        CreateSoftwareProductDto: {
-            software: components["schemas"]["BaseSoftwareDto"];
-            name: string;
-            mainFeature: string;
-            /** Format: uri */
-            datasheetUrl?: string;
-            /** Format: uri */
-            drawingUrl?: string;
-            /** Format: uri */
-            manualUrl?: string;
-            images: components["schemas"]["CreateImageDto"][];
-        };
-        UpdateSoftwareDto: Record<string, never>;
-        UpdateSoftwareProductDto: {
-            software?: components["schemas"]["UpdateSoftwareDto"];
-            id: number;
-            images?: components["schemas"]["UpdateImageDto"][];
-        };
-        BaseLightDto: {
-            /** Format: uri */
-            catalogUrl: string;
-        };
-        CreateLightProductDto: {
-            light: components["schemas"]["BaseLightDto"];
-        };
-        UpdateLightDto: {
-            id: number;
-        };
-        UpdateLightProductDto: {
-            light?: components["schemas"]["UpdateLightDto"];
-        };
         RegisterAdminDto: {
             /** Format: email */
             email: string;
@@ -702,237 +399,35 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    ProductsController_createCamera: {
+    ProductsController_paginateProducts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProductsController_createProduct: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCameraProductDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_updateCamera: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                productId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCameraProductDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_createFrameGrabber: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFrameGrabberProductDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_updateFrameGrabber: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                productId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFrameGrabberProductDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_createLens: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateLensProductDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_updateLens: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                productId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateLensProductDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_createSoftware: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateSoftwareProductDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_updateSoftware: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                productId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateSoftwareProductDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_createLightProduct: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateLightProductDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProductModel"];
-                };
-            };
-        };
-    };
-    ProductsController_updateLightProduct: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                productId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateLightProductDto"];
-            };
-        };
-        responses: {
-            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -964,13 +459,11 @@ export interface operations {
             };
         };
     };
-    ProductsController_paginateProducts: {
+    ProductsController_updateProduct: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                category: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -979,7 +472,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ProductModel"];
+                };
             };
         };
     };
