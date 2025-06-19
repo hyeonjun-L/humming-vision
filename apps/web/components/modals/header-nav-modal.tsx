@@ -1,5 +1,10 @@
 "use client";
-import { ADMIN_NAV_ITEMS, NAV_ITEMS, type NavItem } from "consts/route.const";
+import {
+  ADMIN_NAV_ITEMS,
+  ADMIN_ROUTE_PATH,
+  NAV_ITEMS,
+  type NavItem,
+} from "consts/route.const";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowSVG } from "public/svg/index";
@@ -24,7 +29,7 @@ function HeaderNavModal() {
 
   const closeModal = useModalStore((state) => state.closeModal);
 
-  const currentNavItems = pathname.startsWith("/admin")
+  const currentNavItems = pathname.startsWith(ADMIN_ROUTE_PATH)
     ? ADMIN_NAV_ITEMS
     : NAV_ITEMS;
 
@@ -58,7 +63,7 @@ function HeaderNavModal() {
           const { name } = item;
           const isLastItem = NAV_ITEMS.length - 1 === index;
 
-          const isAdminPath = pathname.startsWith("/admin");
+          const isAdminPath = pathname.startsWith(ADMIN_ROUTE_PATH);
           const currentPathSegment = pathname.split("/")[isAdminPath ? 2 : 1];
 
           const targetName =
