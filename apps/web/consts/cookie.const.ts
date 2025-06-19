@@ -12,10 +12,10 @@ export const createCookieOptions = (
   secure: process.env[NODE_ENV_KEY] === "production",
   sameSite: "strict",
   path: "/",
-  maxAge:
-    maxAgeEnvKey && process.env[maxAgeEnvKey]
-      ? parseInt(process.env[maxAgeEnvKey], 10)
-      : undefined,
+  // maxAge:
+  //   maxAgeEnvKey && process.env[maxAgeEnvKey]
+  //     ? parseInt(process.env[maxAgeEnvKey], 10)
+  //     : undefined,
 });
 
 export const ACCESS_TOKEN_COOKIE_OPTIONS = createCookieOptions(
