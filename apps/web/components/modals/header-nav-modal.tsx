@@ -1,7 +1,7 @@
 "use client";
-import { NAV_ITEMS, type NavItem } from "consts/route.const";
+import { ADMIN_NAV_ITEMS, NAV_ITEMS, type NavItem } from "consts/route.const";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ArrowSVG } from "public/svg/index";
 import { useModalStore } from "stores/use-modal.store";
 import cn from "utils/cn";
@@ -20,8 +20,25 @@ const hasDirectLink = (
 
 function HeaderNavModal() {
   const pathname = usePathname();
+  const router = useRouter();
 
   const closeModal = useModalStore((state) => state.closeModal);
+
+  const currentNavItems = pathname.startsWith("/admin")
+    ? ADMIN_NAV_ITEMS
+    : NAV_ITEMS;
+
+  const normalizeString = (str?: string) =>
+    str
+      ?.toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/[^a-z0-9가-힣]/g, "") || "";
+
+  const handleNavigation = async (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    await closeModal();
+    router.push(href);
+  };
 
   return (
     <section className="bg-background absolute right-0 flex h-screen w-full flex-col overflow-scroll px-10 py-5 sm:w-[476px]">
@@ -37,22 +54,31 @@ function HeaderNavModal() {
         </div>
       </div>
       <ul className="flex w-full flex-col">
-        {NAV_ITEMS.map((item) => {
+        {currentNavItems.map((item, index) => {
           const { name } = item;
-          const isContact = name === "Contact";
-          const isPathActive = pathname.startsWith(`/${name.toLowerCase()}`);
+          const isLastItem = NAV_ITEMS.length - 1 === index;
+
+          const isAdminPath = pathname.startsWith("/admin");
+          const currentPathSegment = pathname.split("/")[isAdminPath ? 2 : 1];
+
+          const targetName =
+            isAdminPath && hasDirectLink(item) ? item.href.split("/")[2] : name;
+
+          const isPathActive =
+            normalizeString(currentPathSegment) === normalizeString(targetName);
 
           return (
             <li
               key={name}
               className={cn(
                 "border-gray200 mb-10 flex min-h-24 w-full border-b pb-10",
-                isContact && "mb-0 border-b-0",
+                isLastItem && "mb-0 border-b-0",
               )}
             >
               {hasDirectLink(item) ? (
                 <Link
                   href={item.href}
+                  onClick={(e) => handleNavigation(e, item.href)}
                   className={cn(
                     "text-gray600 w-40 font-semibold",
                     isPathActive && "text-main font-bold",
@@ -76,6 +102,7 @@ function HeaderNavModal() {
                     <Link
                       key={subName}
                       href={subHref}
+                      onClick={(e) => handleNavigation(e, subHref)}
                       className={cn(
                         "hover:text-main w-full min-w-max text-base hover:font-bold",
                         pathname === subHref &&

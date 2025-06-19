@@ -1,11 +1,13 @@
-import { ModalType } from "types/modal.type";
+import { ModalEnum } from "consts/modal.const";
 import { create } from "zustand";
+
+export type ModalType = ModalEnum | null;
 
 interface ModalState {
   modalType: ModalType;
   modalProps?: Record<string, unknown>;
   openModal: (type: ModalType, props?: Record<string, unknown>) => void;
-  closeModal: () => void;
+  closeModal: () => Promise<void>;
   initializeBackHandler: () => void;
 }
 
@@ -41,15 +43,32 @@ export const useModalStore = create<ModalState>((set, get) => {
     },
 
     closeModal: () => {
-      const currentState = get();
+      return new Promise<void>((resolve) => {
+        const currentState = get();
 
-      if (typeof window === "undefined") return;
+        if (typeof window === "undefined") {
+          resolve();
+          return;
+        }
 
-      if (currentState.modalType && window.history.state?.modal) {
-        window.history.back();
-      } else {
-        set({ modalType: null, modalProps: {} });
-      }
+        if (!currentState.modalType) {
+          resolve();
+          return;
+        }
+
+        const handlePop = () => {
+          resolve();
+          window.removeEventListener("popstate", handlePop);
+        };
+
+        if (window.history.state?.modal) {
+          window.addEventListener("popstate", handlePop);
+          window.history.back();
+        } else {
+          set({ modalType: null, modalProps: {} });
+          resolve();
+        }
+      });
     },
 
     initializeBackHandler: () => {

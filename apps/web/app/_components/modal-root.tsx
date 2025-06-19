@@ -2,8 +2,8 @@
 
 import HeaderNavModal from "components/modals/header-nav-modal";
 import { useModalStore } from "stores/use-modal.store";
-import { ModalEnum } from "types/modal.type";
 import { useEffect, useState } from "react";
+import { ModalEnum } from "consts/modal.const";
 
 export default function ModalRoot() {
   const { modalType, modalProps } = useModalStore();

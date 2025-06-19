@@ -28,7 +28,7 @@ export enum AdminRoutePath {
   LOGIN = "/login",
   CONTACT = "/contact",
   PRODUCTS = "/products",
-  PRODUCT_CREATE = "/products/create",
+  PRODUCT_CREATE = "/product/create",
 }
 
 // Navigation item types

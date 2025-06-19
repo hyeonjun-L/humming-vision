@@ -21,7 +21,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { setAdmin } = useAdminStore();
+  const setAdmin = useAdminStore((state) => state.setAdmin);
 
   const {
     register,
