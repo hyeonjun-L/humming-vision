@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import cn from "utils/cn";
 import { type NavItem, type NavItemWithSubmenu } from "consts/route.const";
 import { HeaderState } from "./hooks/use-header-state.hook";
@@ -14,8 +13,7 @@ function hasSubmenus(item: NavItem): item is NavItemWithSubmenu {
 }
 
 export function Navigation({ navItems, state }: NavigationProps) {
-  const pathname = usePathname();
-  const { isClient } = state;
+  const { isClient, headerVariant, pathname } = state;
 
   return (
     <div className="relative hidden items-start lg:flex lg:gap-9 lg:text-lg xl:text-xl 2xl:gap-13">
@@ -27,7 +25,10 @@ export function Navigation({ navItems, state }: NavigationProps) {
           : (item.href ?? "#");
 
         const isPathActive =
-          isClient && pathname.startsWith(`/${name.toLowerCase()}`);
+          isClient &&
+          (headerVariant === "admin"
+            ? mainHref === pathname
+            : pathname.startsWith(`/${name.toLowerCase()}`));
 
         return (
           <div

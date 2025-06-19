@@ -8,6 +8,7 @@ import {
 } from "consts/route.const";
 
 export interface HeaderState {
+  pathname: string;
   isClient: boolean;
   isAdminPage: boolean;
   isAdminLoginPage: boolean;
@@ -38,6 +39,7 @@ export function useHeaderState(): HeaderState {
   }, []);
 
   return {
+    pathname,
     isClient,
     isAdminPage,
     isAdminLoginPage,

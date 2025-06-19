@@ -5,6 +5,7 @@ import { useHeaderState } from "./hooks/use-header-state.hook";
 import { getHeaderClassName, getNavClassName } from "./utils/header-styles";
 import { Navigation } from "./navigation";
 import { AdminActions } from "./admin-actions";
+import { ADMIN_ROUTE_PATH } from "consts/route.const";
 
 function Header() {
   const state = useHeaderState();
@@ -14,7 +15,9 @@ function Header() {
       <nav className={getNavClassName(state)}>
         <Logo />
         <Navigation navItems={state.navItems} state={state} />
-        <AdminActions state={state} />
+        {state.pathname.startsWith(ADMIN_ROUTE_PATH) && (
+          <AdminActions state={state} />
+        )}
         <HeaderNavModalViewButton />
       </nav>
     </header>
