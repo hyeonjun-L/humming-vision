@@ -2,8 +2,12 @@
 import Table from "components/table";
 import { Contact } from "@humming-vision/shared";
 import { type ColumnDef } from "@tanstack/react-table";
+import Pagination from "components/pagination";
+import { useState } from "react";
 
-function page() {
+function Page() {
+  const [currentPage, setCurrentPage] = useState(1);
+
   const columns: ColumnDef<Contact>[] = [
     {
       accessorKey: "id",
@@ -41,13 +45,13 @@ function page() {
         return (
           <div className="flex justify-center gap-2">
             <button
-              className="text-blue-500 hover:underline"
+              className="bg-main px-4 py-1 text-white"
               onClick={() => alert(`읽기: ${contact.id}`)}
             >
-              읽기
+              상세
             </button>
             <button
-              className="text-red-500 hover:underline"
+              className="bg-gray300 px-4 py-1 text-white"
               onClick={() => alert(`삭제: ${contact.id}`)}
             >
               삭제
@@ -87,8 +91,16 @@ function page() {
         dsadas <p>dsadas</p>
       </div>
       <Table data={data} columns={columns} />
+      <Pagination
+        currentPage={currentPage}
+        take={5}
+        total={40}
+        onPageChange={(page: number) => {
+          setCurrentPage(page);
+        }}
+      />
     </main>
   );
 }
 
-export default page;
+export default Page;

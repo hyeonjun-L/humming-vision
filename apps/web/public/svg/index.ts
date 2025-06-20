@@ -8,3 +8,5 @@ export { default as EmailSVG } from "./email.svg";
 export { default as LockSVG } from "./lock.svg";
 export { default as SpinnerSVG } from "./spiner.svg";
 export { default as PersonSVG } from "./person.svg";
+export { default as DoubleArrowSVG } from "./double-arrow.svg";
+export { default as PaginationArrowSVG } from "./pagination-arrow.svg";
