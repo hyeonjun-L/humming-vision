@@ -1,5 +1,4 @@
 import * as React from "react";
-import cn from "utils/cn";
 
 import {
   Select,
@@ -17,17 +16,15 @@ type SelectBoxProps = {
   placeholder?: string;
   defaultValue?: string;
   value?: string;
-  className?: string;
   onValueChange?: (value: string) => void;
 };
 
 export function SelectBox({
   options,
   selectLabel,
-  placeholder = "Select a fruit",
+  placeholder,
   defaultValue,
   value,
-  className,
   onValueChange,
 }: SelectBoxProps) {
   return (
@@ -36,7 +33,7 @@ export function SelectBox({
       defaultValue={defaultValue}
       value={value}
     >
-      <SelectTrigger className={cn("w-[180px]", className)}>
+      <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
