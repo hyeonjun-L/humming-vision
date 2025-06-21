@@ -86,19 +86,23 @@ function Page() {
   ];
 
   return (
-    <main className="mx-auto mt-44 max-w-7xl">
-      <div className="border-main flex justify-between border-b">
-        dsadas <p>dsadas</p>
+    <main className="mx-auto mt-33 max-w-7xl">
+      <hr className="border-gray200 absolute left-0 w-screen border-t" />
+      <div className="border-main flex justify-between border-b py-5.5">
+        <h2 className="text-main text-2xl font-bold">제품문의</h2>
+        <div className="gap-5"></div>
       </div>
       <Table data={data} columns={columns} />
-      <Pagination
-        currentPage={currentPage}
-        take={5}
-        total={40}
-        onPageChange={(page: number) => {
-          setCurrentPage(page);
-        }}
-      />
+      <div className="mt-8 flex w-full justify-center">
+        <Pagination
+          currentPage={currentPage}
+          take={5}
+          total={40}
+          onPageChange={(page: number) => {
+            setCurrentPage(page);
+          }}
+        />
+      </div>
     </main>
   );
 }

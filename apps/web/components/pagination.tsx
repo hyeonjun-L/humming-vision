@@ -1,4 +1,4 @@
-import { DoubleArrowSVG, PaginationArrowSVG } from "public/svg/index";
+import { DoubleArrowSVG, PaginationArrowSVG } from "public/svg";
 import cn from "utils/cn";
 
 type PaginationProps = {
@@ -7,6 +7,24 @@ type PaginationProps = {
   total: number;
   onPageChange: (page: number) => void;
 };
+
+const PageIconButton = ({
+  onClick,
+  disabled,
+  icon,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  icon: React.ReactElement;
+}) => (
+  <button
+    disabled={disabled}
+    onClick={onClick}
+    className="group flex size-9 items-center justify-center rounded-full hover:bg-[#D7DAFF]"
+  >
+    {icon}
+  </button>
+);
 
 export default function Pagination({
   currentPage,
@@ -26,56 +44,58 @@ export default function Pagination({
   }
 
   return (
-    <nav className="mt-4 flex gap-2">
+    <nav className="mt-4 flex gap-3">
       <div className="flex items-center gap-2.5">
-        <button
+        <PageIconButton
           disabled={currentPage === 1}
           onClick={() => onPageChange(1)}
-          className="flex size-9 items-center justify-center"
-        >
-          <DoubleArrowSVG className="stroke-gray400 size-4 -scale-x-100" />
-        </button>
-        <button
+          icon={
+            <DoubleArrowSVG className="group-hover:stroke-main stroke-gray400 size-4 -scale-x-100" />
+          }
+        />
+        <PageIconButton
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className="flex size-9 items-center justify-center"
-        >
-          <PaginationArrowSVG className="stroke-gray400 size-4 -scale-x-100" />
-        </button>
+          icon={
+            <PaginationArrowSVG className="group-hover:stroke-main stroke-gray400 size-4 -scale-x-100" />
+          }
+        />
       </div>
 
-      {Array.from({ length: end - start + 1 }).map((_, i) => {
-        const pageNumber = start + i;
-        return (
-          <button
-            key={pageNumber}
-            onClick={() => onPageChange(pageNumber)}
-            className={cn(
-              currentPage === pageNumber &&
-                "text-main rounded-full bg-[#D7DAFF]",
-              "text-gray600 size-9 text-base",
-            )}
-          >
-            {pageNumber}
-          </button>
-        );
-      })}
+      <div className="flex items-center gap-3">
+        {Array.from({ length: end - start + 1 }).map((_, i) => {
+          const pageNumber = start + i;
+          return (
+            <button
+              key={pageNumber}
+              onClick={() => onPageChange(pageNumber)}
+              className={cn(
+                currentPage === pageNumber &&
+                  "text-main rounded-full bg-[#D7DAFF]",
+                "text-gray600 hover:text-main size-9 text-base",
+              )}
+            >
+              {pageNumber}
+            </button>
+          );
+        })}
+      </div>
 
       <div className="flex items-center gap-2.5">
-        <button
+        <PageIconButton
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-          className="flex size-9 items-center justify-center"
-        >
-          <PaginationArrowSVG className="stroke-gray400 size-4" />
-        </button>
-        <button
+          icon={
+            <PaginationArrowSVG className="group-hover:stroke-main stroke-gray400 size-4" />
+          }
+        />
+        <PageIconButton
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(totalPages)}
-          className="flex size-9 items-center justify-center"
-        >
-          <DoubleArrowSVG className="stroke-gray400 size-4" />
-        </button>
+          icon={
+            <DoubleArrowSVG className="group-hover:stroke-main stroke-gray400 size-4" />
+          }
+        />
       </div>
     </nav>
   );
