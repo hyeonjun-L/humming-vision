@@ -4,8 +4,10 @@ import { Contact } from "@humming-vision/shared";
 import { type ColumnDef } from "@tanstack/react-table";
 import Pagination from "components/pagination";
 import { useState } from "react";
+import { SelectBox } from "components/select-box/select-box";
 
 function Page() {
+  const [category, setCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   const columns: ColumnDef<Contact>[] = [
@@ -85,12 +87,25 @@ function Page() {
     },
   ];
 
+  const selectOptions = [
+    { value: "all", label: "전체" },
+    { value: "unread", label: "읽지 않음" },
+    { value: "read", label: "읽음" },
+    { value: "deleted", label: "삭제됨" },
+  ];
+
   return (
     <main className="mx-auto mt-33 max-w-7xl">
       <hr className="border-gray200 absolute left-0 w-screen border-t" />
       <div className="border-main flex justify-between border-b py-5.5">
         <h2 className="text-main text-2xl font-bold">제품문의</h2>
-        <div className="gap-5"></div>
+        <div className="gap-5">
+          <SelectBox
+            options={selectOptions}
+            selectLabel="filter"
+            onValueChange={() => {}}
+          />
+        </div>
       </div>
       <Table data={data} columns={columns} />
       <div className="mt-8 flex w-full justify-center">
