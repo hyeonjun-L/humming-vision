@@ -1,111 +1,66 @@
-import {
-  type NextFetchEvent,
-  type NextRequest,
-  NextResponse,
-} from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
-import {
-  ACCESS_TOKEN_COOKIE_OPTIONS,
-  REFRESH_TOKEN_COOKIE_OPTIONS,
-  COOKIE_NAMES,
-} from "consts/cookie.const";
+import { COOKIE_NAMES } from "consts/cookie.const";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 import verifyAccessToken from "utils/verify-access-token";
 
-export async function middleware(request: NextRequest, event: NextFetchEvent) {
+export async function middleware(request: NextRequest) {
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
-
   const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
-
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
-
   const pathname = request.nextUrl.pathname;
 
   if (!END_POINT) {
     return NextResponse.json("API endpoint not configured", { status: 500 });
   }
 
-  if (pathname === `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`) {
+  const loginPath = `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
+  const contactPath = `${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`;
+
+  if (pathname === loginPath) {
     if (accessToken) {
-      return NextResponse.redirect(
-        new URL(`${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`, request.url),
-      );
+      try {
+        await verifyAccessToken(accessToken);
+        return NextResponse.redirect(new URL(contactPath, request.url));
+      } catch {
+        // accessToken이 있지만 유효하지 않으면 그냥 로그인 페이지로
+      }
     }
 
-    if (!refreshToken) {
-      return NextResponse.next();
-    }
+    return NextResponse.next();
   }
-
-  const redirectResponse = NextResponse.redirect(
-    new URL(`${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`, request.url),
-  );
 
   if (accessToken) {
     try {
       await verifyAccessToken(accessToken);
       return NextResponse.next();
     } catch {
-      redirectResponse.cookies.delete(COOKIE_NAMES.ACCESS_TOKEN);
+      if (refreshToken) {
+        const refreshUrl = request.nextUrl.clone();
+        refreshUrl.pathname = "/admin/refresh";
+        refreshUrl.searchParams.set("redirect", pathname);
+        return NextResponse.rewrite(refreshUrl);
+      } else {
+        const loginUrl = new URL(loginPath, request.url);
+        return NextResponse.redirect(loginUrl);
+      }
     }
   }
 
-  if (!refreshToken) {
-    return redirectResponse;
+  if (refreshToken) {
+    const refreshUrl = request.nextUrl.clone();
+    refreshUrl.pathname = "/admin/refresh";
+    refreshUrl.searchParams.set("redirect", pathname);
+    return NextResponse.rewrite(refreshUrl);
   }
 
-  const refreshPromise = fetch(`${END_POINT}/admin/token/access`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${refreshToken}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  event.waitUntil(refreshPromise);
-
-  try {
-    const refreshResponse = await refreshPromise;
-
-    if (refreshResponse.ok) {
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-        await refreshResponse.json();
-
-      const response =
-        pathname === `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`
-          ? NextResponse.redirect(
-              new URL(
-                `${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`,
-                request.url,
-              ),
-            )
-          : NextResponse.next();
-
-      response.cookies.set(
-        COOKIE_NAMES.ACCESS_TOKEN,
-        newAccessToken,
-        ACCESS_TOKEN_COOKIE_OPTIONS,
-      );
-
-      response.cookies.set(
-        COOKIE_NAMES.REFRESH_TOKEN,
-        newRefreshToken,
-        REFRESH_TOKEN_COOKIE_OPTIONS,
-      );
-
-      return response;
-    }
-  } catch (error) {
-    console.error("Token refresh failed:", error);
-  }
-
-  redirectResponse.cookies.delete(COOKIE_NAMES.REFRESH_TOKEN);
-  return redirectResponse;
+  const loginUrl = new URL(loginPath, request.url);
+  return NextResponse.redirect(loginUrl);
 }
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico)admin.*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|admin/refresh).*)",
     "/admin$",
   ],
 };

@@ -27,10 +27,21 @@ export class AdminController {
   @IsPublic()
   @UseGuards(RefreshTokenGuard)
   async tokenAccess(@Headers('authorization') rawToken: string) {
+    console.log('api tokenAccess rawToken', rawToken);
+
     const token = this.adminService.extractTokenFromHeader(rawToken, true);
+
+    console.log('api tokenAccess', token);
+
     const newAccessToken = this.adminService.rotateToken(token, false);
     const newRefreshToken = this.adminService.rotateToken(token, true);
+
+    console.log('api newAccessToken', newAccessToken);
+    console.log('api newRefreshToken', newRefreshToken);
+
     await this.adminService.updateSessionByAdminId(newRefreshToken);
+
+    console.log('api updateSessionByAdminId', newRefreshToken);
     return {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
