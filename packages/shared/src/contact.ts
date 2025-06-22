@@ -1,4 +1,4 @@
-import { components } from "./schema";
+import { components, operations } from "./schema";
 
 export interface Contact
   extends Pick<
@@ -12,3 +12,8 @@ export interface Contact
     | "message"
     | "isRead"
   > {}
+
+export type GetContactQuery =
+  operations["ContactController_getContacts"]["parameters"]["query"];
+
+// ContactController_getContacts
