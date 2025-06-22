@@ -9,7 +9,7 @@ interface AdminActionsProps {
   state: HeaderState;
 }
 
-export function AdminActions({ state }: AdminActionsProps) {
+function AdminActions({ state }: AdminActionsProps) {
   const { headerVariant } = state;
   const admin = useAdminStore((state) => state.admin);
 
@@ -35,3 +35,5 @@ export function AdminActions({ state }: AdminActionsProps) {
     </div>
   ) : null;
 }
+
+export default AdminActions;

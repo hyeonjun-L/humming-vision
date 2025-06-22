@@ -8,7 +8,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 
 export const GET = async (request: NextRequest) => {
-  console.log("Admin refresh token route called");
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
 
   const url = new URL(request.url);
