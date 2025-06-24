@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import api from "libs/axios";
+import { protectApi } from "libs/axios";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 import { useAdminStore } from "stores/use-admin.store";
 import { Admin } from "@humming-vision/shared";
@@ -17,7 +17,7 @@ function useAuthVerification(skip: boolean) {
   return useQuery({
     queryKey: ["admin-auth"],
     queryFn: async () => {
-      const response = await api.get<Admin>("/api/admin/info");
+      const response = await protectApi.get<Admin>("/api/admin/info");
       return response.data;
     },
     enabled: !skip,

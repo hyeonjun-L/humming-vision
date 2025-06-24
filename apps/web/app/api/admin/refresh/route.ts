@@ -1,61 +1,60 @@
-import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import {
   ACCESS_TOKEN_COOKIE_OPTIONS,
   REFRESH_TOKEN_COOKIE_OPTIONS,
   COOKIE_NAMES,
 } from "consts/cookie.const";
 import { NextResponse, type NextRequest } from "next/server";
-import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
+import { publicApi } from "libs/axios";
 
 export const GET = async (request: NextRequest) => {
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
-
   if (!refreshToken) {
     return NextResponse.json({ message: "NO_REFRESH" }, { status: 401 });
   }
 
-  const END_POINT = process.env[ENV_API_END_POINT_KEY];
+  try {
+    console.log("Refreshing access token...", refreshToken);
 
-  if (!END_POINT) {
-    return NextResponse.json("API endpoint not configured", { status: 500 });
-  }
+    const response = await publicApi.post(
+      "/admin/token/access",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
 
-  const response = await fetch(`${END_POINT}/admin/token/access`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${refreshToken}`,
-      "Content-Type": "application/json",
-    },
-  });
+    const result = response.data;
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+      result;
 
-  if (!response.ok) {
-    const redirectResponse = NextResponse.json(
+    const nextResponse = NextResponse.json({ status: 200 });
+
+    nextResponse.cookies.set(
+      COOKIE_NAMES.ACCESS_TOKEN,
+      newAccessToken,
+      ACCESS_TOKEN_COOKIE_OPTIONS,
+    );
+
+    nextResponse.cookies.set(
+      COOKIE_NAMES.REFRESH_TOKEN,
+      newRefreshToken,
+      REFRESH_TOKEN_COOKIE_OPTIONS,
+    );
+
+    return nextResponse;
+  } catch (error) {
+    console.error("Token refresh failed:", error);
+
+    const response = NextResponse.json(
       { message: "NO_REFRESH" },
       { status: 401 },
     );
 
-    redirectResponse.cookies.delete(COOKIE_NAMES.REFRESH_TOKEN);
+    response.cookies.delete(COOKIE_NAMES.REFRESH_TOKEN);
 
-    return redirectResponse;
+    return response;
   }
-
-  const result = await response.json();
-
-  const { accessToken: newAccessToken, refreshToken: newRefreshToken } = result;
-
-  const nextResponse = NextResponse.json({ status: 200 });
-
-  nextResponse.cookies.set(
-    COOKIE_NAMES.ACCESS_TOKEN,
-    newAccessToken,
-    ACCESS_TOKEN_COOKIE_OPTIONS,
-  );
-
-  nextResponse.cookies.set(
-    COOKIE_NAMES.REFRESH_TOKEN,
-    newRefreshToken,
-    REFRESH_TOKEN_COOKIE_OPTIONS,
-  );
-
-  return nextResponse;
 };

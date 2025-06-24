@@ -5,13 +5,24 @@ import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 let isRefreshing = false;
 let failedQueue: (() => void)[] = [];
 
-const api = axios.create({
+export const protectApi = axios.create({
   baseURL: process.env[ENV_API_END_POINT_KEY],
   withCredentials: true,
   adapter: "fetch",
+  fetchOptions: {
+    cache: "no-cache",
+  },
 });
 
-api.interceptors.response.use(
+export const publicApi = axios.create({
+  baseURL: process.env[ENV_API_END_POINT_KEY],
+  adapter: "fetch",
+  fetchOptions: {
+    cache: "default",
+  },
+});
+
+protectApi.interceptors.response.use(
   (res) => res,
   async (error) => {
     const originalRequest = error.config;
@@ -21,7 +32,7 @@ api.interceptors.response.use(
 
       if (isRefreshing) {
         return new Promise((resolve) => {
-          failedQueue.push(() => resolve(api(originalRequest)));
+          failedQueue.push(() => resolve(protectApi(originalRequest)));
         });
       }
 
@@ -33,6 +44,7 @@ api.interceptors.response.use(
         });
 
         if (!refreshResponse.ok) {
+          console.log(refreshResponse);
           throw new Error(
             `Refresh failed with status: ${refreshResponse.status}`,
           );
@@ -40,7 +52,7 @@ api.interceptors.response.use(
 
         failedQueue.forEach((cb) => cb());
         failedQueue = [];
-        return api(originalRequest);
+        return protectApi(originalRequest);
       } catch {
         failedQueue = [];
         window.location.href = `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
@@ -53,5 +65,3 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-export default api;
