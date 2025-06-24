@@ -18,7 +18,10 @@ export const publicApi = axios.create({
   baseURL: process.env[ENV_API_END_POINT_KEY],
   adapter: "fetch",
   fetchOptions: {
-    cache: "default",
+    cache: "force-cache",
+    next: {
+      revalidate: 3600,
+    },
   },
 });
 
@@ -38,17 +41,14 @@ protectApi.interceptors.response.use(
 
       isRefreshing = true;
       try {
-        const refreshResponse = await fetch("/api/admin/refresh", {
-          method: "GET",
-          credentials: "include",
+        await axios.get("/admin/refresh", {
+          baseURL: process.env[ENV_API_END_POINT_KEY],
+          withCredentials: true,
+          adapter: "fetch",
+          fetchOptions: {
+            cache: "no-cache",
+          },
         });
-
-        if (!refreshResponse.ok) {
-          console.log(refreshResponse);
-          throw new Error(
-            `Refresh failed with status: ${refreshResponse.status}`,
-          );
-        }
 
         failedQueue.forEach((cb) => cb());
         failedQueue = [];

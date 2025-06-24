@@ -176,7 +176,8 @@ export class AdminService {
     const refreshExpiresMs = Number(
       this.configService.get(ENV_JWT_REFRESH_EXPIRES),
     );
-    const expiresAt = new Date(Date.now() + refreshExpiresMs);
+    const expiresAt = new Date(Date.now() + refreshExpiresMs * 1000);
+
     const session = await this.getSessionByAdminId(adminId);
 
     if (session) {
