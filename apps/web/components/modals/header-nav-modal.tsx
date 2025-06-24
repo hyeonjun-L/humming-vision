@@ -9,7 +9,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowSVG } from "public/svg/index";
 import { useModalStore } from "stores/use-modal.store";
-import cn from "utils/cn";
+import cn from "libs/cn";
 
 const hasSubmenu = (
   item: NavItem,

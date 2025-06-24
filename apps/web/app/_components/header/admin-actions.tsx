@@ -3,7 +3,6 @@
 import { HeaderState } from "./hooks/use-header-state.hook";
 import { PersonSVG } from "public/svg/index";
 import { useAdminStore } from "stores/use-admin.store";
-import { useInitializeAdmin } from "./hooks/use-initialize-admin.hook";
 
 interface AdminActionsProps {
   state: HeaderState;
@@ -13,11 +12,16 @@ function AdminActions({ state }: AdminActionsProps) {
   const { headerVariant } = state;
   const admin = useAdminStore((state) => state.admin);
 
-  const { isPending } = useInitializeAdmin();
-
   if (headerVariant !== "admin") return null;
 
-  return isPending ? (
+  return admin ? (
+    <div className="ml-auto hidden items-center gap-4 sm:flex lg:mt-4">
+      <button className="text-gray600 flex items-center gap-1.5 text-base font-normal">
+        <PersonSVG />
+        <p className="max-w-40 truncate">{admin.email}</p>
+      </button>
+    </div>
+  ) : (
     <div className="ml-auto hidden animate-pulse items-center gap-4 sm:flex lg:mt-4">
       <div className="flex items-center gap-1.5">
         <div className="h-5 w-5 rounded-full bg-gray-200"></div>
@@ -26,14 +30,7 @@ function AdminActions({ state }: AdminActionsProps) {
         </div>
       </div>
     </div>
-  ) : admin ? (
-    <div className="ml-auto hidden items-center gap-4 sm:flex lg:mt-4">
-      <button className="text-gray600 flex items-center gap-1.5 text-base font-normal">
-        <PersonSVG />
-        <p className="max-w-40 truncate">{admin.email}</p>
-      </button>
-    </div>
-  ) : null;
+  );
 }
 
 export default AdminActions;

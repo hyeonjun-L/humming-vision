@@ -9,7 +9,7 @@ import Fade from "embla-carousel-fade";
 import Autoplay from "embla-carousel-autoplay";
 import { useAutoplay } from "./EmblaCarouselAutoplay";
 import { ArrowSVG, PlaySVG, StopSVG } from "public/svg/index";
-import cn from "utils/cn";
+import cn from "libs/cn";
 
 type PropType = {
   slides: StaticImageData[];

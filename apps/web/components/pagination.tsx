@@ -1,5 +1,5 @@
 import { DoubleArrowSVG, PaginationArrowSVG } from "public/svg";
-import cn from "utils/cn";
+import cn from "libs/cn";
 
 type PaginationProps = {
   currentPage: number;

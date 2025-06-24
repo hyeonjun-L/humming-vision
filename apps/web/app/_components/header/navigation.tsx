@@ -1,5 +1,5 @@
 import Link from "next/link";
-import cn from "utils/cn";
+import cn from "libs/cn";
 import { type NavItem, type NavItemWithSubmenu } from "consts/route.const";
 import { HeaderState } from "./hooks/use-header-state.hook";
 
