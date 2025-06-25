@@ -55,7 +55,7 @@ export class AdminService {
     return existingAdmin;
   }
 
-  async loginAdmin(admin: Pick<AdminModel, 'email' | 'id'>) {
+  async loginAdmin(admin: AdminModel) {
     const accessToken = this.signToken(admin, false);
     const refreshToken = this.signToken(admin, true);
     await this.upsertSession(admin.id, refreshToken);

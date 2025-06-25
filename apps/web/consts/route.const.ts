@@ -30,8 +30,6 @@ export enum AdminRoutePath {
   PRODUCTS = "/products",
   PRODUCT_CREATE = "/product/create",
 }
-
-// Navigation item types
 export interface NavItemWithSubmenu {
   name: string;
   hrefs: { name: string; href: string }[];

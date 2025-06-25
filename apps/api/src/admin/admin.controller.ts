@@ -17,7 +17,7 @@ import { Roles } from './decorator/roles.decorator';
 import { RefreshTokenGuard } from './guard/bearer-token.guard';
 import { Admin } from './decorator/admin.decorator';
 import { AdminModel } from './entity/admin.entity';
-import { RolesEnum } from '@humming-vision/shared';
+import { RolesEnum, TokenResponse } from '@humming-vision/shared';
 
 @Controller('admin')
 export class AdminController {
@@ -26,7 +26,9 @@ export class AdminController {
   @Post('token/access')
   @IsPublic()
   @UseGuards(RefreshTokenGuard)
-  async tokenAccess(@Headers('authorization') rawToken: string) {
+  async tokenAccess(
+    @Headers('authorization') rawToken: string,
+  ): Promise<TokenResponse> {
     const token = this.adminService.extractTokenFromHeader(rawToken, true);
 
     const newAccessToken = this.adminService.rotateToken(token, false);
@@ -43,7 +45,9 @@ export class AdminController {
   @Post('token/refresh')
   @IsPublic()
   @UseGuards(RefreshTokenGuard)
-  async tokenRefresh(@Headers('authorization') rawToken: string) {
+  async tokenRefresh(
+    @Headers('authorization') rawToken: string,
+  ): Promise<Pick<TokenResponse, 'refreshToken'>> {
     const token = this.adminService.extractTokenFromHeader(rawToken, true);
     const newToken = this.adminService.rotateToken(token, true);
     await this.adminService.updateSessionByAdminId(newToken);
@@ -54,14 +58,18 @@ export class AdminController {
 
   @Post('register')
   @Roles(RolesEnum.SUPER)
-  registerAdmin(@Body() registerAdminDto: RegisterAdminDto) {
+  registerAdmin(
+    @Body() registerAdminDto: RegisterAdminDto,
+  ): Promise<AdminModel> {
     return this.adminService.registerAdminWithEmail(registerAdminDto);
   }
 
   @Post('login')
   @IsPublic()
   @UseGuards(BasicTokenGuard)
-  async postLoginEmail(@Headers('authorization') rawToken: string) {
+  async postLoginEmail(
+    @Headers('authorization') rawToken: string,
+  ): Promise<TokenResponse & { admin: AdminModel }> {
     const token = this.adminService.extractTokenFromHeader(rawToken, false);
     const credentials = this.adminService.decodeBasicToken(token);
     const { accessToken, refreshToken, admin } =

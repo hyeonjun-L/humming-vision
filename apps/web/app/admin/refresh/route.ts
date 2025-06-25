@@ -6,6 +6,8 @@ import {
 } from "consts/cookie.const";
 import { NextResponse, type NextRequest } from "next/server";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
+import axios from "axios";
+import { TokenResponse } from "@humming-vision/shared";
 
 export const GET = async (request: NextRequest) => {
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
@@ -25,16 +27,43 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json("API endpoint not configured", { status: 500 });
   }
 
-  const response = await fetch(`${END_POINT}/admin/token/access`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${refreshToken}`,
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+  try {
+    const response = await axios.post<TokenResponse>(
+      `${END_POINT}/admin/token/access`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+          "Content-Type": "application/json",
+        },
+        adapter: "fetch",
+        fetchOptions: {
+          cache: "no-cache",
+        },
+      },
+    );
 
-  if (!response.ok) {
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+      response.data;
+
+    const nextResponse = NextResponse.redirect(
+      new URL(redirectPath, request.url),
+    );
+
+    nextResponse.cookies.set(
+      COOKIE_NAMES.ACCESS_TOKEN,
+      newAccessToken,
+      ACCESS_TOKEN_COOKIE_OPTIONS,
+    );
+
+    nextResponse.cookies.set(
+      COOKIE_NAMES.REFRESH_TOKEN,
+      newRefreshToken,
+      REFRESH_TOKEN_COOKIE_OPTIONS,
+    );
+
+    return nextResponse;
+  } catch {
     const redirectResponse = NextResponse.redirect(
       new URL(redirectPath, request.url),
     );
@@ -43,26 +72,4 @@ export const GET = async (request: NextRequest) => {
 
     return redirectResponse;
   }
-
-  const result = await response.json();
-
-  const { accessToken: newAccessToken, refreshToken: newRefreshToken } = result;
-
-  const nextResponse = NextResponse.redirect(
-    new URL(redirectPath, request.url),
-  );
-
-  nextResponse.cookies.set(
-    COOKIE_NAMES.ACCESS_TOKEN,
-    newAccessToken,
-    ACCESS_TOKEN_COOKIE_OPTIONS,
-  );
-
-  nextResponse.cookies.set(
-    COOKIE_NAMES.REFRESH_TOKEN,
-    newRefreshToken,
-    REFRESH_TOKEN_COOKIE_OPTIONS,
-  );
-
-  return nextResponse;
 };

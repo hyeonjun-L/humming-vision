@@ -11,3 +11,8 @@ export enum RolesEnum {
   ADMIN = "ADMIN",
   EDITOR = "EDITOR",
 }
+
+export interface TokenResponse {
+  accessToken: string;
+  refreshToken: string;
+}

@@ -8,6 +8,8 @@ import { EmailSVG, LockSVG, SpinnerSVG } from "public/svg/index";
 import { useRouter } from "next/navigation";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 import { useAdminStore } from "stores/use-admin.store";
+import axios from "axios";
+import { Admin } from "@humming-vision/shared";
 
 const loginSchema = z.object({
   email: z
@@ -34,33 +36,34 @@ export default function AdminLoginPage() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: async ({ email, password }: LoginFormData) => {
-      const response = await fetch(
-        `/api/admin/login?email=${email}&password=${password}`,
-        {
-          method: "POST",
-          credentials: "include",
-        },
-      );
+    mutationFn: async ({
+      email,
+      password,
+    }: LoginFormData): Promise<{ admin: Admin }> => {
+      try {
+        const response = await axios.post<{ admin: Admin }>(
+          "/api/admin/login",
+          {
+            email,
+            password,
+          },
+        );
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        const errorMessage =
-          result.message ||
-          (result.status === 401
-            ? "로그인 실패: 잘못된 이메일 또는 비밀번호입니다."
-            : "로그인에 실패했습니다.");
-        throw new Error(errorMessage);
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          const errorMessage =
+            error.response.data.message ||
+            (error.response.status === 401 &&
+              "로그인 실패: 잘못된 이메일 또는 비밀번호입니다.");
+          throw new Error(errorMessage);
+        }
+        throw new Error("서버 오류 발생: 로그인에 실패했습니다.");
       }
-
-      return result;
     },
     onSuccess: (data) => {
-      // Zustand 스토어에 관리자 정보 저장
       setAdmin(data.admin);
 
-      // 관리자 페이지로 이동
       router.push(`${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`, {
         scroll: false,
       });

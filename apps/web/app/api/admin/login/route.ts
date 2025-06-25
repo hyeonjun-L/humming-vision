@@ -5,11 +5,12 @@ import {
   COOKIE_NAMES,
 } from "consts/cookie.const";
 import { NextResponse, type NextRequest } from "next/server";
+import axios from "axios";
+import { Admin, TokenResponse } from "@humming-vision/shared";
 
 export const POST = async (request: NextRequest) => {
-  const searchParams = request.nextUrl.searchParams;
-  const email = searchParams.get("email");
-  const password = searchParams.get("password");
+  const body = await request.json();
+  const { email, password } = body;
 
   if (!email || !password) {
     return NextResponse.json("Invalid request", { status: 400 });
@@ -26,43 +27,41 @@ export const POST = async (request: NextRequest) => {
     "Content-Type": "application/json",
   };
 
-  const response = await fetch(`${END_POINT}/admin/login`, {
-    method: "POST",
-    headers,
-  });
+  try {
+    const response = await axios.post<TokenResponse & { admin: Admin }>(
+      `${END_POINT}/admin/login`,
+      {},
+      { headers },
+    );
 
-  if (!response.ok) {
-    let errorData;
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      errorData = await response.json();
-    } else {
-      errorData = await response.text();
+    const responseWithCookies = NextResponse.json({
+      admin: response.data.admin,
+    });
+
+    responseWithCookies.cookies.set(
+      COOKIE_NAMES.ACCESS_TOKEN,
+      response.data.accessToken,
+      ACCESS_TOKEN_COOKIE_OPTIONS,
+    );
+
+    responseWithCookies.cookies.set(
+      COOKIE_NAMES.REFRESH_TOKEN,
+      response.data.refreshToken,
+      REFRESH_TOKEN_COOKIE_OPTIONS,
+    );
+
+    return responseWithCookies;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      const errorMessage = error.response.data.message || "Login failed";
+      return NextResponse.json(
+        { error: errorMessage, status: error.response.status },
+        { status: error.response.status },
+      );
     }
-
     return NextResponse.json(
-      {
-        error: "Login failed",
-        errorData,
-        status: response.status,
-      },
-      { status: response.status },
+      { error: "Server error occurred during login" },
+      { status: 500 },
     );
   }
-  const result = await response.json();
-  const responseWithCookies = NextResponse.json({ admin: result.admin });
-
-  responseWithCookies.cookies.set(
-    COOKIE_NAMES.ACCESS_TOKEN,
-    result.accessToken,
-    ACCESS_TOKEN_COOKIE_OPTIONS,
-  );
-
-  responseWithCookies.cookies.set(
-    COOKIE_NAMES.REFRESH_TOKEN,
-    result.refreshToken,
-    REFRESH_TOKEN_COOKIE_OPTIONS,
-  );
-
-  return responseWithCookies;
 };
