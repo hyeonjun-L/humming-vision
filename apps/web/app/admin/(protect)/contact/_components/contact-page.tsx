@@ -14,8 +14,14 @@ import { SearchInput } from "components/input";
 import { useQuery } from "@tanstack/react-query";
 import { publicApi } from "libs/axios";
 import ContactCardView from "./contact-card-view";
+import { useModalStore } from "stores/use-modal.store";
+import { ModalEnum } from "consts/modal.const";
 
 function ContactPage() {
+  const TAKE = 12;
+
+  const openModal = useModalStore((state) => state.openModal);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchField, setSearchField] = useState<ContactSearchFieldEnum>(
     ContactSearchFieldEnum.NAME,
@@ -25,7 +31,9 @@ function ContactPage() {
     useState<ContactSearchFieldEnum>(ContactSearchFieldEnum.NAME);
   const [activeSearchValue, setActiveSearchValue] = useState<string>("");
 
-  const TAKE = 12;
+  const handleContactModalOpen = (contactData: Contact) => {
+    openModal(ModalEnum.CONTACT, { data: contactData });
+  };
 
   const getContacts = async (page: number) => {
     const params: GetContactQuery = {
@@ -94,7 +102,7 @@ function ContactPage() {
           <div className="flex justify-center gap-2">
             <button
               className="bg-main px-4 py-1 whitespace-nowrap text-white"
-              onClick={() => alert(`읽기: ${contact.id}`)}
+              onClick={() => handleContactModalOpen(contact)}
             >
               상세
             </button>
@@ -118,7 +126,7 @@ function ContactPage() {
   ];
 
   return (
-    <main className="mx-auto my-33 max-w-7xl px-5 sm:mb-0 md:mx-10">
+    <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-0 md:px-10">
       <hr className="border-gray200 absolute left-0 w-screen border-t" />
       <div className="border-main flex flex-wrap justify-between gap-5 border-b py-5.5 sm:gap-0">
         <h2 className="text-main text-2xl font-bold">제품문의</h2>

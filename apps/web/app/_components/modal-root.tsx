@@ -1,9 +1,10 @@
 "use client";
 
 import HeaderNavModal from "components/modals/header-nav-modal";
-import { useModalStore } from "stores/use-modal.store";
+import { useModalStore, ModalProps } from "stores/use-modal.store";
 import { useEffect, useState } from "react";
 import { ModalEnum } from "consts/modal.const";
+import ContactModal from "components/modals/contact-modal";
 
 export default function ModalRoot() {
   const { modalType, modalProps } = useModalStore();
@@ -16,6 +17,22 @@ export default function ModalRoot() {
 
   useEffect(() => {
     setIsAnimating(!!modalType);
+
+    if (modalType) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflow = "";
+        window.scrollTo(0, scrollY);
+      };
+    }
   }, [modalType]);
 
   if (!modalType) return null;
@@ -23,7 +40,15 @@ export default function ModalRoot() {
   const renderModal = () => {
     switch (modalType) {
       case ModalEnum.HEADER_NAV:
-        return <HeaderNavModal {...modalProps} />;
+        return (
+          <HeaderNavModal
+            {...(modalProps as ModalProps[ModalEnum.HEADER_NAV])}
+          />
+        );
+      case ModalEnum.CONTACT:
+        return (
+          <ContactModal {...(modalProps as ModalProps[ModalEnum.CONTACT])} />
+        );
       default:
         return null;
     }
@@ -32,7 +57,7 @@ export default function ModalRoot() {
   return (
     <div
       onClick={closeModal}
-      className={`text-foreground max-w-8xl absolute z-(--z-modal) mx-auto size-full bg-black/50 transition-opacity duration-300 lg:hidden ${
+      className={`text-foreground max-w-8xl absolute z-(--z-modal) mx-auto size-full bg-black/50 transition-opacity duration-300 ${
         isAnimating ? "opacity-100" : "opacity-0"
       }`}
     >

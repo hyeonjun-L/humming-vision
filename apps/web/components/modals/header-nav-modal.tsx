@@ -51,6 +51,7 @@ function HeaderNavModal() {
         <button
           onClick={closeModal}
           className="border-gray200 flex size-10 items-center justify-center rounded-full border"
+          aria-label="모달 닫기"
         >
           <ArrowSVG className="stroke-main size-5 stroke-2" />
         </button>

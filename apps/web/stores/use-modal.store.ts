@@ -1,12 +1,18 @@
 import { ModalEnum } from "consts/modal.const";
+import { Contact } from "@humming-vision/shared";
 import { create } from "zustand";
 
 export type ModalType = ModalEnum | null;
 
+export interface ModalProps {
+  [ModalEnum.HEADER_NAV]: Record<string, never>;
+  [ModalEnum.CONTACT]: { data: Contact };
+}
+
 interface ModalState {
   modalType: ModalType;
-  modalProps?: Record<string, unknown>;
-  openModal: (type: ModalType, props?: Record<string, unknown>) => void;
+  modalProps?: ModalProps[keyof ModalProps];
+  openModal: <T extends ModalEnum>(type: T, props: ModalProps[T]) => void;
   closeModal: () => Promise<void>;
   initializeBackHandler: () => void;
 }
