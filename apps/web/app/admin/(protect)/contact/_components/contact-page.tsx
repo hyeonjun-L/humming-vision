@@ -13,6 +13,7 @@ import { SelectBox } from "components/select-box/select-box";
 import { SearchInput } from "components/input";
 import { useQuery } from "@tanstack/react-query";
 import { publicApi } from "libs/axios";
+import ContactCardView from "./contact-card-view";
 
 function ContactPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -117,9 +118,9 @@ function ContactPage() {
   ];
 
   return (
-    <main className="mx-auto mt-33 max-w-7xl">
+    <main className="mx-auto my-33 max-w-7xl px-5 sm:mb-0 md:mx-10">
       <hr className="border-gray200 absolute left-0 w-screen border-t" />
-      <div className="border-main flex justify-between border-b py-5.5">
+      <div className="border-main flex flex-wrap justify-between gap-5 border-b py-5.5 sm:gap-0">
         <h2 className="text-main text-2xl font-bold">제품문의</h2>
         <div className="flex gap-5">
           <SelectBox
@@ -132,6 +133,7 @@ function ContactPage() {
           />
           <SearchInput
             placeholder="검색어를 입력해주세요"
+            className="sm:w-[309px]"
             onSubmit={handleSearch}
           />
         </div>
@@ -139,7 +141,14 @@ function ContactPage() {
       {isLoading ? (
         <div className="flex justify-center py-10">로딩 중...</div>
       ) : (
-        <Table data={contactData?.data || []} columns={columns} />
+        <>
+          <Table data={contactData?.data || []} columns={columns} />
+          <ul className="mt-5 flex flex-col gap-2.5 sm:hidden">
+            {contactData?.data.map((contact) => (
+              <ContactCardView key={contact.id} data={contact} />
+            ))}
+          </ul>
+        </>
       )}
       <div className="mt-8 flex w-full justify-center">
         <Pagination

@@ -64,7 +64,7 @@ function SearchInput({
     <form className="relative" onSubmit={handleSubmit}>
       <button
         type="submit"
-        className="absolute top-1/2 right-3 size-6 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        className="absolute top-1/2 right-3 size-6 -translate-y-1/2 overflow-hidden text-gray-400 hover:text-gray-600"
       >
         <SearchSVG />
       </button>
@@ -77,9 +77,9 @@ function SearchInput({
         onChange={(e) => setInputValue(e.target.value)}
         className={cn(
           ...BASE_INPUT_STYLES,
-          "placeholder:text-gray300 border-gray200 rounded-sm font-normal",
+          "placeholder:text-gray300 border-gray200 rounded-sm font-normal placeholder:text-sm placeholder:sm:text-base",
           "data-[size=sm]:pr-2 data-[size=sm]:pl-8",
-          "data-[size=default]:h-10 data-[size=default]:w-[309px] data-[size=default]:px-4 data-[size=default]:py-2",
+          "data-[size=default]:h-10 data-[size=default]:px-4 data-[size=default]:py-2",
           SIZE_STYLES.sm,
           className,
         )}
