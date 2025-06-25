@@ -57,7 +57,7 @@ export default function ModalRoot() {
   return (
     <div
       onClick={closeModal}
-      className={`text-foreground max-w-8xl absolute z-(--z-modal) mx-auto size-full bg-black/50 transition-opacity duration-300 ${
+      className={`text-foreground max-w-8xl fixed top-1/2 left-1/2 z-(--z-modal) mx-auto size-full h-screen -translate-x-1/2 -translate-y-1/2 transform bg-black/50 transition-opacity duration-300 ${
         isAnimating ? "opacity-100" : "opacity-0"
       }`}
     >

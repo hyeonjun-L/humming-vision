@@ -1,4 +1,5 @@
 import { ContactSearchFieldEnum } from "@humming-vision/shared";
+import axios from "axios";
 import { COOKIE_NAMES } from "consts/cookie.const";
 import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import { NextRequest, NextResponse } from "next/server";
@@ -65,18 +66,12 @@ export const GET = async (request: NextRequest) => {
 
     const backendUrl = `${END_POINT}/contact?${backendParams.toString()}`;
 
-    const response = await fetch(backendUrl, {
-      method: "GET",
+    const response = await axios.get(backendUrl, {
       headers,
+      adapter: "fetch",
     });
 
-    if (!response.ok) {
-      return NextResponse.json("Failed to fetch contacts", {
-        status: response.status,
-      });
-    }
-
-    const data = await response.json();
+    const data = await response.data;
     return NextResponse.json(data);
   } catch (error) {
     console.error("[contact] Fetch error:", error);

@@ -40,20 +40,31 @@ export default function Table<T>({ data, columns }: TableProps<T>) {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className="border-gray200 text-gray600 border-b p-2 py-3.5 text-center text-sm font-normal"
-                >
-                  <div className="max-w-xs truncate">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </div>
-                </td>
-              ))}
-            </tr>
-          ))}
+          {table.getRowModel().rows.map((row) => {
+            const rowData = row.original as Record<string, unknown>;
+            const isRead = rowData?.isRead === true;
+
+            return (
+              <tr
+                key={row.id}
+                className={isRead ? "bg-gray100 text-gray400" : "text-gray600"}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className="border-gray200 border-b p-2 py-3.5 text-center text-sm font-normal"
+                  >
+                    <div className="max-w-xs truncate">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

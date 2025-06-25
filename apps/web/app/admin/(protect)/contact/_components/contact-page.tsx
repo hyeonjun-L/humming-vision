@@ -11,7 +11,7 @@ import Pagination from "components/pagination";
 import { useState } from "react";
 import { SelectBox } from "components/select-box/select-box";
 import { SearchInput } from "components/input";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { publicApi } from "libs/axios";
 import ContactCardView from "./contact-card-view";
 import { useModalStore } from "stores/use-modal.store";
@@ -21,6 +21,7 @@ function ContactPage() {
   const TAKE = 12;
 
   const openModal = useModalStore((state) => state.openModal);
+  const queryClient = useQueryClient();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchField, setSearchField] = useState<ContactSearchFieldEnum>(
@@ -31,7 +32,33 @@ function ContactPage() {
     useState<ContactSearchFieldEnum>(ContactSearchFieldEnum.NAME);
   const [activeSearchValue, setActiveSearchValue] = useState<string>("");
 
-  const handleContactModalOpen = (contactData: Contact) => {
+  const handleMarkAsRead = async (id: number) => {
+    try {
+      await publicApi.patch(`/api/contact/read?id=${id}`);
+
+      queryClient.setQueryData(
+        ["contacts", currentPage, activeSearchField, activeSearchValue],
+        (oldData: GetContactResponse | undefined) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            data: oldData.data.map((contact) =>
+              contact.id === id ? { ...contact, isRead: true } : contact,
+            ),
+          };
+        },
+      );
+    } catch (error) {
+      console.error("Failed to mark contact as read:", error);
+    }
+  };
+
+  const handleContactModalOpen = async (contactData: Contact) => {
+    if (contactData.isRead === false) {
+      await handleMarkAsRead(contactData.id);
+    }
+
     openModal(ModalEnum.CONTACT, { data: contactData });
   };
 
@@ -153,7 +180,11 @@ function ContactPage() {
           <Table data={contactData?.data || []} columns={columns} />
           <ul className="mt-5 flex flex-col gap-2.5 sm:hidden">
             {contactData?.data.map((contact) => (
-              <ContactCardView key={contact.id} data={contact} />
+              <ContactCardView
+                key={contact.id}
+                data={contact}
+                handleContactModalOpen={handleContactModalOpen}
+              />
             ))}
           </ul>
         </>
