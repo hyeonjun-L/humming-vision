@@ -39,30 +39,42 @@ function Input({ className, type, size = "default", ...props }: InputProps) {
 }
 
 interface SearchInputProps
-  extends Omit<React.ComponentProps<"input">, "type" | "size"> {
+  extends Omit<React.ComponentProps<"input">, "type" | "size" | "onSubmit"> {
   size?: "sm" | "default";
+  onSubmit?: (value: string) => void;
 }
 
 function SearchInput({
   className,
   size = "default",
   placeholder,
+  onSubmit,
   ...props
 }: SearchInputProps) {
+  const [inputValue, setInputValue] = React.useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onSubmit) {
+      onSubmit(inputValue);
+    }
+  };
+
   return (
-    <div className="relative">
-      <label
-        className="absolute top-1/2 right-3 size-6 -translate-y-1/2 text-gray-400"
-        htmlFor="search"
+    <form className="relative" onSubmit={handleSubmit}>
+      <button
+        type="submit"
+        className="absolute top-1/2 right-3 size-6 -translate-y-1/2 text-gray-400 hover:text-gray-600"
       >
         <SearchSVG />
-      </label>
+      </button>
       <input
-        id="search"
         type="search"
         data-slot="input"
         data-size={size}
         placeholder={placeholder}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
         className={cn(
           ...BASE_INPUT_STYLES,
           "placeholder:text-gray300 border-gray200 rounded-sm font-normal",
@@ -73,7 +85,7 @@ function SearchInput({
         )}
         {...props}
       />
-    </div>
+    </form>
   );
 }
 

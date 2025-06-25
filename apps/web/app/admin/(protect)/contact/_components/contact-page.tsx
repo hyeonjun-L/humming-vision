@@ -1,54 +1,58 @@
 "use client";
 import Table from "components/table";
-import { Contact } from "@humming-vision/shared";
+import {
+  Contact,
+  ContactSearchFieldEnum,
+  GetContactQuery,
+  GetContactResponse,
+} from "@humming-vision/shared";
 import { type ColumnDef } from "@tanstack/react-table";
 import Pagination from "components/pagination";
 import { useState } from "react";
 import { SelectBox } from "components/select-box/select-box";
 import { SearchInput } from "components/input";
 import { useQuery } from "@tanstack/react-query";
-
-// const data: Contact[] = [
-//   {
-//     id: 1,
-//     name: "홍길동",
-//     email: "Dasda@naver.com",
-//     company: "홍길동 회사",
-//     subject: "문의 제목",
-//     message: "문의 내용입니다.",
-//     isRead: false,
-//     createdAt: new Date().toISOString(),
-//   },
-//   {
-//     id: 2,
-//     name: "김철수",
-//     email: "sadasdasda@gmail.com",
-//     company: "김철수 회사",
-//     subject: "두번째 문의",
-//     message: "두번째 문의 내용입니다.",
-//     isRead: true,
-//     createdAt: new Date().toISOString(),
-//   },
-// ];
+import { publicApi } from "libs/axios";
 
 function ContactPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterType, setFilterType] = useState("all");
+  const [searchField, setSearchField] = useState<ContactSearchFieldEnum>(
+    ContactSearchFieldEnum.NAME,
+  );
+
+  const [activeSearchField, setActiveSearchField] =
+    useState<ContactSearchFieldEnum>(ContactSearchFieldEnum.NAME);
+  const [activeSearchValue, setActiveSearchValue] = useState<string>("");
+
+  const TAKE = 12;
 
   const getContacts = async (page: number) => {
-    const response = await fetch(`/api/contact?page=${page}&take=5`);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
+    const params: GetContactQuery = {
+      page,
+      take: TAKE,
+      order__createdAt: "DESC",
+    };
+
+    if (activeSearchValue.trim()) {
+      params[activeSearchField] = activeSearchValue.trim();
     }
-    const data = await response.json();
-    console.log("Fetched contacts:", data);
-    return data;
+
+    const response = await publicApi.get<GetContactResponse>(`/api/contact`, {
+      params,
+    });
+
+    return response.data;
   };
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["contacts", currentPage],
+  const handleSearch = (value: string) => {
+    setActiveSearchField(searchField);
+    setActiveSearchValue(value);
+    setCurrentPage(1);
+  };
+
+  const { data: contactData, isLoading } = useQuery({
+    queryKey: ["contacts", currentPage, activeSearchField, activeSearchValue],
     queryFn: () => getContacts(currentPage),
-    // keepPreviousData: true, // 페이지 이동 시 flicker 방지
   });
 
   const columns: ColumnDef<Contact>[] = [
@@ -88,13 +92,13 @@ function ContactPage() {
         return (
           <div className="flex justify-center gap-2">
             <button
-              className="bg-main px-4 py-1 text-white"
+              className="bg-main px-4 py-1 whitespace-nowrap text-white"
               onClick={() => alert(`읽기: ${contact.id}`)}
             >
               상세
             </button>
             <button
-              className="bg-gray300 px-4 py-1 text-white"
+              className="bg-gray300 px-4 py-1 whitespace-nowrap text-white"
               onClick={() => alert(`삭제: ${contact.id}`)}
             >
               삭제
@@ -106,10 +110,10 @@ function ContactPage() {
   ];
 
   const selectOptions = [
-    { value: "where__name__i_like", label: "이름" },
-    { value: "where__email__i_like", label: "이메일" },
-    { value: "where__subject__i_like", label: "제목" },
-    { value: "where__company__i_like", label: "회사" },
+    { value: ContactSearchFieldEnum.NAME, label: "이름" },
+    { value: ContactSearchFieldEnum.EMAIL, label: "이메일" },
+    { value: ContactSearchFieldEnum.SUBJECT, label: "제목" },
+    { value: ContactSearchFieldEnum.COMPANY, label: "회사" },
   ];
 
   return (
@@ -120,22 +124,28 @@ function ContactPage() {
         <div className="flex gap-5">
           <SelectBox
             options={selectOptions}
-            selectLabel="filter"
-            onValueChange={() => {}}
+            selectLabel="검색 필드"
+            defaultValue={searchField}
+            onValueChange={(value) =>
+              setSearchField(value as ContactSearchFieldEnum)
+            }
           />
-          <SearchInput placeholder="검색어를 입력해주세요" />
+          <SearchInput
+            placeholder="검색어를 입력해주세요"
+            onSubmit={handleSearch}
+          />
         </div>
       </div>
-      {/* {isLoading ? (
+      {isLoading ? (
         <div className="flex justify-center py-10">로딩 중...</div>
       ) : (
-        <Table data={data?.data || []} columns={columns} />
-      )} */}
+        <Table data={contactData?.data || []} columns={columns} />
+      )}
       <div className="mt-8 flex w-full justify-center">
         <Pagination
           currentPage={currentPage}
-          take={5}
-          total={40}
+          take={TAKE}
+          total={contactData?.total || 0}
           onPageChange={(page: number) => {
             setCurrentPage(page);
           }}
