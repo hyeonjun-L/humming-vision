@@ -31,9 +31,6 @@ export const DELETE = async (request: NextRequest) => {
     await axios.delete(`${END_POINT}/contact/${id}`, {
       headers,
       adapter: "fetch",
-      fetchOptions: {
-        cache: "no-cache",
-      },
     });
 
     return new NextResponse(null, {

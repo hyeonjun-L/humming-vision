@@ -16,6 +16,7 @@ import { publicApi } from "libs/axios";
 import ContactCardView from "./contact-card-view";
 import { useModalStore } from "stores/use-modal.store";
 import { ModalEnum } from "consts/modal.const";
+import { Mail } from "lucide-react";
 
 function ContactPage() {
   const TAKE = 12;
@@ -196,33 +197,51 @@ function ContactPage() {
           />
         </div>
       </div>
-      {isLoading ? (
-        <div className="flex justify-center py-10">로딩 중...</div>
-      ) : (
+      {contactData?.data && contactData?.data.length > 0 ? (
         <>
-          <Table data={contactData?.data || []} columns={columns} />
-          <ul className="mt-5 flex flex-col gap-2.5 sm:hidden">
-            {contactData?.data.map((contact) => (
-              <ContactCardView
-                key={contact.id}
-                data={contact}
-                handleContactModalOpen={handleContactModalOpen}
-                handleDeleteContact={handleDeleteContact}
-              />
-            ))}
-          </ul>
+          {isLoading ? (
+            <div className="flex justify-center py-10">로딩 중...</div>
+          ) : (
+            <>
+              <Table data={contactData?.data || []} columns={columns} />
+              <ul className="mt-5 flex flex-col gap-2.5 sm:hidden">
+                {contactData?.data.map((contact) => (
+                  <ContactCardView
+                    key={contact.id}
+                    data={contact}
+                    handleContactModalOpen={handleContactModalOpen}
+                    handleDeleteContact={handleDeleteContact}
+                  />
+                ))}
+              </ul>
+            </>
+          )}
+          <div className="mt-8 flex w-full justify-center">
+            <Pagination
+              currentPage={currentPage}
+              take={TAKE}
+              total={contactData?.total || 0}
+              onPageChange={(page: number) => {
+                setCurrentPage(page);
+              }}
+            />
+          </div>
         </>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="bg-gray100 mb-6 flex size-20 items-center justify-center rounded-full">
+            <Mail className="text-gray300 size-10" />
+          </div>
+          <h3 className="text-gray600 mb-2 text-lg font-semibold">
+            등록된 문의가 없습니다
+          </h3>
+          <p className="text-gray400 text-center text-sm">
+            아직 등록된 문의가 없습니다.
+            <br />
+            새로운 문의가 등록되면 여기에 표시됩니다.
+          </p>
+        </div>
       )}
-      <div className="mt-8 flex w-full justify-center">
-        <Pagination
-          currentPage={currentPage}
-          take={TAKE}
-          total={contactData?.total || 0}
-          onPageChange={(page: number) => {
-            setCurrentPage(page);
-          }}
-        />
-      </div>
     </main>
   );
 }
