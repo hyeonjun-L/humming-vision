@@ -6,7 +6,10 @@ export type ModalType = ModalEnum | null;
 
 export interface ModalProps {
   [ModalEnum.HEADER_NAV]: Record<string, never>;
-  [ModalEnum.CONTACT]: { data: Contact };
+  [ModalEnum.CONTACT]: {
+    data: Contact;
+    onDelete: (id: number) => Promise<void>;
+  };
 }
 
 interface ModalState {

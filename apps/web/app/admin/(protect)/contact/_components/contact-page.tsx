@@ -54,12 +54,35 @@ function ContactPage() {
     }
   };
 
+  const handleDeleteContact = async (id: number) => {
+    try {
+      await publicApi.delete(`/api/contact/delete?id=${id}`);
+
+      queryClient.setQueryData(
+        ["contacts", currentPage, activeSearchField, activeSearchValue],
+        (oldData: GetContactResponse | undefined) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            data: oldData.data.filter((contact) => contact.id !== id),
+            total: oldData.total - 1,
+          };
+        },
+      );
+    } catch (error) {
+      console.error("Failed to delete contact:", error);
+    }
+  };
+
   const handleContactModalOpen = async (contactData: Contact) => {
     if (contactData.isRead === false) {
       await handleMarkAsRead(contactData.id);
     }
 
-    openModal(ModalEnum.CONTACT, { data: contactData });
+    openModal(ModalEnum.CONTACT, {
+      data: contactData,
+      onDelete: handleDeleteContact,
+    });
   };
 
   const getContacts = async (page: number) => {
@@ -135,7 +158,7 @@ function ContactPage() {
             </button>
             <button
               className="bg-gray300 px-4 py-1 whitespace-nowrap text-white"
-              onClick={() => alert(`삭제: ${contact.id}`)}
+              onClick={() => handleDeleteContact(contact.id)}
             >
               삭제
             </button>
@@ -184,6 +207,7 @@ function ContactPage() {
                 key={contact.id}
                 data={contact}
                 handleContactModalOpen={handleContactModalOpen}
+                handleDeleteContact={handleDeleteContact}
               />
             ))}
           </ul>

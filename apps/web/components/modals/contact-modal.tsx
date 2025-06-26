@@ -8,10 +8,20 @@ import { ArrowSVG } from "public/svg";
 
 type ContactModalProps = {
   data: Contact;
+  onDelete: (id: number) => Promise<void>;
 };
 
-function ContactModal({ data }: ContactModalProps) {
+function ContactModal({ data, onDelete }: ContactModalProps) {
   const closeModal = useModalStore((state) => state.closeModal);
+
+  const handleDeleteContact = async () => {
+    try {
+      await onDelete(data.id);
+      closeModal();
+    } catch (error) {
+      console.error("Failed to delete contact:", error);
+    }
+  };
 
   return (
     <section className="bg-background absolute top-0 right-0 h-screen w-full max-w-md overflow-scroll shadow-2xl">
@@ -104,7 +114,10 @@ function ContactModal({ data }: ContactModalProps) {
 
       {/* Footer */}
       <footer className="border-gray200 border-t p-6">
-        <button className="border-gray300 bg-background text-gray600 focus:ring-main hover:bg-gray100 w-full rounded-lg border px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none">
+        <button
+          onClick={handleDeleteContact}
+          className="border-gray300 bg-background text-gray600 focus:ring-main hover:bg-gray100 w-full rounded-lg border px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none"
+        >
           삭제
         </button>
       </footer>

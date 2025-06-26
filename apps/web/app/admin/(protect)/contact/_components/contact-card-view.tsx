@@ -5,11 +5,13 @@ import { formatDate } from "utils/date";
 type ContactCardViewProps = {
   data: Contact;
   handleContactModalOpen: (data: Contact) => Promise<void>;
+  handleDeleteContact: (id: number) => Promise<void>;
 };
 
 function ContactCardView({
   data,
   handleContactModalOpen,
+  handleDeleteContact,
 }: ContactCardViewProps) {
   return (
     <li
@@ -49,7 +51,10 @@ function ContactCardView({
           >
             상세
           </button>
-          <button className="bg-gray300 px-4 py-1 text-xs text-white">
+          <button
+            onClick={() => handleDeleteContact(data.id)}
+            className="bg-gray300 px-4 py-1 text-xs text-white"
+          >
             삭제
           </button>
         </div>
