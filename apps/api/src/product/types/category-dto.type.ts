@@ -1,6 +1,6 @@
+import { CategoriesEnum } from '@humming-vision/shared';
 import { CreateCameraProductDto } from '../camera/dto/create-camera-product.dto';
 import { UpdateCameraProductDto } from '../camera/dto/update-camera-product.dto';
-import { CategoriesEnum } from '../const/categories.const';
 import { CreateFrameGrabberProductDto } from '../frame-grabber/dto/create-frame-grabber-product.dto';
 import { UpdateFrameGrabberProductDto } from '../frame-grabber/dto/update-fame-grabber-product.dto';
 import { CreateLensProductDto } from '../lens/dto/create-lens-product.dto';

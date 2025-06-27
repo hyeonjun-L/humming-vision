@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryRunner, Repository } from 'typeorm';
 import { ProductModel } from './product.entity';
-import { CategoriesEnum, CategoryRelationMap } from './const/categories.const';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommonService } from 'src/common/common.service';
 import { BasePaginateProductDto } from './dto/paginate-product.dto';
@@ -16,6 +15,7 @@ import {
   CreateCategoryDtoMap,
   UpdateCategoryDtoMap,
 } from './types/category-dto.type';
+import { CategoriesEnum, CategoryRelationMap } from '@humming-vision/shared';
 
 @Injectable()
 export class ProductsService {

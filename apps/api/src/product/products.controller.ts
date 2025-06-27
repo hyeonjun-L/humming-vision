@@ -18,7 +18,6 @@ import { TransactionInterceptor } from 'src/common/interceptor/transaction.inter
 import { QueryRunner as QR } from 'typeorm';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import {
-  CategoriesEnum,
   CREATE_CATEGORY_DTO_MAPPING,
   UPDATE_CATEGORY_DTO_MAPPING,
 } from './const/categories.const';
@@ -35,6 +34,7 @@ import {
   UpdateCategoryDtoMap,
 } from './types/category-dto.type';
 import { ManualValidationBadRequestException } from 'src/common/exception/manual-validation-bad-request.exception';
+import { CategoriesEnum } from '@humming-vision/shared';
 
 @Controller('product')
 export class ProductsController {

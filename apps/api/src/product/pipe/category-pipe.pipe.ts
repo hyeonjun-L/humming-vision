@@ -1,5 +1,5 @@
+import { CategoriesEnum } from '@humming-vision/shared';
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { CategoriesEnum } from '../const/categories.const';
 
 @Injectable()
 export class ParseCategoryPipe

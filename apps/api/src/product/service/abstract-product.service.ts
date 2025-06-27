@@ -1,10 +1,10 @@
 import { QueryRunner, Repository } from 'typeorm';
 import { ProductModel } from '../product.entity';
 import { ProductImagesService } from '../image/images.service';
-import { CategoriesEnum, CategoryRelationMap } from '../const/categories.const';
 import { BaseProductDto } from '../dto/base-product.dto';
 import { NotFoundException } from '@nestjs/common';
 import { BaseUpdateProductDto } from '../dto/base-update-product.dto';
+import { CategoriesEnum, CategoryRelationMap } from '@humming-vision/shared';
 
 export abstract class AbstractProductService<
   CreateDto extends Partial<BaseProductDto>,
