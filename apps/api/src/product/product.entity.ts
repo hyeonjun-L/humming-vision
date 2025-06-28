@@ -1,12 +1,12 @@
 import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
-import { CategoriesEnum } from './const/categories.const';
 import { LensModel } from './lens/lens.entity';
 import { FrameGrabberModel } from './frame-grabber/frame-grabber.entity';
 import { ImageModel } from './image/image.entity';
 import { CameraModel } from './camera/camera.entity';
 import { SoftwareModel } from './software/software.entity';
 import { LightModel } from './light/light.entity';
+import { CategoriesEnum } from '@humming-vision/shared';
 
 @Entity()
 export class ProductModel extends BaseModel {

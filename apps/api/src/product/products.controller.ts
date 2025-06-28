@@ -13,6 +13,7 @@ import {
   ValidationPipe,
   BadRequestException,
 } from '@nestjs/common';
+import { ApiExtraModels } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { QueryRunner as QR } from 'typeorm';
@@ -106,6 +107,12 @@ export class ProductsController {
   }
 
   @Get(':category')
+  @ApiExtraModels(
+    PaginateCameraDto,
+    PaginateLensDto,
+    PaginateFrameGrabberDto,
+    PaginateSoftwareDto,
+  )
   @IsPublic()
   async paginateProducts(
     @Query() query: Record<string, any>,
@@ -124,7 +131,7 @@ export class ProductsController {
     } else if (category === CategoriesEnum.FRAMEGRABBER) {
       dto = plainToInstance(PaginateFrameGrabberDto, query);
     } else if (category === CategoriesEnum.SOFTWARE) {
-      dto = plainToInstance(PaginateFrameGrabberDto, query);
+      dto = plainToInstance(PaginateSoftwareDto, query);
     } else {
       throw new BadRequestException('유효하지 않은 카테고리입니다.');
     }

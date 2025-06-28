@@ -319,6 +319,71 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
+        PaginateCameraDto: {
+            /** @enum {string} */
+            camera__maker__equal?: "CREVIS" | "VIEWORKS" | "BASLER" | "HIK" | "HUARAY" | "JAI";
+            _camera__resolution__between?: string[];
+            camera__speed__between?: string[];
+            /** @enum {string} */
+            camera__interface__equal?: "GIGE" | "USB" | "CAMERA_LINK" | "COAXPRESS";
+            where__name__i_like?: string;
+            /** @enum {string} */
+            order__name?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__createdAt?: "ASC" | "DESC";
+            /** @default 1 */
+            page: number;
+            /** @default 10 */
+            take: number;
+        };
+        PaginateLensDto: {
+            /**
+             * @default CCTV
+             * @enum {string}
+             */
+            lens__type__equal: "CCTV" | "TCL";
+            /** @enum {string} */
+            lens__mount__equal?: "C" | "CS" | "F" | "M";
+            lens__focalLength__between?: string[];
+            lens__formatSize__between?: string[];
+            where__name__i_like?: string;
+            /** @enum {string} */
+            order__name?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__createdAt?: "ASC" | "DESC";
+            /** @default 1 */
+            page: number;
+            /** @default 10 */
+            take: number;
+        };
+        PaginateFrameGrabberDto: {
+            /** @enum {string} */
+            frameGrabber__maker__equal: "MATROX" | "EURESYS" | "ADLINK" | "BASLER";
+            /** @enum {string} */
+            frameGrabber__interface__equal: "GIGE" | "USB" | "CAMERA_LINK" | "COAXPRESS";
+            where__name__i_like?: string;
+            /** @enum {string} */
+            order__name?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__createdAt?: "ASC" | "DESC";
+            /** @default 1 */
+            page: number;
+            /** @default 10 */
+            take: number;
+        };
+        PaginateSoftwareDto: {
+            /** @enum {string} */
+            software__maker__equal?: "MATROX" | "EURESYS";
+            where__name__i_like?: string;
+            /** @enum {string} */
+            order__name?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__createdAt?: "ASC" | "DESC";
+            /** @default 1 */
+            page: number;
+            /** @default 10 */
+            take: number;
+        };
         RegisterAdminDto: {
             /** Format: email */
             email: string;
@@ -512,7 +577,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": Record<string, never>;
+                };
             };
         };
     };
@@ -531,7 +598,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": Record<string, never>;
+                };
             };
         };
     };
@@ -573,7 +642,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": Record<string, never>;
+                };
             };
         };
     };
