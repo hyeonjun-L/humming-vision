@@ -5,8 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  console.log("[products] searchParams:", searchParams.toString());
-
   const category = searchParams.get("category");
   const page = searchParams.get("page");
   const take = searchParams.get("take");

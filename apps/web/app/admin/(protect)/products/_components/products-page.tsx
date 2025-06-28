@@ -2,6 +2,7 @@
 import Table from "components/table";
 import {
   CategoryRelationMapKebab,
+  GetProductResponseBase,
   GetProductResponseByCategory,
   Product,
 } from "@humming-vision/shared";
@@ -73,6 +74,26 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
     setCurrentPage(1);
   };
 
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      await publicApi.delete(`/api/products/delete?id=${id}`);
+
+      queryClient.setQueryData(
+        ["products", currentPage, activeSearchValue, searchField],
+        (oldData: GetProductResponseBase | undefined) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            data: oldData.data.filter((product) => product.id !== id),
+            total: oldData.total - 1,
+          };
+        },
+      );
+    } catch (error) {
+      console.error("Failed to delete Product:", error);
+    }
+  };
+
   const { data: productsData, isLoading } = useQuery({
     queryKey: ["products", currentPage, activeSearchValue, searchField],
     queryFn: () =>
@@ -120,13 +141,13 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
             <Link
               href={`${ADMIN_ROUTE_PATH}${AdminRoutePath.PRODUCT_CREATE}`}
               className="bg-main px-4 py-1 whitespace-nowrap text-white"
-              // onClick={() => handleContactModalOpen(contact)}
+              // onClick={() => handleProductModalOpen(Product)}
             >
               상세
             </Link>
             <button
               className="bg-gray300 px-4 py-1 whitespace-nowrap text-white"
-              // onClick={() => handleDeleteContact(contact.id)}
+              onClick={() => handleDeleteProduct(product.id)}
             >
               삭제
             </button>
