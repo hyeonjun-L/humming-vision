@@ -125,18 +125,33 @@ export class ProductsController {
       | PaginateSoftwareDto;
 
     if (category === CategoriesEnum.CAMERA) {
-      dto = plainToInstance(PaginateCameraDto, query);
+      dto = plainToInstance(PaginateCameraDto, query, {
+        enableImplicitConversion: true,
+      });
     } else if (category === CategoriesEnum.LENS) {
-      dto = plainToInstance(PaginateLensDto, query);
+      dto = plainToInstance(PaginateLensDto, query, {
+        enableImplicitConversion: true,
+      });
     } else if (category === CategoriesEnum.FRAMEGRABBER) {
-      dto = plainToInstance(PaginateFrameGrabberDto, query);
+      dto = plainToInstance(PaginateFrameGrabberDto, query, {
+        enableImplicitConversion: true,
+      });
     } else if (category === CategoriesEnum.SOFTWARE) {
-      dto = plainToInstance(PaginateSoftwareDto, query);
+      dto = plainToInstance(PaginateSoftwareDto, query, {
+        enableImplicitConversion: true,
+      });
+    } else if (category === CategoriesEnum.LIGHT) {
+      dto = plainToInstance(PaginateSoftwareDto, query, {
+        enableImplicitConversion: true,
+      });
     } else {
       throw new BadRequestException('유효하지 않은 카테고리입니다.');
     }
 
-    const errors = await validate(dto);
+    const errors = await validate(dto, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
 
     if (errors.length > 0) {
       throw new ManualValidationBadRequestException(errors);

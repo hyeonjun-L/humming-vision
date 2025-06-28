@@ -13,4 +13,8 @@ export class BasePaginateProductDto extends BasePaginationDto {
   @IsIn(['ASC', 'DESC'])
   @IsOptional()
   order__createdAt?: 'ASC' | 'DESC';
+
+  @IsIn(['ASC', 'DESC'])
+  @IsOptional()
+  order__id?: 'ASC' | 'DESC';
 }
