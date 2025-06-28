@@ -49,9 +49,12 @@ function SearchInput({
   size = "default",
   placeholder,
   onSubmit,
+  defaultValue,
   ...props
 }: SearchInputProps) {
-  const [inputValue, setInputValue] = React.useState("");
+  const [inputValue, setInputValue] = React.useState(
+    String(defaultValue || ""),
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

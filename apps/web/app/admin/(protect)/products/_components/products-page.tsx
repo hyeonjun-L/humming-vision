@@ -7,13 +7,16 @@ import {
 } from "@humming-vision/shared";
 import { type ColumnDef } from "@tanstack/react-table";
 import Pagination from "components/pagination";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SearchInput } from "components/input";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { publicApi } from "libs/axios";
 import { Box } from "lucide-react";
 import Image from "next/image";
 import { SelectBox } from "components/select-box/select-box";
+import Link from "next/link";
+import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
+import { useRouter } from "next/navigation";
 
 async function getProductsForCategory<C extends CategoryRelationMapKebab>(
   category: C,
@@ -34,16 +37,36 @@ async function getProductsForCategory<C extends CategoryRelationMapKebab>(
     .then((response) => response.data);
 }
 
-function ProductsPage() {
+type ProductsPageProps = {
+  page: number;
+  category: CategoryRelationMapKebab;
+  searchValue: string;
+};
+
+function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
   const TAKE = 12;
+
+  const route = useRouter();
 
   const queryClient = useQueryClient();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [activeSearchValue, setActiveSearchValue] = useState<string>("");
-  const [searchField, setSearchField] = useState<CategoryRelationMapKebab>(
-    CategoryRelationMapKebab.CAMERA,
-  );
+  const [currentPage, setCurrentPage] = useState(page);
+  const [activeSearchValue, setActiveSearchValue] =
+    useState<string>(searchValue);
+  const [searchField, setSearchField] =
+    useState<CategoryRelationMapKebab>(category);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("category", searchField);
+    params.set("page", currentPage.toString());
+    if (activeSearchValue.trim()) {
+      params.set("searchValue", activeSearchValue);
+    }
+
+    const newUrl = `${ADMIN_ROUTE_PATH}${AdminRoutePath.PRODUCTS}?${params.toString()}`;
+    route.replace(newUrl);
+  }, [currentPage, activeSearchValue, searchField, route]);
 
   const handleSearch = (value: string) => {
     setActiveSearchValue(value);
@@ -94,12 +117,13 @@ function ProductsPage() {
         const product = row.original;
         return (
           <div className="flex justify-center gap-2">
-            <button
+            <Link
+              href={`${ADMIN_ROUTE_PATH}${AdminRoutePath.PRODUCT_CREATE}`}
               className="bg-main px-4 py-1 whitespace-nowrap text-white"
               // onClick={() => handleContactModalOpen(contact)}
             >
               상세
-            </button>
+            </Link>
             <button
               className="bg-gray300 px-4 py-1 whitespace-nowrap text-white"
               // onClick={() => handleDeleteContact(contact.id)}
@@ -130,12 +154,14 @@ function ProductsPage() {
             options={selectOptions}
             selectLabel="검색 필드"
             defaultValue={searchField}
-            onValueChange={(value) =>
-              setSearchField(value as CategoryRelationMapKebab)
-            }
+            onValueChange={(value) => {
+              setSearchField(value as CategoryRelationMapKebab);
+              setCurrentPage(1); // 카테고리 변경시 첫 페이지로
+            }}
           />
           <SearchInput
             placeholder="검색어를 입력해주세요"
+            defaultValue={searchValue}
             className="sm:w-[309px]"
             onSubmit={handleSearch}
           />

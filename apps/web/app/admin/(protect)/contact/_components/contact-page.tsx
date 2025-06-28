@@ -8,7 +8,7 @@ import {
 } from "@humming-vision/shared";
 import { type ColumnDef } from "@tanstack/react-table";
 import Pagination from "components/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SelectBox } from "components/select-box/select-box";
 import { SearchInput } from "components/input";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,21 +17,47 @@ import ContactCardView from "./contact-card-view";
 import { useModalStore } from "stores/use-modal.store";
 import { ModalEnum } from "consts/modal.const";
 import { Mail } from "lucide-react";
+import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
+import { useRouter } from "next/navigation";
 
-function ContactPage() {
+type ContactPageProps = {
+  page: number;
+  searchValue: string;
+  searchField: ContactSearchFieldEnum;
+};
+
+function ContactPage({
+  page,
+  searchValue,
+  searchField: searchParamsField,
+}: ContactPageProps) {
   const TAKE = 12;
+
+  const route = useRouter();
 
   const openModal = useModalStore((state) => state.openModal);
   const queryClient = useQueryClient();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchField, setSearchField] = useState<ContactSearchFieldEnum>(
-    ContactSearchFieldEnum.NAME,
-  );
+  const [currentPage, setCurrentPage] = useState(page);
+  const [searchField, setSearchField] =
+    useState<ContactSearchFieldEnum>(searchParamsField);
 
   const [activeSearchField, setActiveSearchField] =
-    useState<ContactSearchFieldEnum>(ContactSearchFieldEnum.NAME);
-  const [activeSearchValue, setActiveSearchValue] = useState<string>("");
+    useState<ContactSearchFieldEnum>(searchParamsField);
+  const [activeSearchValue, setActiveSearchValue] =
+    useState<string>(searchValue);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("page", currentPage.toString());
+    if (activeSearchValue.trim()) {
+      params.set("searchValue", activeSearchValue);
+      params.set("searchField", searchField);
+    }
+
+    const newUrl = `${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}?${params.toString()}`;
+    route.replace(newUrl);
+  }, [currentPage, activeSearchValue, searchField, route]);
 
   const handleMarkAsRead = async (id: number) => {
     try {
@@ -192,6 +218,7 @@ function ContactPage() {
           />
           <SearchInput
             placeholder="검색어를 입력해주세요"
+            defaultValue={searchValue}
             className="sm:w-[309px]"
             onSubmit={handleSearch}
           />
