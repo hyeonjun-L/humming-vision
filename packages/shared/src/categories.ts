@@ -13,3 +13,11 @@ export enum CategoryRelationMap {
   LENS = "lens",
   LIGHT = "light",
 }
+
+export enum CategoryRelationMapKebab {
+  SOFTWARE = "software",
+  FRAMEGRABBER = "frame-grabber",
+  CAMERA = "camera",
+  LENS = "lens",
+  LIGHT = "light",
+}

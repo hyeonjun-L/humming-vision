@@ -1,5 +1,7 @@
+import ProductsPage from "./_components/products-page";
+
 function page() {
-  return <div></div>;
+  return <ProductsPage />;
 }
 
 export default page;

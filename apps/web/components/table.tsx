@@ -54,7 +54,7 @@ export default function Table<T>({ data, columns }: TableProps<T>) {
                     key={cell.id}
                     className="border-gray200 border-b p-2 py-3.5 text-center text-sm font-normal"
                   >
-                    <div className="max-w-xs truncate">
+                    <div className="mx-auto max-w-xs truncate">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
