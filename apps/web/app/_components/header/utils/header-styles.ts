@@ -6,6 +6,7 @@ export function getHeaderClassName(state: HeaderState): string {
 
   return cn(
     "group/header fixed top-0 z-(--z-header) flex w-full flex-col",
+    "scroll-header",
     isClient && {
       "bg-white text-black fill-black": headerVariant === "admin",
       "text-white lg:hover:bg-white lg:hover:text-black fill-white":

@@ -6,9 +6,11 @@ import { getHeaderClassName, getNavClassName } from "./utils/header-styles";
 import { Navigation } from "./navigation";
 import { ADMIN_ROUTE_PATH } from "consts/route.const";
 import AdminActions from "./admin-actions";
+import { useScrollHeader } from "./hooks/use-scroll-header.hook";
 
 function Header() {
   const state = useHeaderState();
+  useScrollHeader();
 
   return (
     <header className={getHeaderClassName(state)}>
