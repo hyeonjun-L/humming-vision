@@ -4,14 +4,14 @@ import { SearchSVG } from "public/svg";
 import cn from "libs/cn";
 
 const BASE_INPUT_STYLES = [
-  "file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex w-full min-w-0 border bg-transparent text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+  "file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex w-full min-w-0 border bg-transparent text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
   "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
   "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
 ] as const;
 
 const SIZE_STYLES = {
   sm: "data-[size=sm]:h-8 data-[size=sm]:py-1 data-[size=sm]:text-sm",
-  default: "data-[size=default]:h-9 data-[size=default]:py-1",
+  default: "data-[size=default]:h-10 data-[size=default]:py-2",
 } as const;
 
 interface InputProps extends Omit<React.ComponentProps<"input">, "size"> {

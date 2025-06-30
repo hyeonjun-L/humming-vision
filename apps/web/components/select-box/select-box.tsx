@@ -17,6 +17,7 @@ type SelectBoxProps = {
   defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
+  size?: "default" | "sm" | "full";
 };
 
 export function SelectBox({
@@ -26,6 +27,7 @@ export function SelectBox({
   defaultValue,
   value,
   onValueChange,
+  size = "default",
 }: SelectBoxProps) {
   return (
     <Select
@@ -33,7 +35,7 @@ export function SelectBox({
       defaultValue={defaultValue}
       value={value}
     >
-      <SelectTrigger>
+      <SelectTrigger size={size}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
