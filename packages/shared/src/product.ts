@@ -53,3 +53,19 @@ export type GetProductResponseBase = {
   data: Product[];
   total: number;
 };
+
+export type CreateCategoryDtoMap = {
+  [CategoriesEnum.CAMERA]: components["schemas"]["CreateCameraProductDto"];
+  [CategoriesEnum.FRAMEGRABBER]: components["schemas"]["CreateFrameGrabberProductDto"];
+  [CategoriesEnum.LENS]: components["schemas"]["CreateLensProductDto"];
+  [CategoriesEnum.SOFTWARE]: components["schemas"]["CreateSoftwareProductDto"];
+  [CategoriesEnum.LIGHT]: components["schemas"]["CreateLightProductDto"];
+};
+
+export type UpdateCategoryDtoMap = {
+  [CategoriesEnum.CAMERA]: components["schemas"]["UpdateCameraProductDto"];
+  [CategoriesEnum.FRAMEGRABBER]: components["schemas"]["UpdateFrameGrabberProductDto"];
+  [CategoriesEnum.LENS]: components["schemas"]["UpdateLensProductDto"];
+  [CategoriesEnum.SOFTWARE]: components["schemas"]["UpdateSoftwareProductDto"];
+  [CategoriesEnum.LIGHT]: components["schemas"]["UpdateLightProductDto"];
+};

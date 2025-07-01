@@ -30,12 +30,22 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PaginateFrameGrabberDto } from './frame-grabber/dto/paginate-frame-grabber.dto';
 import { PaginateSoftwareDto } from './software/dto/paginate-software.dto';
+import { ManualValidationBadRequestException } from 'src/common/exception/manual-validation-bad-request.exception';
+import { CreateCameraProductDto } from './camera/dto/create-camera-product.dto';
+import { CreateFrameGrabberProductDto } from './frame-grabber/dto/create-frame-grabber-product.dto';
+import { CreateLensProductDto } from './lens/dto/create-lens-product.dto';
+import { CreateSoftwareProductDto } from './software/dto/create-software-product.dto';
+import { CreateLightProductDto } from './light/dto/create-light-product.dto';
+import { UpdateCameraProductDto } from './camera/dto/update-camera-product.dto';
+import { UpdateFrameGrabberProductDto } from './frame-grabber/dto/update-fame-grabber-product.dto';
+import { UpdateLensProductDto } from './lens/dto/update-lens-product.dto';
+import { UpdateSoftwareProductDto } from './software/dto/update-software-product.dto';
+import { UpdateLightProductDto } from './light/dto/update-light-product.dto';
+import { CategoriesEnum } from '@humming-vision/shared';
 import {
   CreateCategoryDtoMap,
   UpdateCategoryDtoMap,
 } from './types/category-dto.type';
-import { ManualValidationBadRequestException } from 'src/common/exception/manual-validation-bad-request.exception';
-import { CategoriesEnum } from '@humming-vision/shared';
 
 @Controller('product')
 export class ProductsController {
@@ -43,6 +53,13 @@ export class ProductsController {
 
   @Post(':category')
   @UseInterceptors(TransactionInterceptor)
+  @ApiExtraModels(
+    CreateCameraProductDto,
+    CreateFrameGrabberProductDto,
+    CreateLensProductDto,
+    CreateSoftwareProductDto,
+    CreateLightProductDto,
+  )
   async createProduct<K extends CategoriesEnum>(
     @Param('category', ParseCategoryPipe) category: K,
     @Body(new ValidationPipe({ transform: true }))
@@ -71,6 +88,13 @@ export class ProductsController {
 
   @Patch(':category/:productId')
   @UseInterceptors(TransactionInterceptor)
+  @ApiExtraModels(
+    UpdateCameraProductDto,
+    UpdateFrameGrabberProductDto,
+    UpdateLensProductDto,
+    UpdateSoftwareProductDto,
+    UpdateLightProductDto,
+  )
   async updateProduct<K extends CategoriesEnum>(
     @Param('category', ParseCategoryPipe) category: K,
     @Body() dto: any,

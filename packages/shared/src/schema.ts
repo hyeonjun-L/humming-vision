@@ -232,6 +232,110 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        BaseCameraDto: {
+            /** @enum {string} */
+            interface: "GIGE" | "USB" | "CAMERA_LINK" | "COAXPRESS";
+            /** @enum {string} */
+            type: "AREA" | "LINE";
+            /** @enum {string} */
+            color: "MONO" | "COLOR";
+            /** @enum {string} */
+            maker: "CREVIS" | "VIEWORKS" | "BASLER" | "HIK" | "HUARAY" | "JAI";
+            resolutionX: number;
+            resolutionY: number;
+            speed: number;
+            pixelSize?: number;
+            formatSize: string;
+            mountType: string;
+            sensor: string;
+        };
+        CreateImageDto: {
+            order: number;
+            /** @enum {string} */
+            type: "SPEC" | "PRODUCT";
+            /** Format: uri */
+            path: string;
+        };
+        CreateCameraProductDto: {
+            camera: components["schemas"]["BaseCameraDto"];
+            name: string;
+            mainFeature: string;
+            /** Format: uri */
+            datasheetUrl?: string;
+            /** Format: uri */
+            drawingUrl?: string;
+            /** Format: uri */
+            manualUrl?: string;
+            images: components["schemas"]["CreateImageDto"][];
+        };
+        BaseFrameGrabberDto: {
+            /** @enum {string} */
+            interface: "GIGE" | "USB" | "CAMERA_LINK" | "COAXPRESS";
+            /** @enum {string} */
+            maker: "MATROX" | "EURESYS" | "ADLINK" | "BASLER";
+            memory: number;
+            pcSlot: string;
+            connector: string;
+        };
+        CreateFrameGrabberProductDto: {
+            frameGrabber: components["schemas"]["BaseFrameGrabberDto"];
+            name: string;
+            mainFeature: string;
+            /** Format: uri */
+            datasheetUrl?: string;
+            /** Format: uri */
+            drawingUrl?: string;
+            /** Format: uri */
+            manualUrl?: string;
+            images: components["schemas"]["CreateImageDto"][];
+        };
+        BaseLensDto: {
+            /** @enum {string} */
+            type: "CCTV" | "TCL";
+            /** @enum {string} */
+            mount: "C" | "CS" | "F" | "M";
+            maker: string;
+            resolution: number;
+            numericAperture: string;
+            fNumnber: string;
+            focalLength: number;
+            formatSize: number;
+        };
+        CreateLensProductDto: {
+            lens: components["schemas"]["BaseLensDto"];
+            name: string;
+            mainFeature: string;
+            /** Format: uri */
+            datasheetUrl?: string;
+            /** Format: uri */
+            drawingUrl?: string;
+            /** Format: uri */
+            manualUrl?: string;
+            images: components["schemas"]["CreateImageDto"][];
+        };
+        BaseSoftwareDto: {
+            /** @enum {string} */
+            maker: "MATROX" | "EURESYS";
+        };
+        CreateSoftwareProductDto: {
+            software: components["schemas"]["BaseSoftwareDto"];
+            name: string;
+            mainFeature: string;
+            /** Format: uri */
+            datasheetUrl?: string;
+            /** Format: uri */
+            drawingUrl?: string;
+            /** Format: uri */
+            manualUrl?: string;
+            images: components["schemas"]["CreateImageDto"][];
+        };
+        BaseLightDto: {
+            /** Format: uri */
+            catalogUrl: string;
+        };
+        CreateLightProductDto: {
+            light: components["schemas"]["BaseLightDto"];
+        };
         CameraModel: {
             id: number;
             product: components["schemas"]["ProductModel"];
@@ -319,6 +423,45 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
+        UpdateCameraDto: {
+            id: number;
+        };
+        UpdateImageDto: {
+            id: number;
+        };
+        UpdateCameraProductDto: {
+            camera?: components["schemas"]["UpdateCameraDto"];
+            id: number;
+            images?: components["schemas"]["UpdateImageDto"][];
+        };
+        UpdateFrameGrabberDto: {
+            id: number;
+        };
+        UpdateFrameGrabberProductDto: {
+            frameGrabber?: components["schemas"]["UpdateFrameGrabberDto"];
+            id: number;
+            images?: components["schemas"]["UpdateImageDto"][];
+        };
+        UpdateLensDto: {
+            id: number;
+        };
+        UpdateLensProductDto: {
+            lens?: components["schemas"]["UpdateLensDto"];
+            id: number;
+            images?: components["schemas"]["UpdateImageDto"][];
+        };
+        UpdateSoftwareDto: Record<string, never>;
+        UpdateSoftwareProductDto: {
+            software?: components["schemas"]["UpdateSoftwareDto"];
+            id: number;
+            images?: components["schemas"]["UpdateImageDto"][];
+        };
+        UpdateLightDto: {
+            id: number;
+        };
+        UpdateLightProductDto: {
+            light?: components["schemas"]["UpdateLightDto"];
+        };
         PaginateCameraDto: {
             /** @enum {string} */
             camera__maker__equal?: "CREVIS" | "VIEWORKS" | "BASLER" | "HIK" | "HUARAY" | "JAI";
@@ -331,6 +474,8 @@ export interface components {
             order__name?: "ASC" | "DESC";
             /** @enum {string} */
             order__createdAt?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__id?: "ASC" | "DESC";
             /** @default 1 */
             page: number;
             /** @default 10 */
@@ -351,6 +496,8 @@ export interface components {
             order__name?: "ASC" | "DESC";
             /** @enum {string} */
             order__createdAt?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__id?: "ASC" | "DESC";
             /** @default 1 */
             page: number;
             /** @default 10 */
@@ -366,6 +513,8 @@ export interface components {
             order__name?: "ASC" | "DESC";
             /** @enum {string} */
             order__createdAt?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__id?: "ASC" | "DESC";
             /** @default 1 */
             page: number;
             /** @default 10 */
@@ -379,6 +528,8 @@ export interface components {
             order__name?: "ASC" | "DESC";
             /** @enum {string} */
             order__createdAt?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__id?: "ASC" | "DESC";
             /** @default 1 */
             page: number;
             /** @default 10 */
