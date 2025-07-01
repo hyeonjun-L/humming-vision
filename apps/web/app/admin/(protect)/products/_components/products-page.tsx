@@ -3,7 +3,6 @@ import Table from "components/table";
 import {
   CategoryRelationMapKebab,
   GetProductResponse,
-  GetProductResponseBase,
   GetProductResponseByCategory,
   Product,
 } from "@humming-vision/shared";
@@ -178,7 +177,7 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
             defaultValue={searchField}
             onValueChange={(value) => {
               setSearchField(value as CategoryRelationMapKebab);
-              setCurrentPage(1); // 카테고리 변경시 첫 페이지로
+              setCurrentPage(1);
             }}
           />
           <SearchInput
