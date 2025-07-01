@@ -22,6 +22,15 @@ function CreateProductPage() {
     { value: CategoryRelationMapKebab.SOFTWARE, label: "소프트웨어" },
   ];
 
+  const selectCategoryOptions = [
+    {
+      [CategoryRelationMapKebab.CAMERA]: [
+        { value: "CCTV", label: "CCTV 카메라" },
+        { value: "TCL", label: "TCL 카메라" },
+      ],
+    },
+  ];
+
   return (
     <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-60 md:px-10">
       <hr className="border-gray200 absolute left-0 w-screen border-t" />

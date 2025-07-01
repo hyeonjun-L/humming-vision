@@ -2,6 +2,7 @@
 import Table from "components/table";
 import {
   CategoryRelationMapKebab,
+  GetProductResponse,
   GetProductResponseBase,
   GetProductResponseByCategory,
   Product,
@@ -80,7 +81,7 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
 
       queryClient.setQueryData(
         ["products", currentPage, activeSearchValue, searchField],
-        (oldData: GetProductResponseBase | undefined) => {
+        (oldData: GetProductResponse | undefined) => {
           if (!oldData) return oldData;
           return {
             ...oldData,

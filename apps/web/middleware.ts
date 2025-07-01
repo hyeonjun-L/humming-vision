@@ -32,8 +32,6 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  console.log("Middleware triggered for path:", pathname);
-
   const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
 
