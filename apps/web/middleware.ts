@@ -32,6 +32,8 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  console.log("Middleware triggered for path:", pathname);
+
   const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
 
@@ -65,8 +67,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|admin/refresh).*)",
-    "/admin$",
-  ],
+  matcher: ["/admin/((?!refresh).*)", "/admin$"],
 };

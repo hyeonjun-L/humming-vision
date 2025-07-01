@@ -6,7 +6,7 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 };
 
-export const ProductSearchParamsSchema = z.object({
+const ProductSearchParamsSchema = z.object({
   category: z
     .nativeEnum(CategoryRelationMapKebab)
     .default(CategoryRelationMapKebab.CAMERA),
@@ -14,13 +14,13 @@ export const ProductSearchParamsSchema = z.object({
   searchValue: z.string().default(""),
 });
 
-export type ProductSearchParams = {
+type ProductSearchParams = {
   category: CategoryRelationMapKebab;
   page: number;
   searchValue: string;
 };
 
-export function safeParseProductSearchParams(
+function safeParseProductSearchParams(
   searchParams: Record<string, string | undefined>,
 ): ProductSearchParams {
   const result = ProductSearchParamsSchema.safeParse(searchParams);

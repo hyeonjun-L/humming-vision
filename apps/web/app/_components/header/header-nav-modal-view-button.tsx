@@ -5,7 +5,7 @@ import { useModalStore } from "stores/use-modal.store";
 
 function HeaderNavModalViewButton() {
   const handleClick = () => {
-    useModalStore.getState().openModal(ModalEnum.HEADER_NAV);
+    useModalStore.getState().openModal(ModalEnum.HEADER_NAV, {});
   };
 
   return (
