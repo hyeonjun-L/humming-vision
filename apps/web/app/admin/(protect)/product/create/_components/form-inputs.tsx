@@ -56,6 +56,7 @@ export function TextInput<TName extends FieldPath<ProductFormData>>({
       {({ field }) => (
         <Input
           {...field}
+          value={field.value ?? ""}
           size="default"
           placeholder={placeholder}
           className={inputClassName}
@@ -85,6 +86,7 @@ export function TextAreaInput<TName extends FieldPath<ProductFormData>>({
       {({ field }) => (
         <textarea
           {...field}
+          value={field.value ?? ""}
           placeholder={placeholder}
           className={textAreaClassName}
         />
@@ -113,7 +115,7 @@ export function SelectInput<TName extends FieldPath<ProductFormData>>({
         <SelectBox
           options={options}
           onValueChange={field.onChange}
-          value={field.value as string}
+          value={(field.value as string) ?? ""}
           size="full"
         />
       )}

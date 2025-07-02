@@ -12,6 +12,7 @@ import { InfoSection } from "./_components/info-section";
 import { SpecSection } from "./_components/spec-section";
 import { OtherInfoSection } from "./_components/other-info-section";
 import { ProductFormData } from "./_types/product.type";
+import { protectApi } from "libs/axios";
 
 function CreateProductPage() {
   const { control, handleSubmit, watch, setError, clearErrors } =
@@ -32,9 +33,7 @@ function CreateProductPage() {
 
   const selectedCategory = watch("category");
 
-  const onSubmit = (data: ProductFormData) => {
-    console.log("Original form data:", data);
-
+  const onSubmit = async (data: ProductFormData) => {
     clearErrors();
 
     try {
@@ -44,7 +43,13 @@ function CreateProductPage() {
       console.log("Validated form data:", validatedData);
 
       const transformedData = createCompleteProductDto(data);
-      console.log("Transformed DTO:", transformedData);
+
+      const request = await protectApi.post(
+        `/products/${data.category}`,
+        transformedData,
+      );
+
+      console.log("Product created successfully:", request.data);
     } catch (error) {
       if (error instanceof ZodError) {
         error.errors.forEach((err) => {

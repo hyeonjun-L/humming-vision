@@ -76,7 +76,7 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
 
   const handleDeleteProduct = async (id: number) => {
     try {
-      await publicApi.delete(`/api/products/delete?id=${id}`);
+      await publicApi.delete(`/api/product/delete?id=${id}`);
 
       queryClient.setQueryData(
         ["products", currentPage, activeSearchValue, searchField],
