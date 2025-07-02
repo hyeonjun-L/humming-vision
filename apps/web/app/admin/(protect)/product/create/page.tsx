@@ -33,6 +33,46 @@ function CreateProductPage() {
 
   const selectedCategory = watch("category");
 
+  const uploadedImages = async (images: File[]) => {
+    try {
+      const formData = new FormData();
+      images.forEach((image) => {
+        formData.append("files", image);
+      });
+
+      const request = await protectApi.post("/api/uploads/images", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return request.data.map((image: { url: string }) => image.url);
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(`이미지 업로드 오류: ${error.message}`);
+      }
+      return [];
+    }
+  };
+
+  const uploadDocument = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const request = await protectApi.post("/uploads/documents", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return request.data.url;
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(`문서 업로드 오류: ${error.message}`);
+      }
+      return null;
+    }
+  };
+
   const onSubmit = async (data: ProductFormData) => {
     clearErrors();
 
@@ -40,16 +80,41 @@ function CreateProductPage() {
       const schema = getFormSchema(data.category);
 
       const validatedData = schema.parse(data);
-      console.log("Validated form data:", validatedData);
 
-      const transformedData = createCompleteProductDto(data);
-
-      const request = await protectApi.post(
-        `/products/${data.category}`,
-        transformedData,
+      const productImageUrls = await uploadedImages(
+        validatedData.productImages,
       );
+      const specImageUrls = await uploadedImages(validatedData.specImages);
 
-      console.log("Product created successfully:", request.data);
+      console.log(productImageUrls, specImageUrls);
+
+      // const datasheetUrl = validatedData.datasheetFile
+      //   ? await uploadDocument(validatedData.datasheetFile)
+      //   : null;
+      // const drawingUrl = validatedData.drawingFile
+      //   ? await uploadDocument(validatedData.drawingFile)
+      //   : null;
+      // const manualUrl = validatedData.manualFile
+      //   ? await uploadDocument(validatedData.manualFile)
+      //   : null;
+
+      // const dataWithUrls = {
+      //   ...data,
+      //   productImages: productImageUrls,
+      //   specImages: specImageUrls,
+      //   datasheetFile: datasheetUrl,
+      //   drawingFile: drawingUrl,
+      //   manualFile: manualUrl,
+      // };
+
+      // const transformedData = createCompleteProductDto(dataWithUrls);
+
+      // const request = await protectApi.post(
+      //   `/products/${data.category}`,
+      //   transformedData,
+      // );
+
+      // console.log("Product created successfully:", request.data);
     } catch (error) {
       if (error instanceof ZodError) {
         error.errors.forEach((err) => {
