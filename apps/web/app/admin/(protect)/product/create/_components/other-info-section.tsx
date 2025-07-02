@@ -1,7 +1,7 @@
 import { Controller, Control } from "react-hook-form";
 import { Input } from "components/input";
 import { SelectBox } from "components/select-box/select-box";
-import { CategoryRelationMapKebab } from "@humming-vision/shared";
+import { CategoriesEnum } from "@humming-vision/shared";
 import {
   ProductFormData,
   CategoryFieldOption,
@@ -10,22 +10,12 @@ import {
 
 interface CategoryFieldProps {
   field: CategoryFieldOption;
-  index: number;
   control: Control<ProductFormData>;
 }
 
-export const CategoryField = ({
-  field,
-  index,
-  control,
-}: CategoryFieldProps) => {
-  const fieldId = `field-${index}`;
-
+export const CategoryField = ({ field, control }: CategoryFieldProps) => {
   return (
-    <div
-      key={fieldId}
-      className="flex w-full flex-col gap-2 lg:w-[calc(50%-10px)]"
-    >
+    <div className="flex w-full flex-col gap-2 lg:w-[calc(50%-10px)]">
       <label className="text-gray400 font-semibold">
         {field.label}
         {field.unit && (
@@ -34,7 +24,7 @@ export const CategoryField = ({
       </label>
 
       <Controller
-        name={`categoryFields.${field.label}` as keyof ProductFormData}
+        name={`categoryFields.${field.fieldName}` as keyof ProductFormData}
         control={control}
         defaultValue=""
         render={({ field: formField }) => {
@@ -62,7 +52,7 @@ export const CategoryField = ({
 
 interface OtherInfoSectionProps {
   control: Control<ProductFormData>;
-  selectedCategory: CategoryRelationMapKebab;
+  selectedCategory: CategoriesEnum;
 }
 
 export const OtherInfoSection = ({
@@ -78,7 +68,6 @@ export const OtherInfoSection = ({
             <CategoryField
               key={`category-field-${index}`}
               field={field}
-              index={index}
               control={control}
             />
           ),

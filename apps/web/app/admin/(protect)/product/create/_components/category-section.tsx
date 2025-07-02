@@ -1,6 +1,6 @@
 import { Controller, Control } from "react-hook-form";
 import { SelectBox } from "components/select-box/select-box";
-import { CategoryRelationMapKebab } from "@humming-vision/shared";
+import { CategoriesEnum } from "@humming-vision/shared";
 import {
   ProductFormData,
   selectProductOptions,
@@ -9,7 +9,7 @@ import {
 
 interface CategorySectionProps {
   control: Control<ProductFormData>;
-  selectedCategory: CategoryRelationMapKebab;
+  selectedCategory: CategoriesEnum;
 }
 
 export const CategorySection = ({

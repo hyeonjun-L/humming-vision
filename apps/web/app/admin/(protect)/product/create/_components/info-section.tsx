@@ -45,6 +45,22 @@ export const InfoSection = ({ control }: InfoSectionProps) => {
       </div>
 
       <div className="flex w-full flex-col gap-2">
+        <label className="text-gray400 font-semibold">제조사</label>
+        <Controller
+          name="manufacturer"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              size="default"
+              placeholder="제조사 입력"
+              className="text-gray600 focus-visible:border-gray200 rounded-none border-x-0 border-t-0 border-b text-base outline-none placeholder:text-sm focus-visible:ring-0"
+            />
+          )}
+        />
+      </div>
+
+      <div className="flex w-full flex-col gap-2">
         <label className="text-gray400 font-semibold">이미지</label>
         <Controller
           name="productImages"
@@ -88,22 +104,6 @@ export const InfoSection = ({ control }: InfoSectionProps) => {
           control={control}
           render={({ field }) => (
             <PdfUpload file={field.value} onFileChange={field.onChange} />
-          )}
-        />
-      </div>
-
-      <div className="flex w-full flex-col gap-2">
-        <label className="text-gray400 font-semibold">제조사</label>
-        <Controller
-          name="manufacturer"
-          control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              size="default"
-              placeholder="제조사 입력"
-              className="text-gray600 focus-visible:border-gray200 rounded-none border-x-0 border-t-0 border-b text-base outline-none placeholder:text-sm focus-visible:ring-0"
-            />
           )}
         />
       </div>
