@@ -1,31 +1,38 @@
 import { z } from "zod";
-import { CategoriesEnum, CreateCategoryDtoMap } from "@humming-vision/shared";
-import { categoryOptions, type ProductFormData } from "../_const/constants";
-
-type CameraFields = CreateCategoryDtoMap[CategoriesEnum.CAMERA]["camera"];
-type FrameGrabberFields =
-  CreateCategoryDtoMap[CategoriesEnum.FRAMEGRABBER]["frameGrabber"];
-type LensFields = CreateCategoryDtoMap[CategoriesEnum.LENS]["lens"];
-type SoftwareFields = CreateCategoryDtoMap[CategoriesEnum.SOFTWARE]["software"];
-type LightFields = CreateCategoryDtoMap[CategoriesEnum.LIGHT]["light"];
-
-type CreateCategoryFields =
-  | CameraFields
-  | FrameGrabberFields
-  | LensFields
-  | SoftwareFields
-  | LightFields;
+import {
+  CategoriesEnum,
+  CategoryRelationMap,
+  CreateCategoryDtoMap,
+} from "@humming-vision/shared";
+import { categoryOptions } from "../_const/constants";
+import {
+  CameraFields,
+  CreateCategoryFields,
+  FrameGrabberFields,
+  LensFields,
+  LightFields,
+  ProductFormData,
+  SoftwareFields,
+} from "../_types/product.type";
 
 const fileSchema = z.instanceof(File).nullable().optional();
 
 const baseProductSchema = z.object({
-  name: z.string().min(1, "제품명은 필수입니다"),
-  mainFeature: z.string().min(1, "주요 특징은 필수입니다"),
-  manufacturer: z.string().min(1, "제조사는 필수입니다"),
+  name: z
+    .string({ required_error: "제품명은 필수입니다" })
+    .min(1, "제품명은 필수입니다"),
+  mainFeature: z
+    .string({ required_error: "주요 특징은 필수입니다" })
+    .min(1, "주요 특징은 필수입니다"),
+  manufacturer: z
+    .string({ required_error: "제조사는 필수입니다" })
+    .min(1, "제조사는 필수입니다"),
   productImages: z
     .array(z.instanceof(File))
     .min(1, "제품 이미지는 최소 1개 필요합니다"),
-  specImages: z.array(z.instanceof(File)),
+  specImages: z
+    .array(z.instanceof(File))
+    .min(1, "스펙 이미지는 최소 1개 필요합니다"),
   datasheetFile: fileSchema,
   drawingFile: fileSchema,
   manualFile: fileSchema,
@@ -36,6 +43,9 @@ const createCategorySchema = (category: CategoriesEnum) => {
   const schemaFields: Record<string, z.ZodTypeAny> = {};
 
   fields.forEach((field) => {
+    const requiredMessage = `${field.label}은(는) 필수입니다`;
+    const invalidMessage = `${field.label}을(를) 올바르게 입력해주세요`;
+
     if (field.type === "select" && field.options) {
       const values = field.options.map((opt) => opt.value) as [
         string,
@@ -43,7 +53,10 @@ const createCategorySchema = (category: CategoriesEnum) => {
       ];
 
       if (field.required) {
-        schemaFields[field.fieldName] = z.enum(values);
+        schemaFields[field.fieldName] = z.enum(values, {
+          required_error: requiredMessage,
+          invalid_type_error: invalidMessage,
+        });
       } else {
         schemaFields[field.fieldName] = z.enum(values).optional();
       }
@@ -51,12 +64,15 @@ const createCategorySchema = (category: CategoriesEnum) => {
       if (field.unit) {
         if (field.required) {
           schemaFields[field.fieldName] = z
-            .string()
+            .string({ required_error: requiredMessage })
+            .min(1, requiredMessage)
             .transform((val) => {
               const num = Number(val);
               return isNaN(num) ? 0 : num;
             })
-            .pipe(z.number().min(0));
+            .pipe(
+              z.number().min(0, `${field.label}은(는) 0 이상이어야 합니다`),
+            );
         } else {
           schemaFields[field.fieldName] = z
             .string()
@@ -66,11 +82,18 @@ const createCategorySchema = (category: CategoriesEnum) => {
               const num = Number(val);
               return isNaN(num) ? undefined : num;
             })
-            .pipe(z.number().min(0).optional());
+            .pipe(
+              z
+                .number()
+                .min(0, `${field.label}은(는) 0 이상이어야 합니다`)
+                .optional(),
+            );
         }
       } else {
         if (field.required) {
-          schemaFields[field.fieldName] = z.string();
+          schemaFields[field.fieldName] = z
+            .string({ required_error: requiredMessage })
+            .min(1, requiredMessage);
         } else {
           schemaFields[field.fieldName] = z.string().optional();
         }
@@ -85,8 +108,15 @@ const createCompleteFormSchema = (category: CategoriesEnum) => {
   const categorySchema = createCategorySchema(category);
 
   return baseProductSchema.extend({
-    category: z.literal(category),
-    subCategory: z.string().optional(),
+    category: z.literal(category, {
+      required_error: "제품 카테고리는 필수입니다",
+      invalid_type_error: "올바른 카테고리를 선택해주세요",
+    }),
+    subCategory: z
+      .string({
+        required_error: "서브 카테고리는 필수입니다",
+      })
+      .min(1, "서브 카테고리를 선택해주세요"),
     categoryFields: categorySchema,
   });
 };
@@ -214,7 +244,7 @@ export function createCompleteProductDto(
       );
       return {
         ...baseDto,
-        camera: cameraFields,
+        [CategoryRelationMap.CAMERA]: cameraFields,
       };
     }
 
@@ -225,7 +255,7 @@ export function createCompleteProductDto(
       );
       return {
         ...baseDto,
-        frameGrabber: frameGrabberFields,
+        [CategoryRelationMap.FRAMEGRABBER]: frameGrabberFields,
       };
     }
 
@@ -237,7 +267,7 @@ export function createCompleteProductDto(
       );
       return {
         ...baseDto,
-        lens: lensFields,
+        [CategoryRelationMap.LENS]: lensFields,
       };
     }
 
@@ -248,7 +278,7 @@ export function createCompleteProductDto(
       );
       return {
         ...baseDto,
-        software: softwareFields,
+        [CategoryRelationMap.SOFTWARE]: softwareFields,
       };
     }
 
@@ -259,7 +289,7 @@ export function createCompleteProductDto(
       );
       return {
         ...baseDto,
-        light: lightFields,
+        [CategoryRelationMap.LIGHT]: lightFields,
       };
     }
 

@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
 import { ZodError } from "zod";
 import { CategoriesEnum } from "@humming-vision/shared";
-import { ProductFormData } from "./_const/constants";
 import {
   getFormSchema,
   createCompleteProductDto,
@@ -12,27 +11,31 @@ import { CategorySection } from "./_components/category-section";
 import { InfoSection } from "./_components/info-section";
 import { SpecSection } from "./_components/spec-section";
 import { OtherInfoSection } from "./_components/other-info-section";
+import { ProductFormData } from "./_types/product.type";
 
 function CreateProductPage() {
-  const { control, handleSubmit, watch } = useForm<ProductFormData>({
-    defaultValues: {
-      category: CategoriesEnum.CAMERA,
-      name: "",
-      mainFeature: "",
-      manufacturer: "",
-      productImages: [],
-      specImages: [],
-      datasheetFile: null,
-      drawingFile: null,
-      manualFile: null,
-      categoryFields: {},
-    },
-  });
+  const { control, handleSubmit, watch, setError, clearErrors } =
+    useForm<ProductFormData>({
+      defaultValues: {
+        category: CategoriesEnum.CAMERA,
+        name: "",
+        mainFeature: "",
+        manufacturer: "",
+        productImages: [],
+        specImages: [],
+        datasheetFile: null,
+        drawingFile: null,
+        manualFile: null,
+        categoryFields: {},
+      },
+    });
 
   const selectedCategory = watch("category");
 
   const onSubmit = (data: ProductFormData) => {
     console.log("Original form data:", data);
+
+    clearErrors();
 
     try {
       const schema = getFormSchema(data.category);
@@ -44,13 +47,25 @@ function CreateProductPage() {
       console.log("Transformed DTO:", transformedData);
     } catch (error) {
       if (error instanceof ZodError) {
-        const errorMessages = error.errors
-          .map((err) => {
-            const path = err.path.join(".");
-            return `${path}: ${err.message}`;
-          })
-          .join("\n");
-        alert(`검증 오류:\n${errorMessages}`);
+        error.errors.forEach((err) => {
+          const fieldPath = err.path.join(".");
+
+          if (fieldPath.startsWith("categoryFields.")) {
+            const categoryFieldName = fieldPath.replace("categoryFields.", "");
+            setError(
+              `categoryFields.${categoryFieldName}` as `categoryFields.${string}`,
+              {
+                type: "validation",
+                message: err.message,
+              },
+            );
+          } else {
+            setError(fieldPath as keyof ProductFormData, {
+              type: "validation",
+              message: err.message,
+            });
+          }
+        });
       } else if (error instanceof Error) {
         alert(`오류: ${error.message}`);
       } else {

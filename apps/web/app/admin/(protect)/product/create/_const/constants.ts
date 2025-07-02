@@ -10,40 +10,7 @@ import {
   LensTypeEnum,
   SoftwareMakerEnum,
 } from "@humming-vision/shared";
-
-export type CategoryFieldOption = {
-  required: boolean;
-  fieldName: string;
-  label: string;
-  type: "select" | "input";
-  placeholder?: string;
-  unit?: string;
-  options?: { value: string; label: string }[];
-};
-
-export type CategoryOptionsMap = {
-  [key in CategoriesEnum]: CategoryFieldOption[];
-};
-
-// 폼 데이터 타입 정의
-export type ProductFormData = {
-  // 기본 정보
-  category: CategoriesEnum;
-  subCategory?: string;
-  name: string;
-  mainFeature: string;
-  manufacturer: string;
-
-  // 파일들
-  productImages: File[];
-  specImages: File[];
-  datasheetFile: File | null;
-  drawingFile: File | null;
-  manualFile: File | null;
-
-  // 카테고리별 동적 필드들
-  categoryFields: Record<string, string>;
-};
+import { CategoryOptionsMap } from "../_types/product.type";
 
 export const selectProductOptions = [
   { value: CategoriesEnum.CAMERA, label: "카메라" },

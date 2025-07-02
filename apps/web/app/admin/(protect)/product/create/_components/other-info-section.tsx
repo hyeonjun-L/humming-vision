@@ -1,12 +1,8 @@
-import { Controller, Control } from "react-hook-form";
-import { Input } from "components/input";
-import { SelectBox } from "components/select-box/select-box";
+import { Control } from "react-hook-form";
 import { CategoriesEnum } from "@humming-vision/shared";
-import {
-  ProductFormData,
-  CategoryFieldOption,
-  categoryOptions,
-} from "../_const/constants";
+import { categoryOptions } from "../_const/constants";
+import { CategoryFieldOption, ProductFormData } from "../_types/product.type";
+import { TextInput, SelectInput } from "./form-inputs";
 
 interface CategoryFieldProps {
   field: CategoryFieldOption;
@@ -14,39 +10,34 @@ interface CategoryFieldProps {
 }
 
 export const CategoryField = ({ field, control }: CategoryFieldProps) => {
-  return (
-    <div className="flex w-full flex-col gap-2 lg:w-[calc(50%-10px)]">
-      <label className="text-gray400 font-semibold">
-        {field.label}
-        {field.unit && (
-          <span className="text-gray300 ml-1">({field.unit})</span>
-        )}
-      </label>
+  const fieldName =
+    `categoryFields.${field.fieldName}` as keyof ProductFormData;
+  const label = field.label + (field.unit ? ` (${field.unit})` : "");
+  const className = "flex w-full flex-col gap-2 lg:w-[calc(50%-10px)]";
 
-      <Controller
-        name={`categoryFields.${field.fieldName}` as keyof ProductFormData}
+  if (field.type === "select") {
+    return (
+      <SelectInput
+        name={fieldName}
         control={control}
-        defaultValue=""
-        render={({ field: formField }) => {
-          return field.type === "select" ? (
-            <SelectBox
-              options={field.options || []}
-              onValueChange={formField.onChange}
-              value={formField.value as string}
-              size="full"
-            />
-          ) : (
-            <Input
-              {...formField}
-              value={formField.value as string}
-              size="default"
-              placeholder={field.placeholder}
-              className="text-gray600 border-gray200 focus-visible:border-gray200 rounded-none text-base outline-none placeholder:text-sm focus-visible:ring-0"
-            />
-          );
-        }}
+        label={label}
+        options={field.options || []}
+        required={field.required}
+        className={className}
       />
-    </div>
+    );
+  }
+
+  return (
+    <TextInput
+      name={fieldName}
+      control={control}
+      label={label}
+      placeholder={field.placeholder}
+      required={field.required}
+      className={className}
+      inputClassName="text-gray600 border-gray200 focus-visible:border-gray200 rounded-none text-base outline-none placeholder:text-sm focus-visible:ring-0"
+    />
   );
 };
 
