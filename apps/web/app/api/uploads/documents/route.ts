@@ -39,13 +39,9 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    const maxFileSize = 10 * 1024 * 1024;
-    if (file.size > maxFileSize) {
-      return NextResponse.json(
-        { error: "파일 크기가 10MB를 초과합니다." },
-        { status: 413 },
-      );
-    }
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${accessToken}`,
+    };
 
     const backendFormData = new FormData();
     backendFormData.append("file", file);
@@ -54,11 +50,7 @@ export const POST = async (request: NextRequest) => {
       `${END_POINT}/common/asset/upload`,
       backendFormData,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "multipart/form-data",
-        },
-        adapter: "fetch",
+        headers,
       },
     );
 
@@ -76,26 +68,9 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    if (error instanceof Error && error.message.includes("Body exceeded")) {
-      return NextResponse.json(
-        {
-          error: "파일 크기가 너무 큽니다. 10MB 이하의 파일을 업로드해주세요.",
-        },
-        { status: 413 },
-      );
-    }
-
     return NextResponse.json(
       { error: "파일 업로드 중 오류가 발생했습니다." },
       { status: 500 },
     );
   }
-};
-
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "10mb",
-    },
-  },
 };

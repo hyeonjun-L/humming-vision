@@ -21,7 +21,6 @@ function CreateProductPage() {
         category: CategoriesEnum.CAMERA,
         name: "",
         mainFeature: "",
-        manufacturer: "",
         productImages: [],
         specImages: [],
         datasheetFile: null,
@@ -40,11 +39,7 @@ function CreateProductPage() {
         formData.append("files", image);
       });
 
-      const request = await protectApi.post("/api/uploads/images", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const request = await protectApi.post("/api/uploads/images", formData);
       return request.data.map((image: { url: string }) => image.url);
     } catch (error) {
       if (error instanceof Error) {
@@ -59,11 +54,7 @@ function CreateProductPage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const request = await protectApi.post("/uploads/documents", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const request = await protectApi.post("/api/uploads/documents", formData);
       return request.data.url;
     } catch (error) {
       if (error instanceof Error) {
@@ -86,35 +77,33 @@ function CreateProductPage() {
       );
       const specImageUrls = await uploadedImages(validatedData.specImages);
 
-      console.log(productImageUrls, specImageUrls);
+      const datasheetUrl = validatedData.datasheetFile
+        ? await uploadDocument(validatedData.datasheetFile)
+        : null;
+      const drawingUrl = validatedData.drawingFile
+        ? await uploadDocument(validatedData.drawingFile)
+        : null;
+      const manualUrl = validatedData.manualFile
+        ? await uploadDocument(validatedData.manualFile)
+        : null;
 
-      // const datasheetUrl = validatedData.datasheetFile
-      //   ? await uploadDocument(validatedData.datasheetFile)
-      //   : null;
-      // const drawingUrl = validatedData.drawingFile
-      //   ? await uploadDocument(validatedData.drawingFile)
-      //   : null;
-      // const manualUrl = validatedData.manualFile
-      //   ? await uploadDocument(validatedData.manualFile)
-      //   : null;
+      const dataWithUrls = {
+        ...data,
+        productImages: productImageUrls,
+        specImages: specImageUrls,
+        datasheetFile: datasheetUrl,
+        drawingFile: drawingUrl,
+        manualFile: manualUrl,
+      };
 
-      // const dataWithUrls = {
-      //   ...data,
-      //   productImages: productImageUrls,
-      //   specImages: specImageUrls,
-      //   datasheetFile: datasheetUrl,
-      //   drawingFile: drawingUrl,
-      //   manualFile: manualUrl,
-      // };
+      const transformedData = createCompleteProductDto(dataWithUrls);
 
-      // const transformedData = createCompleteProductDto(dataWithUrls);
+      const request = await protectApi.post(
+        "/api/product/create",
+        transformedData,
+      );
 
-      // const request = await protectApi.post(
-      //   `/products/${data.category}`,
-      //   transformedData,
-      // );
-
-      // console.log("Product created successfully:", request.data);
+      console.log("Product created successfully:", request.data);
     } catch (error) {
       if (error instanceof ZodError) {
         error.errors.forEach((err) => {
@@ -137,6 +126,7 @@ function CreateProductPage() {
           }
         });
       } else if (error instanceof Error) {
+        console.error("Submission error:", error);
         alert(`오류: ${error.message}`);
       } else {
         alert("알 수 없는 오류가 발생했습니다.");

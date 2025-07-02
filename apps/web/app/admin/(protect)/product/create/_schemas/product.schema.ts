@@ -24,9 +24,6 @@ const baseProductSchema = z.object({
   mainFeature: z
     .string({ required_error: "주요 특징은 필수입니다" })
     .min(1, "주요 특징은 필수입니다"),
-  manufacturer: z
-    .string({ required_error: "제조사는 필수입니다" })
-    .min(1, "제조사는 필수입니다"),
   productImages: z
     .array(z.instanceof(File))
     .min(1, "제품 이미지는 최소 1개 필요합니다"),

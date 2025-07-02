@@ -31,13 +31,6 @@ export const InfoSection = ({ control }: InfoSectionProps) => {
         placeholder="주요특징 입력"
       />
 
-      <TextInput
-        name="manufacturer"
-        control={control}
-        label="제조사"
-        placeholder="제조사 입력"
-      />
-
       <ImageUploadInput
         name="productImages"
         control={control}

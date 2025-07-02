@@ -19,12 +19,12 @@ const nextConfig = {
       },
     },
     serverActions: {
-      bodySizeLimit: "10mb",
+      bodySizeLimit: "10Mb",
     },
   },
   api: {
     bodyParser: {
-      sizeLimit: "10mb",
+      sizeLimit: "10Mb",
     },
   },
   transpilePackages: ["@humming-vision/shared"],

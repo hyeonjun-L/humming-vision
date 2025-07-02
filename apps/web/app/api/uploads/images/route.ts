@@ -5,6 +5,7 @@ import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 
 export const POST = async (request: NextRequest) => {
   const formData = await request.formData();
+
   const files = formData.getAll("files") as File[];
 
   if (!files || files.length === 0) {
@@ -31,18 +32,14 @@ export const POST = async (request: NextRequest) => {
     );
   }
 
-  const maxFileSize = 5 * 1024 * 1024;
-  for (const file of files) {
-    if (file.size > maxFileSize) {
-      return NextResponse.json(
-        { error: `파일 크기가 5MB를 초과합니다: ${file.name}` },
-        { status: 413 },
-      );
-    }
-  }
   const backendFormData = new FormData();
-  files.forEach((file) => {
-    backendFormData.append("files", file);
+
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  Array.from(files).forEach((el) => {
+    backendFormData.append("files", el);
   });
 
   try {
@@ -50,17 +47,11 @@ export const POST = async (request: NextRequest) => {
       `${END_POINT}/common/asset/upload-multiple`,
       backendFormData,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "multipart/form-data",
-        },
-        adapter: "fetch",
+        headers,
       },
     );
 
-    console.log("File upload successful:", response.data);
-
-    return NextResponse.json(response.data);
+    return NextResponse.json(response.data.urls);
   } catch (error) {
     console.error("Image upload error:", error);
 
@@ -74,26 +65,9 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    if (error instanceof Error && error.message.includes("Body exceeded")) {
-      return NextResponse.json(
-        {
-          error: "파일 크기가 너무 큽니다. 10MB 이하의 파일을 업로드해주세요.",
-        },
-        { status: 413 },
-      );
-    }
-
     return NextResponse.json(
       { error: "파일 업로드 중 오류가 발생했습니다." },
       { status: 500 },
     );
   }
-};
-
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "10mb",
-    },
-  },
 };

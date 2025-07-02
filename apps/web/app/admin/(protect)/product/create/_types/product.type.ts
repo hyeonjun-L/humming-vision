@@ -35,7 +35,6 @@ export type ProductFormData = {
   subCategory?: string;
   name: string;
   mainFeature: string;
-  manufacturer: string;
 
   productImages: File[];
   specImages: File[];
