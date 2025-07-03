@@ -194,16 +194,16 @@ function transformCategoryFields(
 }
 
 export const createBaseProductDto = (data: ProductFormData) => {
-  const productImages = data.productImages.map((file, index) => ({
+  const productImages = data.productImages.map((path, index) => ({
     order: index + 1,
     type: "PRODUCT" as const,
-    path: `temp-url-${file.name}`,
+    path,
   }));
 
-  const specImages = data.specImages.map((file, index) => ({
+  const specImages = data.specImages.map((path, index) => ({
     order: index + 1,
     type: "SPEC" as const,
-    path: `temp-url-${file.name}`,
+    path,
   }));
 
   const allImages = [...productImages, ...specImages];
@@ -211,13 +211,9 @@ export const createBaseProductDto = (data: ProductFormData) => {
   return {
     name: data.name,
     mainFeature: data.mainFeature,
-    datasheetUrl: data.datasheetFile
-      ? `temp-url-${data.datasheetFile.name}`
-      : undefined,
-    drawingUrl: data.drawingFile
-      ? `temp-url-${data.drawingFile.name}`
-      : undefined,
-    manualUrl: data.manualFile ? `temp-url-${data.manualFile.name}` : undefined,
+    datasheetUrl: data.datasheetFile,
+    drawingUrl: data.drawingFile,
+    manualUrl: data.manualFile,
     images: allImages,
   };
 };

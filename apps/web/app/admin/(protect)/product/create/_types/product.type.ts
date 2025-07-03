@@ -36,11 +36,11 @@ export type ProductFormData = {
   name: string;
   mainFeature: string;
 
-  productImages: File[];
-  specImages: File[];
-  datasheetFile: File | null;
-  drawingFile: File | null;
-  manualFile: File | null;
+  productImages: string[];
+  specImages: string[];
+  datasheetFile?: string;
+  drawingFile?: string;
+  manualFile?: string;
 
   categoryFields: Record<string, string>;
 };

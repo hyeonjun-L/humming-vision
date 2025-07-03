@@ -23,24 +23,28 @@ function CreateProductPage() {
         mainFeature: "",
         productImages: [],
         specImages: [],
-        datasheetFile: null,
-        drawingFile: null,
-        manualFile: null,
+        datasheetFile: undefined, //TODO: Update 진행 시 수정
+        drawingFile: undefined,
+        manualFile: undefined,
         categoryFields: {},
       },
     });
 
   const selectedCategory = watch("category");
 
-  const uploadedImages = async (images: File[]) => {
+  const uploadedImages = async (images: File[]): Promise<string[]> => {
     try {
       const formData = new FormData();
       images.forEach((image) => {
         formData.append("files", image);
       });
 
-      const request = await protectApi.post("/api/uploads/images", formData);
-      return request.data.map((image: { url: string }) => image.url);
+      const request = await protectApi.post<string[]>(
+        "/api/uploads/images",
+        formData,
+      );
+
+      return request.data.map((url: string) => url);
     } catch (error) {
       if (error instanceof Error) {
         alert(`이미지 업로드 오류: ${error.message}`);
@@ -55,6 +59,7 @@ function CreateProductPage() {
       formData.append("file", file);
 
       const request = await protectApi.post("/api/uploads/documents", formData);
+
       return request.data.url;
     } catch (error) {
       if (error instanceof Error) {
