@@ -112,12 +112,14 @@ export function SelectInput<TName extends FieldPath<ProductFormData>>({
       className={className}
     >
       {({ field }) => (
-        <SelectBox
-          options={options}
-          onValueChange={field.onChange}
-          value={(field.value as string) ?? ""}
-          size="full"
-        />
+        <div data-field={name}>
+          <SelectBox
+            options={options}
+            onValueChange={field.onChange}
+            value={(field.value as string) ?? ""}
+            size="full"
+          />
+        </div>
       )}
     </FormField>
   );

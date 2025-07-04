@@ -1,7 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
-import { ZodError } from "zod";
 import {
   CategoriesEnum,
   CategoryRelationMapKebab,
@@ -21,9 +20,10 @@ import {
   ProductApiData,
 } from "./_types/product.type";
 import { protectApi } from "libs/axios";
+import { handleFormErrors } from "./_utils/form-error-handler";
 
 function CreateProductPage() {
-  const { control, handleSubmit, watch, setError, clearErrors } =
+  const { control, handleSubmit, watch, setError, setFocus, clearErrors } =
     useForm<ProductFormData>({
       defaultValues: {
         category: CategoriesEnum.CAMERA,
@@ -147,32 +147,7 @@ function CreateProductPage() {
 
       console.log("Product created successfully:", request.data);
     } catch (error) {
-      if (error instanceof ZodError) {
-        error.errors.forEach((err) => {
-          const fieldPath = err.path.join(".");
-
-          if (fieldPath.startsWith("categoryFields.")) {
-            const categoryFieldName = fieldPath.replace("categoryFields.", "");
-            setError(
-              `categoryFields.${categoryFieldName}` as `categoryFields.${string}`,
-              {
-                type: "validation",
-                message: err.message,
-              },
-            );
-          } else {
-            setError(fieldPath as keyof ProductFormData, {
-              type: "validation",
-              message: err.message,
-            });
-          }
-        });
-      } else if (error instanceof Error) {
-        console.error("Submission error:", error);
-        alert(`오류: ${error.message}`);
-      } else {
-        alert("알 수 없는 오류가 발생했습니다.");
-      }
+      handleFormErrors(error, setError, setFocus);
     }
   };
 
