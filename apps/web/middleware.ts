@@ -8,9 +8,9 @@ const createRedirectUrl = (path: string, request: NextRequest) =>
   new URL(path, request.url);
 
 const createRefreshUrl = (request: NextRequest, redirectPath: string) => {
-  const refreshUrl = request.nextUrl.clone();
-  refreshUrl.pathname = "/admin/refresh";
+  const refreshUrl = new URL("/admin/refresh", request.url);
   refreshUrl.searchParams.set("redirect", redirectPath);
+
   return refreshUrl;
 };
 
@@ -51,14 +51,14 @@ export async function middleware(request: NextRequest) {
     }
 
     if (refreshToken) {
-      return NextResponse.rewrite(createRefreshUrl(request, pathname));
+      return NextResponse.redirect(createRefreshUrl(request, pathname));
     }
 
     return NextResponse.redirect(createRedirectUrl(loginPath, request));
   }
 
   if (refreshToken) {
-    return NextResponse.rewrite(createRefreshUrl(request, pathname));
+    return NextResponse.redirect(createRefreshUrl(request, pathname));
   }
 
   return NextResponse.redirect(createRedirectUrl(loginPath, request));

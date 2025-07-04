@@ -166,7 +166,7 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
   ];
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-0 md:px-10">
+    <main className="mx-auto max-w-7xl px-5 py-33 md:px-10">
       <hr className="border-gray200 absolute left-0 w-screen border-t" />
       <div className="border-main flex flex-wrap justify-between gap-5 border-b py-5.5 sm:gap-0">
         <h2 className="text-main text-2xl font-bold">제품관리</h2>

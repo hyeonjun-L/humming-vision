@@ -11,8 +11,8 @@ import { TokenResponse } from "@humming-vision/shared";
 
 export const GET = async (request: NextRequest) => {
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
-
   const url = new URL(request.url);
+
   const redirectPath =
     url.searchParams.get("redirect") ??
     `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
@@ -64,11 +64,13 @@ export const GET = async (request: NextRequest) => {
 
     return nextResponse;
   } catch {
+    const loginPath = `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
     const redirectResponse = NextResponse.redirect(
-      new URL(redirectPath, request.url),
+      new URL(loginPath, request.url),
     );
 
     redirectResponse.cookies.delete(COOKIE_NAMES.REFRESH_TOKEN);
+    redirectResponse.cookies.delete(COOKIE_NAMES.ACCESS_TOKEN);
 
     return redirectResponse;
   }
