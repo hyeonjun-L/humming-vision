@@ -50,20 +50,22 @@ export const OtherInfoSection = ({
   control,
   selectedCategory,
 }: OtherInfoSectionProps) => {
+  const categoryFields = categoryOptions[selectedCategory];
+
   return (
-    <section className="border-gray200 mb-3.5 flex flex-col gap-10 border p-[30px]">
-      <h3 className="text-gray600 text-xl font-semibold">기타정보</h3>
-      <div className="flex flex-wrap gap-5">
-        {categoryOptions[selectedCategory]?.map(
-          (field: CategoryFieldOption, index: number) => (
+    categoryFields.length > 0 && (
+      <section className="border-gray200 mb-3.5 flex flex-col gap-10 border p-[30px]">
+        <h3 className="text-gray600 text-xl font-semibold">기타정보</h3>
+        <div className="flex flex-wrap gap-5">
+          {categoryFields.map((field: CategoryFieldOption, index: number) => (
             <CategoryField
               key={`category-field-${index}`}
               field={field}
               control={control}
             />
-          ),
-        )}
-      </div>
-    </section>
+          ))}
+        </div>
+      </section>
+    )
   );
 };

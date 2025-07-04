@@ -262,16 +262,5 @@ export const categoryOptions: CategoryOptionsMap = {
       placeholder: "카탈로그 URL 입력",
     },
   ],
-  [CategoriesEnum.SOFTWARE]: [
-    {
-      fieldName: "maker",
-      label: "제조사",
-      type: "select",
-      required: true,
-      options: [
-        { value: SoftwareMakerEnum.EURESYS, label: "Euresys" },
-        { value: SoftwareMakerEnum.MATROX, label: "Matrox" },
-      ],
-    },
-  ],
+  [CategoriesEnum.SOFTWARE]: [],
 };

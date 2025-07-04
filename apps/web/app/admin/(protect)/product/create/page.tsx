@@ -22,7 +22,7 @@ function CreateProductPage() {
     useForm<ProductFormData>({
       defaultValues: {
         category: CategoriesEnum.CAMERA,
-        name: "", //TODO: 이름 중복 에러처리 & subCategory 기본 값확인 & 조명 등록 컴포넌트 재조정 & 소프트웨어 제조사 제거
+        name: "", //TODO: 이름 중복 에러처리 & 에러 위로 이동 & 조명 등록 컴포넌트 재조정
         mainFeature: "",
         productImages: [],
         specImages: [],
