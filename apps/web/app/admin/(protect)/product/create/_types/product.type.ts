@@ -102,3 +102,22 @@ export type LightProductApiData = Omit<LightProductFormData, "catalogFile"> & {
 };
 
 export type ProductApiData = StandardProductApiData | LightProductApiData;
+
+export type ValidatedLightProductData = {
+  name: string;
+  category: CategoriesEnum.LIGHT;
+  catalogFile: File;
+};
+
+export type ValidatedStandardProductData = {
+  name: string;
+  category: CategoriesEnum;
+  subCategory: string;
+  mainFeature: string;
+  productImages: File[];
+  specImages: File[];
+  datasheetFile?: File;
+  drawingFile?: File;
+  manualFile?: File;
+  categoryFields: Record<string, string>;
+};

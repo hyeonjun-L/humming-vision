@@ -15,8 +15,6 @@ export const POST = async (
   const body = await request.json();
   const { category } = await params;
 
-  console.log(`[product] Create ${category} request body:`, body);
-
   const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
 
