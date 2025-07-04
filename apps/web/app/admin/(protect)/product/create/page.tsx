@@ -2,7 +2,10 @@
 import { useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
 import { ZodError } from "zod";
-import { CategoriesEnum } from "@humming-vision/shared";
+import {
+  CategoriesEnum,
+  CategoryRelationMapKebab,
+} from "@humming-vision/shared";
 import {
   getFormSchema,
   createCompleteProductDto,
@@ -19,7 +22,7 @@ function CreateProductPage() {
     useForm<ProductFormData>({
       defaultValues: {
         category: CategoriesEnum.CAMERA,
-        name: "",
+        name: "", //TODO: 이름 중복 에러처리 & subCategory 기본 값확인 & 조명 등록 컴포넌트 재조정 & 소프트웨어 제조사 제거
         mainFeature: "",
         productImages: [],
         specImages: [],
@@ -104,7 +107,7 @@ function CreateProductPage() {
       const transformedData = createCompleteProductDto(dataWithUrls);
 
       const request = await protectApi.post(
-        "/api/product/create",
+        `/api/product/create/${CategoryRelationMapKebab[data.category]}`,
         transformedData,
       );
 

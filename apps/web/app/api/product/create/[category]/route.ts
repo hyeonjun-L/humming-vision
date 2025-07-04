@@ -5,10 +5,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (
   request: NextRequest,
-  { params }: { params: { category: string } }
+  { params }: { params: { category: string } },
 ) => {
   const body = await request.json();
-  const { category } = params;
+  const { category } = await params;
 
   console.log(`[product] Create ${category} request body:`, body);
 
@@ -18,14 +18,14 @@ export const POST = async (
   if (!END_POINT) {
     return NextResponse.json(
       { error: "API endpoint not configured" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
   if (!accessToken) {
     return NextResponse.json(
       { error: "인증 토큰이 없습니다." },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -35,14 +35,13 @@ export const POST = async (
   };
 
   try {
-    // category별로 다른 엔드포인트 사용 가능
     const response = await axios.post(
-      `${END_POINT}/product/${category.toLowerCase()}`,
+      `${END_POINT}/product/${category}`,
       body,
       {
         headers,
         adapter: "fetch",
-      }
+      },
     );
 
     return NextResponse.json(response.data, { status: 201 });
@@ -55,13 +54,13 @@ export const POST = async (
 
       return NextResponse.json(
         error.response?.data || { error: "제품 생성에 실패했습니다." },
-        { status: error.response?.status || 500 }
+        { status: error.response?.status || 500 },
       );
     }
 
     return NextResponse.json(
       { error: "제품 생성 중 오류가 발생했습니다." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

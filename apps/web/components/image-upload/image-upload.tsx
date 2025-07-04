@@ -175,6 +175,7 @@ function ImageUpload({
           <div className="mb-3 flex justify-end">
             <div className="flex rounded-md border border-gray-200 bg-white">
               <button
+                type="button"
                 onClick={() => setViewMode("grid")}
                 className={cn(
                   "flex items-center rounded-l-md px-3 py-1.5 text-sm font-medium transition-colors",
@@ -187,6 +188,7 @@ function ImageUpload({
                 그리드
               </button>
               <button
+                type="button"
                 onClick={() => setViewMode("list")}
                 className={cn(
                   "flex items-center rounded-r-md px-3 py-1.5 text-sm font-medium transition-colors",
