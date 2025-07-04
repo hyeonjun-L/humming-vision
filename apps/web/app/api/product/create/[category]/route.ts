@@ -2,6 +2,11 @@ import axios from "axios";
 import { COOKIE_NAMES } from "consts/cookie.const";
 import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  handleApiError,
+  handleConfigError,
+  handleAuthError,
+} from "utils/api-error-handler";
 
 export const POST = async (
   request: NextRequest,
@@ -16,17 +21,11 @@ export const POST = async (
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
 
   if (!END_POINT) {
-    return NextResponse.json(
-      { error: "API endpoint not configured" },
-      { status: 500 },
-    );
+    return handleConfigError("API endpoint not configured");
   }
 
   if (!accessToken) {
-    return NextResponse.json(
-      { error: "인증 토큰이 없습니다." },
-      { status: 401 },
-    );
+    return handleAuthError("인증 토큰이 없습니다.");
   }
 
   const headers: Record<string, string> = {
@@ -46,21 +45,6 @@ export const POST = async (
 
     return NextResponse.json(response.data, { status: 201 });
   } catch (error) {
-    console.error(`[product] Create ${category} error:`, error);
-
-    if (axios.isAxiosError(error)) {
-      console.error("Response status:", error.response?.status);
-      console.error("Response data:", error.response?.data);
-
-      return NextResponse.json(
-        error.response?.data || { error: "제품 생성에 실패했습니다." },
-        { status: error.response?.status || 500 },
-      );
-    }
-
-    return NextResponse.json(
-      { error: "제품 생성 중 오류가 발생했습니다." },
-      { status: 500 },
-    );
+    return handleApiError(error, `product create ${category}`);
   }
 };

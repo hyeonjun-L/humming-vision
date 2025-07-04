@@ -1,6 +1,11 @@
 import axios from "axios";
 import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  handleApiError,
+  handleValidationError,
+  handleConfigError,
+} from "utils/api-error-handler";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
@@ -40,21 +45,19 @@ export const GET = async (request: NextRequest) => {
   const software__maker__equal = searchParams.get("software__maker__equal");
 
   if (!category) {
-    return NextResponse.json("Missing required query parameter: category", {
-      status: 400,
-    });
+    return handleValidationError("Missing required query parameter: category");
   }
 
   if (!page || !take) {
-    return NextResponse.json("Missing required query parameters: page, take", {
-      status: 400,
-    });
+    return handleValidationError(
+      "Missing required query parameters: page, take",
+    );
   }
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
 
   if (!END_POINT) {
-    return NextResponse.json("API endpoint not configured", { status: 500 });
+    return handleConfigError("API endpoint not configured");
   }
 
   try {
@@ -142,18 +145,6 @@ export const GET = async (request: NextRequest) => {
     const data = response.data;
     return NextResponse.json(data);
   } catch (error) {
-    console.error("[products] Fetch error:", error);
-
-    if (axios.isAxiosError(error)) {
-      console.error("Response status:", error.response?.status);
-      console.error("Response data:", error.response?.data);
-
-      return NextResponse.json(
-        error.response?.data || "Failed to fetch products",
-        { status: error.response?.status || 500 },
-      );
-    }
-
-    return NextResponse.json("Internal server error", { status: 500 });
+    return handleApiError(error, "products fetch");
   }
 };

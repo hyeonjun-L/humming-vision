@@ -7,19 +7,24 @@ import {
 import { NextResponse, type NextRequest } from "next/server";
 import axios from "axios";
 import { Admin, TokenResponse } from "@humming-vision/shared";
+import {
+  handleApiError,
+  handleValidationError,
+  handleConfigError,
+} from "utils/api-error-handler";
 
 export const POST = async (request: NextRequest) => {
   const body = await request.json();
   const { email, password } = body;
 
   if (!email || !password) {
-    return NextResponse.json("Invalid request", { status: 400 });
+    return handleValidationError("Invalid request");
   }
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
 
   if (!END_POINT) {
-    return NextResponse.json("API endpoint not configured", { status: 500 });
+    return handleConfigError("API endpoint not configured");
   }
 
   const headers: Record<string, string> = {
@@ -52,16 +57,6 @@ export const POST = async (request: NextRequest) => {
 
     return responseWithCookies;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      const errorMessage = error.response.data.message || "Login failed";
-      return NextResponse.json(
-        { error: errorMessage, status: error.response.status },
-        { status: error.response.status },
-      );
-    }
-    return NextResponse.json(
-      { error: "Server error occurred during login" },
-      { status: 500 },
-    );
+    return handleApiError(error, "admin login");
   }
 };
