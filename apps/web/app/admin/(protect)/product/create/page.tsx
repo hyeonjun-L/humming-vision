@@ -1,6 +1,5 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import {
   CategoriesEnum,
@@ -25,10 +24,9 @@ import {
 import { protectApi } from "libs/axios";
 import { handleFormErrors } from "./_utils/form-error-handler";
 import { useMutation } from "@tanstack/react-query";
+import { showToast } from "utils/toast-config";
 
 function CreateProductPage() {
-  const [formKey, setFormKey] = useState(0);
-
   const {
     control,
     handleSubmit,
@@ -136,8 +134,10 @@ function CreateProductPage() {
   const createProductMutation = useMutation({
     mutationFn: createCompleteProduct,
     onSuccess: () => {
+      const currentCategory = watch("category");
+
       reset({
-        category: CategoriesEnum.CAMERA,
+        category: currentCategory,
         name: "",
         mainFeature: "",
         productImages: [],
@@ -149,9 +149,9 @@ function CreateProductPage() {
         categoryFields: {},
       } as Partial<ProductFormData>);
 
-      setFormKey((prev) => prev + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
-      alert("제품이 성공적으로 등록되었습니다!");
+
+      showToast.success("제품이 성공적으로 등록되었습니다.");
     },
     onError: (error: unknown) => {
       handleFormErrors(error, setError, setFocus);
@@ -165,7 +165,7 @@ function CreateProductPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-60 md:px-10">
-      <form key={formKey} onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <hr className="border-gray200 absolute left-0 w-screen border-t" />
         <div className="border-main mb-5 border-b py-5.5 sm:gap-0">
           <h2 className="text-main text-2xl font-bold">제품등록</h2>

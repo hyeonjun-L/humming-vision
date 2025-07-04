@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import Header from "./_components/header/header";
 import ModalRoot from "./_components/modal-root";
 import { QueryProvider } from "providers/query.provider";
+import { ToastContainer } from "react-toastify";
 
 const notoSansKRFont = Noto_Sans_KR({
   display: "fallback",
@@ -79,6 +80,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${gothamBookFont.variable} ${notoSansKRFont.variable}`}>
+        <ToastContainer />
         <QueryProvider>
           <ModalRoot />
           <Header />

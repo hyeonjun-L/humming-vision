@@ -1,6 +1,7 @@
 import { UseFormSetError, UseFormSetFocus } from "react-hook-form";
 import { ZodError } from "zod";
 import { ProductFormData } from "../_types/product.type";
+import { showToast } from "utils/toast-config";
 
 interface ApiErrorResponse {
   error?: string;
@@ -26,7 +27,7 @@ export function handleFormErrors(
   } else if (error instanceof Error) {
     handleApiErrors(error as ApiError, setError, setFocus);
   } else {
-    alert("알 수 없는 오류가 발생했습니다.");
+    showToast.error("알 수 없는 오류가 발생했습니다.");
   }
 }
 
@@ -72,7 +73,7 @@ function handleApiErrors(
   setFocus: UseFormSetFocus<ProductFormData>,
 ) {
   if (!error.response) {
-    alert(`오류: ${error.message}`);
+    showToast.error(`오류: ${error.message}`);
     return;
   }
 
@@ -93,7 +94,7 @@ function handleApiErrors(
     );
   } else {
     const message = errorData?.error || errorData?.message || error.message;
-    alert(`오류: ${message}`);
+    showToast.error(`오류: ${message}`);
     return;
   }
 
