@@ -12,6 +12,87 @@ import {
 } from "@humming-vision/shared";
 import { CategoryOptionsMap } from "../_types/product.type";
 
+export const sectionVisibility = {
+  [CategoriesEnum.CAMERA]: {
+    categorySection: true,
+    infoSection: true,
+    specSection: true,
+    otherInfoSection: true,
+  },
+  [CategoriesEnum.FRAMEGRABBER]: {
+    categorySection: true,
+    infoSection: true,
+    specSection: true,
+    otherInfoSection: true,
+  },
+  [CategoriesEnum.LENS]: {
+    categorySection: true,
+    infoSection: true,
+    specSection: true,
+    otherInfoSection: true,
+  },
+  [CategoriesEnum.LIGHT]: {
+    categorySection: true,
+    infoSection: true,
+    specSection: false,
+    otherInfoSection: false,
+  },
+  [CategoriesEnum.SOFTWARE]: {
+    categorySection: true,
+    infoSection: true,
+    specSection: true,
+    otherInfoSection: true,
+  },
+} as const;
+
+export const infoSectionFields = {
+  [CategoriesEnum.CAMERA]: {
+    name: true,
+    mainFeature: true,
+    productImages: true,
+    datasheetFile: true,
+    drawingFile: true,
+    manualFile: true,
+    catalogFile: false,
+  },
+  [CategoriesEnum.FRAMEGRABBER]: {
+    name: true,
+    mainFeature: true,
+    productImages: true,
+    datasheetFile: true,
+    drawingFile: true,
+    manualFile: true,
+    catalogFile: false,
+  },
+  [CategoriesEnum.LENS]: {
+    name: true,
+    mainFeature: true,
+    productImages: true,
+    datasheetFile: true,
+    drawingFile: true,
+    manualFile: true,
+    catalogFile: false,
+  },
+  [CategoriesEnum.LIGHT]: {
+    name: true,
+    mainFeature: false,
+    productImages: false,
+    datasheetFile: false,
+    drawingFile: false,
+    manualFile: false,
+    catalogFile: true,
+  },
+  [CategoriesEnum.SOFTWARE]: {
+    name: true,
+    mainFeature: true,
+    productImages: true,
+    datasheetFile: true,
+    drawingFile: true,
+    manualFile: true,
+    catalogFile: false,
+  },
+} as const;
+
 export const selectProductOptions = [
   { value: CategoriesEnum.CAMERA, label: "카메라" },
   { value: CategoriesEnum.FRAMEGRABBER, label: "프레임 그래버" },
@@ -253,14 +334,6 @@ export const categoryOptions: CategoryOptionsMap = {
       unit: "inch",
     },
   ],
-  [CategoriesEnum.LIGHT]: [
-    {
-      fieldName: "catalogUrl",
-      label: "카탈로그 URL",
-      type: "input",
-      required: true,
-      placeholder: "카탈로그 URL 입력",
-    },
-  ],
+  [CategoriesEnum.LIGHT]: [],
   [CategoriesEnum.SOFTWARE]: [],
 };

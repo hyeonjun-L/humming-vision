@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  CategoriesEnum,
-  CategoryRelationMap,
-  CreateCategoryDtoMap,
-} from "@humming-vision/shared";
+import { CategoriesEnum, CategoryRelationMap } from "@humming-vision/shared";
 import { categoryOptions } from "../_const/constants";
 import {
   CameraFields,
@@ -11,13 +7,15 @@ import {
   FrameGrabberFields,
   LensFields,
   LightFields,
-  ProductFormData,
   SoftwareFields,
+  ProductApiData,
+  StandardProductApiData,
+  LightProductApiData,
 } from "../_types/product.type";
 
 const fileSchema = z.instanceof(File).nullable().optional();
 
-const baseProductSchema = z.object({
+const standardProductSchema = z.object({
   name: z
     .string({ required_error: "제품명은 필수입니다" })
     .min(1, "제품명은 필수입니다"),
@@ -33,6 +31,13 @@ const baseProductSchema = z.object({
   datasheetFile: fileSchema,
   drawingFile: fileSchema,
   manualFile: fileSchema,
+});
+
+const lightProductSchema = z.object({
+  name: z
+    .string({ required_error: "제품명은 필수입니다" })
+    .min(1, "제품명은 필수입니다"),
+  catalogFile: z.instanceof(File, { message: "카탈로그 파일은 필수입니다" }),
 });
 
 const createCategorySchema = (category: CategoriesEnum) => {
@@ -102,9 +107,17 @@ const createCategorySchema = (category: CategoriesEnum) => {
 };
 
 const createCompleteFormSchema = (category: CategoriesEnum) => {
-  const categorySchema = createCategorySchema(category);
+  if (category === CategoriesEnum.LIGHT) {
+    return lightProductSchema.extend({
+      category: z.literal(category, {
+        required_error: "제품 카테고리는 필수입니다",
+        invalid_type_error: "올바른 카테고리를 선택해주세요",
+      }),
+    });
+  }
 
-  return baseProductSchema.extend({
+  const categorySchema = createCategorySchema(category);
+  return standardProductSchema.extend({
     category: z.literal(category, {
       required_error: "제품 카테고리는 필수입니다",
       invalid_type_error: "올바른 카테고리를 선택해주세요",
@@ -193,14 +206,16 @@ function transformCategoryFields(
   }
 }
 
-export const createBaseProductDto = (data: ProductFormData) => {
-  const productImages = data.productImages.map((path, index) => ({
-    order: index + 1,
-    type: "PRODUCT" as const,
-    path,
-  }));
+export const createBaseProductDto = (data: StandardProductApiData) => {
+  const productImages = data.productImages.map(
+    (path: string, index: number) => ({
+      order: index + 1,
+      type: "PRODUCT" as const,
+      path,
+    }),
+  );
 
-  const specImages = data.specImages.map((path, index) => ({
+  const specImages = data.specImages.map((path: string, index: number) => ({
     order: index + 1,
     type: "SPEC" as const,
     path,
@@ -218,22 +233,31 @@ export const createBaseProductDto = (data: ProductFormData) => {
   };
 };
 
-export function createCompleteProductDto(
-  data: ProductFormData,
-):
-  | CreateCategoryDtoMap[CategoriesEnum.CAMERA]
-  | CreateCategoryDtoMap[CategoriesEnum.FRAMEGRABBER]
-  | CreateCategoryDtoMap[CategoriesEnum.LENS]
-  | CreateCategoryDtoMap[CategoriesEnum.SOFTWARE]
-  | CreateCategoryDtoMap[CategoriesEnum.LIGHT] {
-  const baseDto = createBaseProductDto(data);
+export const createLightProductDto = (data: LightProductApiData) => {
+  return {
+    name: data.name,
+    light: {
+      catalogUrl: data.catalogFile,
+    },
+  };
+};
+
+export function createCompleteProductDto(data: ProductApiData) {
+  // LIGHT 제품의 경우 간단한 구조
+  if (data.category === CategoriesEnum.LIGHT) {
+    return createLightProductDto(data as LightProductApiData);
+  }
+
+  // 일반 제품들 (CAMERA, FRAMEGRABBER, LENS, SOFTWARE)
+  const standardData = data as StandardProductApiData;
+  const baseDto = createBaseProductDto(standardData);
 
   switch (data.category) {
     case CategoriesEnum.CAMERA: {
       const cameraFields = transformCategoryFields(
         CategoriesEnum.CAMERA,
-        data.categoryFields,
-        data.subCategory,
+        standardData.categoryFields,
+        standardData.subCategory,
       );
       return {
         ...baseDto,
@@ -244,7 +268,7 @@ export function createCompleteProductDto(
     case CategoriesEnum.FRAMEGRABBER: {
       const frameGrabberFields = transformCategoryFields(
         CategoriesEnum.FRAMEGRABBER,
-        data.categoryFields,
+        standardData.categoryFields,
       );
       return {
         ...baseDto,
@@ -255,8 +279,8 @@ export function createCompleteProductDto(
     case CategoriesEnum.LENS: {
       const lensFields = transformCategoryFields(
         CategoriesEnum.LENS,
-        data.categoryFields,
-        data.subCategory,
+        standardData.categoryFields,
+        standardData.subCategory,
       );
       return {
         ...baseDto,
@@ -267,22 +291,11 @@ export function createCompleteProductDto(
     case CategoriesEnum.SOFTWARE: {
       const softwareFields = transformCategoryFields(
         CategoriesEnum.SOFTWARE,
-        data.categoryFields,
+        standardData.categoryFields,
       );
       return {
         ...baseDto,
         [CategoryRelationMap.SOFTWARE]: softwareFields,
-      };
-    }
-
-    case CategoriesEnum.LIGHT: {
-      const lightFields = transformCategoryFields(
-        CategoriesEnum.LIGHT,
-        data.categoryFields,
-      );
-      return {
-        ...baseDto,
-        [CategoryRelationMap.LIGHT]: lightFields,
       };
     }
 

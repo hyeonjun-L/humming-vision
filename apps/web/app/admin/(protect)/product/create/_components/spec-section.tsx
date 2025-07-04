@@ -1,4 +1,4 @@
-import { Controller, Control, useController } from "react-hook-form";
+import { Controller, Control, useController, FieldPath } from "react-hook-form";
 import ImageUpload from "components/image-upload/image-upload";
 import { ProductFormData } from "../_types/product.type";
 
@@ -7,19 +7,24 @@ interface SpecSectionProps {
 }
 
 export const SpecSection = ({ control }: SpecSectionProps) => {
+  const fieldName = "specImages" as FieldPath<ProductFormData>;
+
   const { fieldState: nameFieldState } = useController({
     control,
-    name: "specImages",
+    name: fieldName,
   });
 
   return (
     <section className="border-gray200 mb-3.5 flex flex-col gap-10 border p-[30px]">
       <h3 className="text-gray600 text-xl font-semibold">상세스펙</h3>
       <Controller
-        name="specImages"
+        name={fieldName}
         control={control}
         render={({ field }) => (
-          <ImageUpload images={field.value} onImagesChange={field.onChange} />
+          <ImageUpload
+            images={(field.value as File[]) || []}
+            onImagesChange={field.onChange}
+          />
         )}
       />
       {nameFieldState.error && (

@@ -10,11 +10,16 @@ import {
   getFormSchema,
   createCompleteProductDto,
 } from "./_schemas/product.schema";
+import { sectionVisibility } from "./_const/constants";
 import { CategorySection } from "./_components/category-section";
 import { InfoSection } from "./_components/info-section";
 import { SpecSection } from "./_components/spec-section";
 import { OtherInfoSection } from "./_components/other-info-section";
-import { ProductFormData } from "./_types/product.type";
+import {
+  ProductFormData,
+  isLightProduct,
+  ProductApiData,
+} from "./_types/product.type";
 import { protectApi } from "libs/axios";
 
 function CreateProductPage() {
@@ -22,15 +27,16 @@ function CreateProductPage() {
     useForm<ProductFormData>({
       defaultValues: {
         category: CategoriesEnum.CAMERA,
-        name: "", //TODO: 이름 중복 에러처리 & 에러 위로 이동 & 조명 등록 컴포넌트 재조정
+        name: "",
         mainFeature: "",
         productImages: [],
         specImages: [],
-        datasheetFile: undefined, //TODO: Update 진행 시 수정
+        datasheetFile: undefined,
         drawingFile: undefined,
         manualFile: undefined,
+        catalogFile: undefined,
         categoryFields: {},
-      },
+      } as Partial<ProductFormData>,
     });
 
   const selectedCategory = watch("category");
@@ -77,34 +83,62 @@ function CreateProductPage() {
 
     try {
       const schema = getFormSchema(data.category);
-
       const validatedData = schema.parse(data);
 
-      const productImageUrls = await uploadedImages(
-        validatedData.productImages,
-      );
-      const specImageUrls = await uploadedImages(validatedData.specImages);
+      let transformedData;
 
-      const datasheetUrl = validatedData.datasheetFile
-        ? await uploadDocument(validatedData.datasheetFile)
-        : null;
-      const drawingUrl = validatedData.drawingFile
-        ? await uploadDocument(validatedData.drawingFile)
-        : null;
-      const manualUrl = validatedData.manualFile
-        ? await uploadDocument(validatedData.manualFile)
-        : null;
+      if (isLightProduct(data)) {
+        const lightData = validatedData as {
+          name: string;
+          category: CategoriesEnum.LIGHT;
+          catalogFile: File;
+        };
+        const catalogUrl = await uploadDocument(lightData.catalogFile);
 
-      const dataWithUrls = {
-        ...data,
-        productImages: productImageUrls,
-        specImages: specImageUrls,
-        datasheetFile: datasheetUrl,
-        drawingFile: drawingUrl,
-        manualFile: manualUrl,
-      };
+        transformedData = createCompleteProductDto({
+          ...data,
+          catalogFile: catalogUrl,
+        } as ProductApiData);
+      } else {
+        const standardData = validatedData as {
+          name: string;
+          category: CategoriesEnum;
+          subCategory: string;
+          mainFeature: string;
+          productImages: File[];
+          specImages: File[];
+          datasheetFile?: File;
+          drawingFile?: File;
+          manualFile?: File;
+          categoryFields: Record<string, string>;
+        };
 
-      const transformedData = createCompleteProductDto(dataWithUrls);
+        const productImageUrls = await uploadedImages(
+          standardData.productImages,
+        );
+        const specImageUrls = await uploadedImages(standardData.specImages);
+
+        const datasheetUrl = standardData.datasheetFile
+          ? await uploadDocument(standardData.datasheetFile)
+          : null;
+        const drawingUrl = standardData.drawingFile
+          ? await uploadDocument(standardData.drawingFile)
+          : null;
+        const manualUrl = standardData.manualFile
+          ? await uploadDocument(standardData.manualFile)
+          : null;
+
+        const dataWithUrls = {
+          ...data,
+          productImages: productImageUrls,
+          specImages: specImageUrls,
+          datasheetFile: datasheetUrl,
+          drawingFile: drawingUrl,
+          manualFile: manualUrl,
+        } as ProductApiData; // API 데이터 타입으로 변환
+
+        transformedData = createCompleteProductDto(dataWithUrls);
+      }
 
       const request = await protectApi.post(
         `/api/product/create/${CategoryRelationMapKebab[data.category]}`,
@@ -150,16 +184,25 @@ function CreateProductPage() {
           <h2 className="text-main text-2xl font-bold">제품등록</h2>
         </div>
 
-        <CategorySection
-          control={control}
-          selectedCategory={selectedCategory}
-        />
-        <InfoSection control={control} />
-        <SpecSection control={control} />
-        <OtherInfoSection
-          control={control}
-          selectedCategory={selectedCategory}
-        />
+        {sectionVisibility[selectedCategory].categorySection && (
+          <CategorySection
+            control={control}
+            selectedCategory={selectedCategory}
+          />
+        )}
+
+        <InfoSection control={control} selectedCategory={selectedCategory} />
+
+        {sectionVisibility[selectedCategory].specSection && (
+          <SpecSection control={control} />
+        )}
+
+        {sectionVisibility[selectedCategory].otherInfoSection && (
+          <OtherInfoSection
+            control={control}
+            selectedCategory={selectedCategory}
+          />
+        )}
 
         <button
           type="submit"

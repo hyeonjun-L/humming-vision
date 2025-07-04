@@ -30,17 +30,75 @@ export type CategoryOptionsMap = {
   [key in CategoriesEnum]: CategoryFieldOption[];
 };
 
-export type ProductFormData = {
+export type BaseProductFormData = {
   category: CategoriesEnum;
-  subCategory?: string;
   name: string;
+};
+
+export type StandardProductFormData = BaseProductFormData & {
+  subCategory?: string;
   mainFeature: string;
-
-  productImages: string[];
-  specImages: string[];
-  datasheetFile?: string;
-  drawingFile?: string;
-  manualFile?: string;
-
+  productImages: File[];
+  specImages: File[];
+  datasheetFile?: File;
+  drawingFile?: File;
+  manualFile?: File;
   categoryFields: Record<string, string>;
 };
+
+export type LightProductFormData = BaseProductFormData & {
+  category: CategoriesEnum.LIGHT;
+  catalogFile?: File;
+};
+
+export type ProductFormData = StandardProductFormData | LightProductFormData;
+
+export type SectionVisibility = {
+  categorySection: boolean;
+  infoSection: boolean;
+  specSection: boolean;
+  otherInfoSection: boolean;
+};
+
+export type InfoSectionFields = {
+  name: boolean;
+  mainFeature: boolean;
+  productImages: boolean;
+  datasheetFile: boolean;
+  drawingFile: boolean;
+  manualFile: boolean;
+  catalogFile: boolean;
+};
+
+export const isLightProduct = (
+  data: ProductFormData,
+): data is LightProductFormData => {
+  return data.category === CategoriesEnum.LIGHT;
+};
+
+export const isStandardProduct = (
+  data: ProductFormData,
+): data is StandardProductFormData => {
+  return data.category !== CategoriesEnum.LIGHT;
+};
+
+export type StandardProductApiData = Omit<
+  StandardProductFormData,
+  | "productImages"
+  | "specImages"
+  | "datasheetFile"
+  | "drawingFile"
+  | "manualFile"
+> & {
+  productImages: string[];
+  specImages: string[];
+  datasheetFile?: string | null;
+  drawingFile?: string | null;
+  manualFile?: string | null;
+};
+
+export type LightProductApiData = Omit<LightProductFormData, "catalogFile"> & {
+  catalogFile?: string | null;
+};
+
+export type ProductApiData = StandardProductApiData | LightProductApiData;

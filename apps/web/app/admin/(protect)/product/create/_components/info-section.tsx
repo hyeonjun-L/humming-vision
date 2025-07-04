@@ -1,5 +1,7 @@
 import { Control } from "react-hook-form";
+import { CategoriesEnum } from "@humming-vision/shared";
 import { ProductFormData } from "../_types/product.type";
+import { infoSectionFields } from "../_const/constants";
 import {
   TextInput,
   TextAreaInput,
@@ -9,52 +11,78 @@ import {
 
 interface InfoSectionProps {
   control: Control<ProductFormData>;
+  selectedCategory: CategoriesEnum;
 }
 
-export const InfoSection = ({ control }: InfoSectionProps) => {
+export const InfoSection = ({
+  control,
+  selectedCategory,
+}: InfoSectionProps) => {
+  const fields = infoSectionFields[selectedCategory];
+
   return (
     <section className="border-gray200 mb-3.5 flex flex-col gap-10 border p-[30px]">
       <h3 className="text-gray600 text-xl font-semibold">정보</h3>
 
-      <TextInput
-        name="name"
-        control={control}
-        label="제품명"
-        placeholder="제품명 입력"
-        required
-      />
+      {fields.name && (
+        <TextInput
+          name="name"
+          control={control}
+          label="제품명"
+          placeholder="제품명 입력"
+          required
+        />
+      )}
 
-      <TextAreaInput
-        name="mainFeature"
-        control={control}
-        label="주요특징"
-        placeholder="주요특징 입력"
-      />
+      {fields.mainFeature && (
+        <TextAreaInput
+          name="mainFeature"
+          control={control}
+          label="주요특징"
+          placeholder="주요특징 입력"
+        />
+      )}
 
-      <ImageUploadInput
-        name="productImages"
-        control={control}
-        label="이미지"
-        maxImages={10}
-      />
+      {fields.productImages && (
+        <ImageUploadInput
+          name="productImages"
+          control={control}
+          label="이미지"
+          maxImages={10}
+        />
+      )}
 
-      <PdfUploadInput
-        name="datasheetFile"
-        control={control}
-        label="Datasheet (PDF)"
-      />
+      {fields.catalogFile && (
+        <PdfUploadInput
+          name="catalogFile"
+          control={control}
+          label="카탈로그 (PDF)"
+        />
+      )}
 
-      <PdfUploadInput
-        name="drawingFile"
-        control={control}
-        label="Drawing (PDF)"
-      />
+      {fields.datasheetFile && (
+        <PdfUploadInput
+          name="datasheetFile"
+          control={control}
+          label="Datasheet (PDF)"
+        />
+      )}
 
-      <PdfUploadInput
-        name="manualFile"
-        control={control}
-        label="Manual (PDF)"
-      />
+      {fields.drawingFile && (
+        <PdfUploadInput
+          name="drawingFile"
+          control={control}
+          label="Drawing (PDF)"
+        />
+      )}
+
+      {fields.manualFile && (
+        <PdfUploadInput
+          name="manualFile"
+          control={control}
+          label="Manual (PDF)"
+        />
+      )}
     </section>
   );
 };
