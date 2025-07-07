@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   CategoriesEnum,
   CategoryRelationMapKebab,
-  Product,
 } from "@humming-vision/shared";
 import { ProductUpdateFormData } from "../_types/product-update.type";
 import { useForm } from "react-hook-form";
@@ -17,29 +16,6 @@ import { SpecSection } from "./spec-section";
 import { OtherInfoSection } from "./other-info-section";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { protectApi } from "libs/axios";
-
-// Product에서 각 카테고리의 id와 제품 id를 제외한 나머지를 옵셔널로 만든 타입
-type PartialProductUpdate = {
-  // 기본 필드들을 옵셔널로 설정
-  categories?: CategoriesEnum;
-  name?: string;
-  mainFeature?: string;
-  datasheetUrl?: string | null;
-  drawingUrl?: string | null;
-  manualUrl?: string | null;
-  images?: Array<{
-    type: string;
-    path: string;
-    order?: number;
-  }>;
-
-  // 각 카테고리별 관련 데이터에서 id와 product 참조 제거
-  camera?: Omit<NonNullable<Product["camera"]>, "id" | "product">;
-  frameGrabber?: Omit<NonNullable<Product["frameGrabber"]>, "id" | "product">;
-  lens?: Omit<NonNullable<Product["lens"]>, "id" | "product">;
-  light?: Omit<NonNullable<Product["light"]>, "id" | "product">;
-  software?: Omit<NonNullable<Product["software"]>, "id" | "product">;
-};
 
 interface UpdateProductPageProps {
   productId: number;
@@ -70,8 +46,7 @@ function UpdateProductPage({
     control,
     handleSubmit,
     reset,
-    formState: { dirtyFields, isSubmitting },
-    getValues,
+    formState: { isSubmitting },
     watch,
   } = useForm<ProductUpdateFormData>({
     defaultValues: convertedFormData || initialData,
@@ -79,47 +54,154 @@ function UpdateProductPage({
 
   const watchedValues = watch();
 
-  const getChangedFields = useCallback((): Partial<ProductUpdateFormData> => {
-    const currentValues = getValues();
-    const changedData: Partial<ProductUpdateFormData> = {};
+  const hasChanges = useMemo((): boolean => {
+    if (!watchedValues || !convertedFormData) return false;
+    
+    // 텍스트 필드들 비교
+    const textFields = ['name', 'mainFeature'] as const;
+    for (const field of textFields) {
+      if (watchedValues[field] !== convertedFormData[field]) {
+        return true;
+      }
+    }
+    
+    // 파일 필드들 비교
+    const fileFields = ['datasheetFile', 'drawingFile', 'manualFile', 'catalogFile'] as const;
+    for (const field of fileFields) {
+      const currentFile = watchedValues[field];
+      const initialFile = convertedFormData[field];
+      
+      // 하나는 있고 하나는 없거나, 다른 File 객체면 변경
+      if (!!currentFile !== !!initialFile) {
+        return true;
+      }
+      if (currentFile instanceof File && initialFile instanceof File && currentFile !== initialFile) {
+        return true;
+      }
+    }
+    
+    // 이미지 배열 비교
+    const imageFields = ['productImages', 'specImages'] as const;
+    for (const field of imageFields) {
+      const currentImages = watchedValues[field] || [];
+      const initialImages = convertedFormData[field] || [];
+      
+      // 길이가 다르거나 순서/파일이 다르면 변경
+      if (currentImages.length !== initialImages.length) {
+        return true;
+      }
+      
+      for (let i = 0; i < currentImages.length; i++) {
+        if (currentImages[i] !== initialImages[i]) {
+          return true;
+        }
+      }
+    }
+    
+    // categoryFields 비교
+    if (watchedValues.categoryFields && convertedFormData.categoryFields) {
+      const currentCategoryFields = watchedValues.categoryFields;
+      const initialCategoryFields = convertedFormData.categoryFields;
+      
+      // 모든 카테고리 필드 키 확인
+      const allKeys = new Set([
+        ...Object.keys(currentCategoryFields),
+        ...Object.keys(initialCategoryFields)
+      ]);
+      
+      for (const key of allKeys) {
+        if (currentCategoryFields[key] !== initialCategoryFields[key]) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }, [watchedValues, convertedFormData]);
 
-    Object.keys(dirtyFields).forEach((key) => {
-      const fieldKey = key as keyof ProductUpdateFormData;
-      if (dirtyFields[fieldKey]) {
-        if (fieldKey === "categoryFields" && dirtyFields.categoryFields) {
-          changedData.categoryFields = {};
-          Object.keys(dirtyFields.categoryFields).forEach((subKey) => {
-            if (dirtyFields.categoryFields?.[subKey]) {
-              const value = currentValues.categoryFields[subKey];
-              if (value !== undefined) {
-                changedData.categoryFields![subKey] = value;
-              }
-            }
-          });
-        } else if (fieldKey === "productImages" && dirtyFields.productImages) {
-          changedData.productImages = currentValues.productImages;
-        } else if (fieldKey === "specImages" && dirtyFields.specImages) {
-          changedData.specImages = currentValues.specImages;
-        } else {
-          const value = currentValues[fieldKey];
-          if (value !== undefined) {
-            (changedData as Record<string, unknown>)[fieldKey] = value;
+  const getChangedFields = (): Partial<ProductUpdateFormData> => {
+    if (!watchedValues || !convertedFormData) return {};
+    
+    const changedData: Partial<ProductUpdateFormData> = {};
+    
+    // 텍스트 필드들 체크
+    const textFields = ['name', 'mainFeature'] as const;
+    for (const field of textFields) {
+      if (watchedValues[field] !== convertedFormData[field]) {
+        changedData[field] = watchedValues[field];
+      }
+    }
+    
+    // 파일 필드들 체크
+    const fileFields = ['datasheetFile', 'drawingFile', 'manualFile', 'catalogFile'] as const;
+    for (const field of fileFields) {
+      const currentFile = watchedValues[field];
+      const initialFile = convertedFormData[field];
+      
+      if (!!currentFile !== !!initialFile || 
+          (currentFile instanceof File && initialFile instanceof File && currentFile !== initialFile)) {
+        changedData[field] = currentFile;
+      }
+    }
+    
+    // 이미지 배열 체크
+    const imageFields = ['productImages', 'specImages'] as const;
+    for (const field of imageFields) {
+      const currentImages = watchedValues[field] || [];
+      const initialImages = convertedFormData[field] || [];
+      
+      let isChanged = false;
+      if (currentImages.length !== initialImages.length) {
+        isChanged = true;
+      } else {
+        for (let i = 0; i < currentImages.length; i++) {
+          if (currentImages[i] !== initialImages[i]) {
+            isChanged = true;
+            break;
           }
         }
       }
-    });
-
+      
+      if (isChanged) {
+        changedData[field] = currentImages;
+      }
+    }
+    
+    // categoryFields 체크
+    if (watchedValues.categoryFields && convertedFormData.categoryFields) {
+      const currentCategoryFields = watchedValues.categoryFields;
+      const initialCategoryFields = convertedFormData.categoryFields;
+      
+      const allKeys = new Set([
+        ...Object.keys(currentCategoryFields),
+        ...Object.keys(initialCategoryFields)
+      ]);
+      
+      let categoryChanged = false;
+      const changedCategoryFields: Record<string, unknown> = {};
+      
+      for (const key of allKeys) {
+        if (currentCategoryFields[key] !== initialCategoryFields[key]) {
+          categoryChanged = true;
+          changedCategoryFields[key] = currentCategoryFields[key];
+        }
+      }
+      
+      if (categoryChanged) {
+        changedData.categoryFields = changedCategoryFields as Record<string, string>;
+      }
+    }
+    
     return changedData;
-  }, [dirtyFields, getValues]);
-
-  const hasChanges = useMemo((): boolean => {
-    if (!watchedValues) return false;
-    return Object.keys(dirtyFields).length > 0;
-  }, [dirtyFields, watchedValues]);
+  };
 
   useEffect(() => {
     if (convertedFormData) {
-      reset(convertedFormData);
+      reset(convertedFormData, { 
+        keepDirty: false, 
+        keepTouched: false,
+        keepDefaultValues: true 
+      });
     }
   }, [convertedFormData, reset]);
 
@@ -240,14 +322,10 @@ function UpdateProductPage({
 
   const updateCompleteProduct = async (
     data: ProductUpdateFormData,
-  ): Promise<PartialProductUpdate> => {
+  ): Promise<void> => {
     // 변경된 필드만 가져오기
     const changedFields = getChangedFields();
-    console.log("🚀 Changed fields for update:", changedFields);
 
-    if (Object.keys(changedFields).length === 0) {
-      throw new Error("변경된 내용이 없습니다.");
-    }
 
     const uploadImages = async (images: File[]): Promise<string[]> => {
       const formData = new FormData();
@@ -286,6 +364,7 @@ function UpdateProductPage({
         transformedData.name = changedFields.name;
       }
 
+      // PDF 파일은 변경된 경우에만 업로드
       if (changedFields.catalogFile) {
         const catalogUrl = await uploadDocument(changedFields.catalogFile);
         transformedData.catalogFile = catalogUrl;
@@ -304,24 +383,19 @@ function UpdateProductPage({
         transformedData.mainFeature = changedFields.mainFeature;
       }
 
-      // 이미지 업로드 - 변경된 이미지들과 기존 이미지들을 합치는 로직
+      // 이미지 처리 - 변경된 이미지만 업로드
       let allImages: Array<{
         order: number;
         type: "PRODUCT" | "SPEC";
         path: string;
       }> = [];
 
-      if (
-        changedFields.productImages &&
-        changedFields.productImages.length > 0
-      ) {
-        const productImageUrls = await uploadImages(
-          changedFields.productImages,
-        );
-        // 새로 업로드된 제품 이미지들
+      // 제품 이미지가 변경된 경우만 업로드
+      if (changedFields.productImages && changedFields.productImages.length > 0) {
+        const productImageUrls = await uploadImages(changedFields.productImages);
         const newProductImages = productImageUrls.map(
           (path: string, index: number) => ({
-            order: index + 1,
+            order: index,
             type: "PRODUCT" as const,
             path,
           }),
@@ -329,15 +403,12 @@ function UpdateProductPage({
         allImages = [...allImages, ...newProductImages];
       }
 
+      // 스펙 이미지가 변경된 경우만 업로드
       if (changedFields.specImages && changedFields.specImages.length > 0) {
         const specImageUrls = await uploadImages(changedFields.specImages);
-        // 새로 업로드된 스펙 이미지들 (제품 이미지 개수만큼 order 조정)
-        const productImageCount = allImages.filter(
-          (img) => img.type === "PRODUCT",
-        ).length;
         const newSpecImages = specImageUrls.map(
           (path: string, index: number) => ({
-            order: productImageCount + index + 1,
+            order: index,
             type: "SPEC" as const,
             path,
           }),
@@ -345,12 +416,12 @@ function UpdateProductPage({
         allImages = [...allImages, ...newSpecImages];
       }
 
-      // 이미지가 있으면 전체 이미지 배열로 전송
+      // 이미지 변경사항이 있으면 전송
       if (allImages.length > 0) {
         transformedData.images = allImages;
       }
 
-      // 문서 파일 업로드
+      // 문서 파일 업로드 - 변경된 경우에만
       if (changedFields.datasheetFile) {
         const datasheetUrl = await uploadDocument(changedFields.datasheetFile);
         transformedData.datasheetFile = datasheetUrl;
@@ -389,52 +460,6 @@ function UpdateProductPage({
 
     console.log(response.data);
 
-    // // 반환된 데이터를 PartialProductUpdate 형태로 변환
-    // const responseData = response.data as Product;
-
-    // const partialUpdate: PartialProductUpdate = {
-    //   categories: responseData.categories as CategoriesEnum,
-    //   name: responseData.name,
-    //   mainFeature: responseData.mainFeature,
-    //   datasheetUrl: responseData.datasheetUrl,
-    //   drawingUrl: responseData.drawingUrl,
-    //   manualUrl: responseData.manualUrl,
-    //   images: responseData.images?.map((img) => ({
-    //     type: img.type,
-    //     path: img.path,
-    //     order: img.order,
-    //   })),
-    // };
-
-    // // 카테고리별 데이터 추가 (id 제외)
-    // if (responseData.camera) {
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   const { id, product, ...cameraData } = responseData.camera;
-    //   partialUpdate.camera = cameraData;
-    // }
-    // if (responseData.frameGrabber) {
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   const { id, product, ...frameGrabberData } = responseData.frameGrabber;
-    //   partialUpdate.frameGrabber = frameGrabberData;
-    // }
-    // if (responseData.lens) {
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   const { id, product, ...lensData } = responseData.lens;
-    //   partialUpdate.lens = lensData;
-    // }
-    // if (responseData.light) {
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   const { id, product, ...lightData } = responseData.light;
-    //   partialUpdate.light = lightData;
-    // }
-    // if (responseData.software) {
-    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //   const { id, product, ...softwareData } = responseData.software;
-    //   partialUpdate.software = softwareData;
-    // }
-
-    // console.log("✅ Update completed:", partialUpdate);
-    // return partialUpdate;
   };
 
   return (
