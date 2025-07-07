@@ -8,7 +8,6 @@ import {
 import axios from "axios";
 import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import UpdateProductPage from "./_components/update-product-page";
-import { urlsToFiles, urlToFile } from "./_utils/file-converter";
 import { ProductUpdateFormData } from "./_types/product-update.type";
 
 type Props = {
@@ -31,11 +30,22 @@ async function page({ searchParams }: Props) {
     `${END_POINT}/product/${kebabCategory}/${id}`,
   );
 
+  console.log("Fetched product data:", response.data);
+
+  const categoryData =
+    response.data[CategoryRelationMap[category as CategoriesEnum]];
+  const categoryId = categoryData?.id;
+
+  if (!categoryId) {
+    throw new Error(`Category data not found for category: ${category}`);
+  }
+
   const initialData = await transformProductToFormData(response.data);
 
   return (
     <UpdateProductPage
       initialData={initialData}
+      categoryId={categoryId}
       productId={parseInt(id)}
       category={category as CategoriesEnum}
     />
@@ -48,14 +58,13 @@ const transformProductToFormData = async (
   if (product.categories === "LIGHT") {
     const lightProduct = product.light as GetLightResponse;
 
-    const catalogFile = await urlToFile(lightProduct.catalogUrl);
-
     return {
       category: CategoriesEnum.LIGHT,
       name: product.name,
       productImages: [],
       specImages: [],
-      catalogFile,
+      // URL만 저장하고 클라이언트에서 필요시 로드
+      catalogFileUrl: lightProduct.catalogUrl,
       categoryFields: {},
     };
   } else {
@@ -70,21 +79,6 @@ const transformProductToFormData = async (
       product.images
         ?.filter((img: { type: string; path: string }) => img.type === "SPEC")
         ?.map((img: { path: string }) => img.path) || [];
-
-    const [productFiles, specFiles, datasheetFile, drawingFile, manualFile] =
-      await Promise.allSettled([
-        urlsToFiles(productImageUrls),
-        urlsToFiles(specImageUrls),
-        product.datasheetUrl
-          ? urlToFile(product.datasheetUrl)
-          : Promise.resolve(undefined),
-        product.drawingUrl
-          ? urlToFile(product.drawingUrl)
-          : Promise.resolve(undefined),
-        product.manualUrl
-          ? urlToFile(product.manualUrl)
-          : Promise.resolve(undefined),
-      ]);
 
     const categoryRelatedData =
       product[CategoryRelationMap[product.categories]];
@@ -106,15 +100,19 @@ const transformProductToFormData = async (
     return {
       category: product.categories as CategoriesEnum,
       name: product.name,
-      productImages:
-        productFiles.status === "fulfilled" ? productFiles.value : [],
-      specImages: specFiles.status === "fulfilled" ? specFiles.value : [],
-      datasheetFile:
-        datasheetFile.status === "fulfilled" ? datasheetFile.value : undefined,
-      drawingFile:
-        drawingFile.status === "fulfilled" ? drawingFile.value : undefined,
-      manualFile:
-        manualFile.status === "fulfilled" ? manualFile.value : undefined,
+      mainFeature: product.mainFeature,
+      // 초기에는 빈 배열로 설정, URL은 별도 저장
+      productImages: [],
+      specImages: [],
+      datasheetFile: undefined,
+      drawingFile: undefined,
+      manualFile: undefined,
+      // URL들을 별도로 저장
+      productImageUrls,
+      specImageUrls,
+      datasheetUrl: product.datasheetUrl || undefined,
+      drawingUrl: product.drawingUrl || undefined,
+      manualUrl: product.manualUrl || undefined,
       categoryFields,
     };
   }

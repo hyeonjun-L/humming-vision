@@ -1,8 +1,9 @@
-import { CategoriesEnum } from "@humming-vision/shared";
+import { CategoriesEnum, UpdateCategoryDtoMap } from "@humming-vision/shared";
 
 export interface ProductUpdateFormData {
   category: CategoriesEnum;
   name: string;
+  mainFeature?: string;
   productImages: File[];
   specImages: File[];
   datasheetFile?: File;
@@ -10,20 +11,25 @@ export interface ProductUpdateFormData {
   manualFile?: File;
   catalogFile?: File;
   categoryFields: Record<string, string>;
+
+  productImageUrls?: string[];
+  specImageUrls?: string[];
+  datasheetUrl?: string;
+  drawingUrl?: string;
+  manualUrl?: string;
+  catalogFileUrl?: string;
 }
 
-// import { CategoriesEnum, UpdateCategoryDtoMap } from "@humming-vision/shared";
-
-// export type CameraUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.CAMERA]["camera"];
-// export type FrameGrabberUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.FRAMEGRABBER]["frameGrabber"];
-// export type LensUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.LENS]["lens"];
-// export type SoftwareUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.SOFTWARE]["software"];
-// export type LightUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.LIGHT]["light"];
+export type CameraUpdateFields =
+  UpdateCategoryDtoMap[CategoriesEnum.CAMERA]["camera"];
+export type FrameGrabberUpdateFields =
+  UpdateCategoryDtoMap[CategoriesEnum.FRAMEGRABBER]["frameGrabber"];
+export type LensUpdateFields =
+  UpdateCategoryDtoMap[CategoriesEnum.LENS]["lens"];
+export type SoftwareUpdateFields =
+  UpdateCategoryDtoMap[CategoriesEnum.SOFTWARE]["software"];
+export type LightUpdateFields =
+  UpdateCategoryDtoMap[CategoriesEnum.LIGHT]["light"];
 
 // export type UpdateCategoryFields =
 //   | CameraUpdateFields
