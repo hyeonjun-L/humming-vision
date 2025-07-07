@@ -1,4 +1,8 @@
-import { CategoriesEnum, UpdateCategoryDtoMap } from "@humming-vision/shared";
+import { CategoriesEnum } from "@humming-vision/shared";
+import {
+  StandardProductApiData,
+  LightProductApiData,
+} from "../../create/_types/product.type";
 
 export interface ProductUpdateFormData {
   category: CategoriesEnum;
@@ -20,16 +24,51 @@ export interface ProductUpdateFormData {
   catalogFileUrl?: string;
 }
 
-export type CameraUpdateFields =
-  UpdateCategoryDtoMap[CategoriesEnum.CAMERA]["camera"];
-export type FrameGrabberUpdateFields =
-  UpdateCategoryDtoMap[CategoriesEnum.FRAMEGRABBER]["frameGrabber"];
-export type LensUpdateFields =
-  UpdateCategoryDtoMap[CategoriesEnum.LENS]["lens"];
-export type SoftwareUpdateFields =
-  UpdateCategoryDtoMap[CategoriesEnum.SOFTWARE]["software"];
-export type LightUpdateFields =
-  UpdateCategoryDtoMap[CategoriesEnum.LIGHT]["light"];
+// create 페이지의 ProductApiData를 기반으로 update용 타입 생성
+// 모든 필드를 optional로 만들고 id만 필수로 추가
+export type BaseProductUpdateApiData = {
+  id: number; // productId 필수
+};
+
+export type StandardProductUpdateApiData = BaseProductUpdateApiData &
+  Partial<StandardProductApiData> & {
+    // update에서만 필요한 추가 필드들
+    images?: Array<{
+      order: number;
+      type: "PRODUCT" | "SPEC";
+      path: string;
+    }>;
+    datasheetUrl?: string;
+    drawingUrl?: string;
+    manualUrl?: string;
+    // 카테고리별 필드들 (update시에는 id 포함)
+    camera?: { id: number; [key: string]: string | number };
+    frameGrabber?: { id: number; [key: string]: string | number };
+    lens?: { id: number; [key: string]: string | number };
+    software?: { id: number; [key: string]: string | number };
+  };
+
+export type LightProductUpdateApiData = BaseProductUpdateApiData &
+  Partial<LightProductApiData> & {
+    // update에서만 필요한 추가 필드들
+    catalogUrl?: string;
+    light?: { id: number; [key: string]: string | number }; // categoryId 포함
+  };
+
+export type ProductUpdateApiData =
+  | StandardProductUpdateApiData
+  | LightProductUpdateApiData;
+
+// export type CameraUpdateFields =
+//   UpdateCategoryDtoMap[CategoriesEnum.CAMERA]["camera"];
+// export type FrameGrabberUpdateFields =
+//   UpdateCategoryDtoMap[CategoriesEnum.FRAMEGRABBER]["frameGrabber"];
+// export type LensUpdateFields =
+//   UpdateCategoryDtoMap[CategoriesEnum.LENS]["lens"];
+// export type SoftwareUpdateFields =
+//   UpdateCategoryDtoMap[CategoriesEnum.SOFTWARE]["software"];
+// export type LightUpdateFields =
+//   UpdateCategoryDtoMap[CategoriesEnum.LIGHT]["light"];
 
 // export type UpdateCategoryFields =
 //   | CameraUpdateFields

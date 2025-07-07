@@ -6,7 +6,11 @@ import {
   CategoriesEnum,
   CategoryRelationMapKebab,
 } from "@humming-vision/shared";
-import { ProductUpdateFormData } from "../_types/product-update.type";
+import {
+  ProductUpdateFormData,
+  StandardProductUpdateApiData,
+  LightProductUpdateApiData,
+} from "../_types/product-update.type";
 import { useForm } from "react-hook-form";
 import { CategorySection } from "./category-section";
 import { InfoSection } from "./info-section";
@@ -56,100 +60,118 @@ function UpdateProductPage({
 
   const hasChanges = useMemo((): boolean => {
     if (!watchedValues || !convertedFormData) return false;
-    
+
     // 텍스트 필드들 비교
-    const textFields = ['name', 'mainFeature'] as const;
+    const textFields = ["name", "mainFeature"] as const;
     for (const field of textFields) {
       if (watchedValues[field] !== convertedFormData[field]) {
         return true;
       }
     }
-    
+
     // 파일 필드들 비교
-    const fileFields = ['datasheetFile', 'drawingFile', 'manualFile', 'catalogFile'] as const;
+    const fileFields = [
+      "datasheetFile",
+      "drawingFile",
+      "manualFile",
+      "catalogFile",
+    ] as const;
     for (const field of fileFields) {
       const currentFile = watchedValues[field];
       const initialFile = convertedFormData[field];
-      
+
       // 하나는 있고 하나는 없거나, 다른 File 객체면 변경
       if (!!currentFile !== !!initialFile) {
         return true;
       }
-      if (currentFile instanceof File && initialFile instanceof File && currentFile !== initialFile) {
+      if (
+        currentFile instanceof File &&
+        initialFile instanceof File &&
+        currentFile !== initialFile
+      ) {
         return true;
       }
     }
-    
+
     // 이미지 배열 비교
-    const imageFields = ['productImages', 'specImages'] as const;
+    const imageFields = ["productImages", "specImages"] as const;
     for (const field of imageFields) {
       const currentImages = watchedValues[field] || [];
       const initialImages = convertedFormData[field] || [];
-      
+
       // 길이가 다르거나 순서/파일이 다르면 변경
       if (currentImages.length !== initialImages.length) {
         return true;
       }
-      
+
       for (let i = 0; i < currentImages.length; i++) {
         if (currentImages[i] !== initialImages[i]) {
           return true;
         }
       }
     }
-    
+
     // categoryFields 비교
     if (watchedValues.categoryFields && convertedFormData.categoryFields) {
       const currentCategoryFields = watchedValues.categoryFields;
       const initialCategoryFields = convertedFormData.categoryFields;
-      
+
       // 모든 카테고리 필드 키 확인
       const allKeys = new Set([
         ...Object.keys(currentCategoryFields),
-        ...Object.keys(initialCategoryFields)
+        ...Object.keys(initialCategoryFields),
       ]);
-      
+
       for (const key of allKeys) {
         if (currentCategoryFields[key] !== initialCategoryFields[key]) {
           return true;
         }
       }
     }
-    
+
     return false;
   }, [watchedValues, convertedFormData]);
 
   const getChangedFields = (): Partial<ProductUpdateFormData> => {
     if (!watchedValues || !convertedFormData) return {};
-    
+
     const changedData: Partial<ProductUpdateFormData> = {};
-    
+
     // 텍스트 필드들 체크
-    const textFields = ['name', 'mainFeature'] as const;
+    const textFields = ["name", "mainFeature"] as const;
     for (const field of textFields) {
       if (watchedValues[field] !== convertedFormData[field]) {
         changedData[field] = watchedValues[field];
       }
     }
-    
+
     // 파일 필드들 체크
-    const fileFields = ['datasheetFile', 'drawingFile', 'manualFile', 'catalogFile'] as const;
+    const fileFields = [
+      "datasheetFile",
+      "drawingFile",
+      "manualFile",
+      "catalogFile",
+    ] as const;
     for (const field of fileFields) {
       const currentFile = watchedValues[field];
       const initialFile = convertedFormData[field];
-      
-      if (!!currentFile !== !!initialFile || 
-          (currentFile instanceof File && initialFile instanceof File && currentFile !== initialFile)) {
+
+      if (
+        !!currentFile !== !!initialFile ||
+        (currentFile instanceof File &&
+          initialFile instanceof File &&
+          currentFile !== initialFile)
+      ) {
         changedData[field] = currentFile;
       }
     }
-    
+
     // 이미지 배열 체크
-    const imageFields = ['productImages', 'specImages'] as const;
+    const imageFields = ["productImages", "specImages"] as const;
     for (const field of imageFields) {
       const currentImages = watchedValues[field] || [];
       const initialImages = convertedFormData[field] || [];
-      
+
       let isChanged = false;
       if (currentImages.length !== initialImages.length) {
         isChanged = true;
@@ -161,46 +183,49 @@ function UpdateProductPage({
           }
         }
       }
-      
+
       if (isChanged) {
         changedData[field] = currentImages;
       }
     }
-    
+
     // categoryFields 체크
     if (watchedValues.categoryFields && convertedFormData.categoryFields) {
       const currentCategoryFields = watchedValues.categoryFields;
       const initialCategoryFields = convertedFormData.categoryFields;
-      
+
       const allKeys = new Set([
         ...Object.keys(currentCategoryFields),
-        ...Object.keys(initialCategoryFields)
+        ...Object.keys(initialCategoryFields),
       ]);
-      
+
       let categoryChanged = false;
       const changedCategoryFields: Record<string, unknown> = {};
-      
+
       for (const key of allKeys) {
         if (currentCategoryFields[key] !== initialCategoryFields[key]) {
           categoryChanged = true;
           changedCategoryFields[key] = currentCategoryFields[key];
         }
       }
-      
+
       if (categoryChanged) {
-        changedData.categoryFields = changedCategoryFields as Record<string, string>;
+        changedData.categoryFields = changedCategoryFields as Record<
+          string,
+          string
+        >;
       }
     }
-    
+
     return changedData;
   };
 
   useEffect(() => {
     if (convertedFormData) {
-      reset(convertedFormData, { 
-        keepDirty: false, 
+      reset(convertedFormData, {
+        keepDirty: false,
         keepTouched: false,
-        keepDefaultValues: true 
+        keepDefaultValues: true,
       });
     }
   }, [convertedFormData, reset]);
@@ -326,7 +351,6 @@ function UpdateProductPage({
     // 변경된 필드만 가져오기
     const changedFields = getChangedFields();
 
-
     const uploadImages = async (images: File[]): Promise<string[]> => {
       const formData = new FormData();
       images.forEach((image) => {
@@ -349,17 +373,14 @@ function UpdateProductPage({
       return response.data.url;
     };
 
-    // 변경된 데이터로 업데이트용 객체 생성
-    const updateData: Partial<ProductUpdateFormData> = { ...changedFields };
-
-    // 카테고리는 항상 포함 (API에서 필요)
-    updateData.category = data.category;
-
-    const transformedData: Record<string, unknown> = { id: productId };
-
-    // 파일 업로드가 필요한 변경사항 처리
+    // 카테고리별로 올바른 API 타입 사용
     if (selectedCategory === CategoriesEnum.LIGHT) {
-      // LIGHT 카테고리의 경우
+      // LIGHT 카테고리 처리
+      const transformedData: LightProductUpdateApiData = {
+        id: productId,
+        category: CategoriesEnum.LIGHT,
+      };
+
       if (changedFields.name) {
         transformedData.name = changedFields.name;
       }
@@ -367,14 +388,31 @@ function UpdateProductPage({
       // PDF 파일은 변경된 경우에만 업로드
       if (changedFields.catalogFile) {
         const catalogUrl = await uploadDocument(changedFields.catalogFile);
-        transformedData.catalogFile = catalogUrl;
+        transformedData.catalogUrl = catalogUrl;
       }
 
       if (changedFields.categoryFields) {
-        transformedData.light = changedFields.categoryFields;
+        transformedData.light = {
+          id: categoryId,
+          ...changedFields.categoryFields,
+        };
       }
+
+      console.log(transformedData);
+
+      // API 호출
+      const response = await protectApi.patch(
+        `/api/product/update/${productId}?category=${data.category}`,
+        transformedData,
+      );
+
+      console.log(response.data);
     } else {
       // 표준 제품들 (CAMERA, LENS, FRAMEGRABBER, SOFTWARE)
+      const transformedData: StandardProductUpdateApiData = {
+        id: productId,
+      };
+
       if (changedFields.name) {
         transformedData.name = changedFields.name;
       }
@@ -391,8 +429,13 @@ function UpdateProductPage({
       }> = [];
 
       // 제품 이미지가 변경된 경우만 업로드
-      if (changedFields.productImages && changedFields.productImages.length > 0) {
-        const productImageUrls = await uploadImages(changedFields.productImages);
+      if (
+        changedFields.productImages &&
+        changedFields.productImages.length > 0
+      ) {
+        const productImageUrls = await uploadImages(
+          changedFields.productImages,
+        );
         const newProductImages = productImageUrls.map(
           (path: string, index: number) => ({
             order: index,
@@ -424,17 +467,17 @@ function UpdateProductPage({
       // 문서 파일 업로드 - 변경된 경우에만
       if (changedFields.datasheetFile) {
         const datasheetUrl = await uploadDocument(changedFields.datasheetFile);
-        transformedData.datasheetFile = datasheetUrl;
+        transformedData.datasheetUrl = datasheetUrl;
       }
 
       if (changedFields.drawingFile) {
         const drawingUrl = await uploadDocument(changedFields.drawingFile);
-        transformedData.drawingFile = drawingUrl;
+        transformedData.drawingUrl = drawingUrl;
       }
 
       if (changedFields.manualFile) {
         const manualUrl = await uploadDocument(changedFields.manualFile);
-        transformedData.manualFile = manualUrl;
+        transformedData.manualUrl = manualUrl;
       }
 
       // 카테고리별 필드
@@ -442,24 +485,27 @@ function UpdateProductPage({
         const categoryKey = CategoryRelationMapKebab[data.category].replace(
           "-",
           "",
-        );
+        ) as keyof Pick<
+          StandardProductUpdateApiData,
+          "camera" | "frameGrabber" | "lens" | "software"
+        >;
+
         transformedData[categoryKey] = {
           id: categoryId,
           ...changedFields.categoryFields,
         };
       }
+
+      console.log(transformedData);
+
+      // API 호출 - PATCH 요청으로 변경된 필드만 전송
+      const response = await protectApi.patch(
+        `/api/product/update/${productId}?category=${data.category}`,
+        transformedData,
+      );
+
+      console.log(response.data);
     }
-
-    console.log(transformedData);
-
-    // API 호출 - PATCH 요청으로 변경된 필드만 전송
-    const response = await protectApi.patch(
-      `/api/product/update/${productId}?category=${data.category}`,
-      transformedData,
-    );
-
-    console.log(response.data);
-
   };
 
   return (
