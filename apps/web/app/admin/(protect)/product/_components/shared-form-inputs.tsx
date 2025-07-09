@@ -1,65 +1,79 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Control, FieldPath } from "react-hook-form";
 import { Input } from "components/input";
 import { SelectBox } from "components/select-box/select-box";
 import ImageUpload from "components/image-upload/image-upload";
 import PdfUpload from "components/pdf-upload";
-import { ProductUpdateFormData } from "../_types/product-update.type";
-import { FormField } from "./form-field";
+import { ProductFormData } from "../create/_types/product.type";
+import { ProductUpdateFormData } from "../update/_types/product-update.type";
+import { FormField } from "../create/_components/form-field";
 
-interface BaseInputProps<TName extends FieldPath<ProductUpdateFormData>> {
+type SupportedFormData = ProductFormData | ProductUpdateFormData;
+
+interface BaseInputProps<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+> {
   name: TName;
-  control: Control<ProductUpdateFormData>;
+  control: Control<T>;
   label: string;
-  required?: boolean;
   className?: string;
 }
 
-interface TextInputProps<TName extends FieldPath<ProductUpdateFormData>>
-  extends BaseInputProps<TName> {
+interface TextInputProps<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+> extends BaseInputProps<T, TName> {
   placeholder?: string;
   inputClassName?: string;
 }
 
-interface TextAreaInputProps<TName extends FieldPath<ProductUpdateFormData>>
-  extends BaseInputProps<TName> {
+interface TextAreaInputProps<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+> extends BaseInputProps<T, TName> {
   placeholder?: string;
   textAreaClassName?: string;
 }
 
-interface SelectInputProps<TName extends FieldPath<ProductUpdateFormData>>
-  extends BaseInputProps<TName> {
+interface SelectInputProps<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+> extends BaseInputProps<T, TName> {
   options: Array<{ label: string; value: string }>;
 }
 
-interface ImageUploadInputProps<TName extends FieldPath<ProductUpdateFormData>>
-  extends BaseInputProps<TName> {
+interface ImageUploadInputProps<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+> extends BaseInputProps<T, TName> {
   maxImages?: number;
 }
 
-interface PdfUploadInputProps<TName extends FieldPath<ProductUpdateFormData>>
-  extends BaseInputProps<TName> {
-  label: string;
-}
+type PdfUploadInputProps<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+> = BaseInputProps<T, TName>;
 
-export function TextInput<TName extends FieldPath<ProductUpdateFormData>>({
+export function TextInput<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+>({
   name,
   control,
   label,
-  required = false,
   className,
   placeholder,
   inputClassName = "text-gray600 focus-visible:border-gray200 rounded-none border-x-0 border-t-0 border-b text-base outline-none placeholder:text-sm focus-visible:ring-0",
-}: TextInputProps<TName>) {
+}: TextInputProps<T, TName>) {
   return (
     <FormField
-      name={name}
-      control={control}
+      name={name as any}
+      control={control as any}
       label={label}
-      required={required}
       className={className}
     >
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      {({ field }: any) => (
+      {({ field }) => (
         <Input
           {...field}
           value={field.value ?? ""}
@@ -72,25 +86,25 @@ export function TextInput<TName extends FieldPath<ProductUpdateFormData>>({
   );
 }
 
-export function TextAreaInput<TName extends FieldPath<ProductUpdateFormData>>({
+export function TextAreaInput<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+>({
   name,
   control,
   label,
-  required = false,
   className,
   placeholder,
   textAreaClassName = "text-gray600 placeholder:text-gray300 field-sizing-content max-h-[11.25rem] resize-none rounded-none border-x-0 border-t-0 border-b px-3 py-1 outline-none placeholder:text-sm focus-visible:ring-0",
-}: TextAreaInputProps<TName>) {
+}: TextAreaInputProps<T, TName>) {
   return (
     <FormField
-      name={name}
-      control={control}
+      name={name as any}
+      control={control as any}
       label={label}
-      required={required}
       className={className}
     >
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      {({ field }: any) => (
+      {({ field }) => (
         <textarea
           {...field}
           value={field.value ?? ""}
@@ -102,24 +116,18 @@ export function TextAreaInput<TName extends FieldPath<ProductUpdateFormData>>({
   );
 }
 
-export function SelectInput<TName extends FieldPath<ProductUpdateFormData>>({
-  name,
-  control,
-  label,
-  required = false,
-  className,
-  options,
-}: SelectInputProps<TName>) {
+export function SelectInput<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+>({ name, control, label, className, options }: SelectInputProps<T, TName>) {
   return (
     <FormField
-      name={name}
-      control={control}
+      name={name as any}
+      control={control as any}
       label={label}
-      required={required}
       className={className}
     >
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      {({ field }: any) => (
+      {({ field }) => (
         <SelectBox
           value={field.value ?? ""}
           onValueChange={field.onChange}
@@ -132,25 +140,23 @@ export function SelectInput<TName extends FieldPath<ProductUpdateFormData>>({
 }
 
 export function ImageUploadInput<
-  TName extends FieldPath<ProductUpdateFormData>,
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
 >({
   name,
   control,
   label,
-  required = false,
   className,
   maxImages = 10,
-}: ImageUploadInputProps<TName>) {
+}: ImageUploadInputProps<T, TName>) {
   return (
     <FormField
-      name={name}
-      control={control}
+      name={name as any}
+      control={control as any}
       label={label}
-      required={required}
       className={className}
     >
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      {({ field }: any) => (
+      {({ field }) => (
         <ImageUpload
           images={field.value || []}
           onImagesChange={field.onChange}
@@ -161,23 +167,18 @@ export function ImageUploadInput<
   );
 }
 
-export function PdfUploadInput<TName extends FieldPath<ProductUpdateFormData>>({
-  name,
-  control,
-  label,
-  required = false,
-  className,
-}: PdfUploadInputProps<TName>) {
+export function PdfUploadInput<
+  T extends SupportedFormData,
+  TName extends FieldPath<T>,
+>({ name, control, label, className }: PdfUploadInputProps<T, TName>) {
   return (
     <FormField
-      name={name}
-      control={control}
+      name={name as any}
+      control={control as any}
       label={label}
-      required={required}
       className={className}
     >
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      {({ field }: any) => (
+      {({ field }) => (
         <PdfUpload file={field.value} onFileChange={field.onChange} />
       )}
     </FormField>

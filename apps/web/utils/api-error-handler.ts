@@ -24,7 +24,7 @@ export function handleApiError(error: unknown, context?: string): NextResponse {
   if (axios.isAxiosError(error)) {
     console.error(`${contextPrefix} Axios error:`, {
       status: error.response?.status,
-      data: error.response?.data,
+      data: error.response?.data.errors || error.response?.data,
       message: error.message,
     });
 

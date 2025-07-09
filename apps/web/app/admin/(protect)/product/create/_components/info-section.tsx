@@ -7,7 +7,7 @@ import {
   TextAreaInput,
   ImageUploadInput,
   PdfUploadInput,
-} from "./form-inputs";
+} from "../../_components/shared-form-inputs";
 
 interface InfoSectionProps {
   control: Control<ProductFormData>;
@@ -30,7 +30,6 @@ export const InfoSection = ({
           control={control}
           label="제품명"
           placeholder="제품명 입력"
-          required
         />
       )}
 

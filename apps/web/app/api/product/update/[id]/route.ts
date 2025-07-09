@@ -44,10 +44,6 @@ export const PATCH = async (
     "Content-Type": "application/json",
   };
 
-  console.log("Update body:", JSON.stringify(body, null, 2));
-  console.log("Category:", category);
-  console.log("Product ID:", id);
-
   const kebabCategory =
     CategoryRelationMapKebab[category as keyof typeof CategoriesEnum];
 

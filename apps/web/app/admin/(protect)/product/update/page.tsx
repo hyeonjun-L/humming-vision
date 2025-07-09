@@ -30,8 +30,6 @@ async function page({ searchParams }: Props) {
     `${END_POINT}/product/${kebabCategory}/${id}`,
   );
 
-  console.log("Fetched product data:", response.data);
-
   const categoryData =
     response.data[CategoryRelationMap[category as CategoriesEnum]];
   const categoryId = categoryData?.id;
@@ -63,7 +61,6 @@ const transformProductToFormData = async (
       name: product.name,
       productImages: [],
       specImages: [],
-      // URL만 저장하고 클라이언트에서 필요시 로드
       catalogFileUrl: lightProduct.catalogUrl,
       categoryFields: {},
     };
@@ -101,13 +98,13 @@ const transformProductToFormData = async (
       category: product.categories as CategoriesEnum,
       name: product.name,
       mainFeature: product.mainFeature,
-      // 초기에는 빈 배열로 설정, URL은 별도 저장
+
       productImages: [],
       specImages: [],
       datasheetFile: undefined,
       drawingFile: undefined,
       manualFile: undefined,
-      // URL들을 별도로 저장
+
       productImageUrls,
       specImageUrls,
       datasheetUrl: product.datasheetUrl || undefined,

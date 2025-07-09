@@ -2,7 +2,11 @@ import { Control } from "react-hook-form";
 import { CategoriesEnum } from "@humming-vision/shared";
 import { ProductUpdateFormData } from "../_types/product-update.type";
 import { infoSectionFields } from "../_const/constants";
-import { TextInput, ImageUploadInput, PdfUploadInput } from "./form-inputs";
+import {
+  TextInput,
+  ImageUploadInput,
+  PdfUploadInput,
+} from "../../_components/shared-form-inputs";
 
 interface InfoSectionProps {
   control: Control<ProductUpdateFormData>;
@@ -25,7 +29,6 @@ export const InfoSection = ({
           control={control}
           label="제품명"
           placeholder="제품명 입력"
-          required
         />
       )}
 

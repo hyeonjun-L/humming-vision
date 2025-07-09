@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   CategoriesEnum,
@@ -11,15 +11,24 @@ import {
   StandardProductUpdateApiData,
   LightProductUpdateApiData,
 } from "../_types/product-update.type";
-import { useForm } from "react-hook-form";
+import { useProductForm } from "../../_hooks/useProductForm";
+import { createUploadService } from "../../_utils/uploadService";
+import { createProductApiProcessor } from "../../_utils/productApiProcessor";
+import {
+  LoadingState,
+  ErrorState,
+  ProductFormLayout,
+  SubmitButton,
+} from "../../_components/shared-ui";
 import { CategorySection } from "./category-section";
 import { InfoSection } from "./info-section";
 import { urlToFile, urlsToFiles } from "../_utils/file-converter";
 import { sectionVisibility } from "../_const/constants";
 import { SpecSection } from "./spec-section";
 import { OtherInfoSection } from "./other-info-section";
-import { ArrowRight, Loader2 } from "lucide-react";
 import { protectApi } from "libs/axios";
+import { showToast } from "utils/toast-config";
+import { useRouter } from "next/navigation";
 
 interface UpdateProductPageProps {
   productId: number;
@@ -34,6 +43,8 @@ function UpdateProductPage({
   initialData,
   category: selectedCategory,
 }: UpdateProductPageProps) {
+  const router = useRouter();
+
   const {
     data: convertedFormData,
     isLoading,
@@ -51,174 +62,13 @@ function UpdateProductPage({
     handleSubmit,
     reset,
     formState: { isSubmitting },
-    watch,
-  } = useForm<ProductUpdateFormData>({
-    defaultValues: convertedFormData || initialData,
-  });
+    getChangedFields,
+    hasChanges,
+  } = useProductForm<ProductUpdateFormData>(convertedFormData || initialData);
 
-  const watchedValues = watch();
+  const uploadService = createUploadService();
 
-  const hasChanges = useMemo((): boolean => {
-    if (!watchedValues || !convertedFormData) return false;
-
-    // 텍스트 필드들 비교
-    const textFields = ["name", "mainFeature"] as const;
-    for (const field of textFields) {
-      if (watchedValues[field] !== convertedFormData[field]) {
-        return true;
-      }
-    }
-
-    // 파일 필드들 비교
-    const fileFields = [
-      "datasheetFile",
-      "drawingFile",
-      "manualFile",
-      "catalogFile",
-    ] as const;
-    for (const field of fileFields) {
-      const currentFile = watchedValues[field];
-      const initialFile = convertedFormData[field];
-
-      // 하나는 있고 하나는 없거나, 다른 File 객체면 변경
-      if (!!currentFile !== !!initialFile) {
-        return true;
-      }
-      if (
-        currentFile instanceof File &&
-        initialFile instanceof File &&
-        currentFile !== initialFile
-      ) {
-        return true;
-      }
-    }
-
-    // 이미지 배열 비교
-    const imageFields = ["productImages", "specImages"] as const;
-    for (const field of imageFields) {
-      const currentImages = watchedValues[field] || [];
-      const initialImages = convertedFormData[field] || [];
-
-      // 길이가 다르거나 순서/파일이 다르면 변경
-      if (currentImages.length !== initialImages.length) {
-        return true;
-      }
-
-      for (let i = 0; i < currentImages.length; i++) {
-        if (currentImages[i] !== initialImages[i]) {
-          return true;
-        }
-      }
-    }
-
-    // categoryFields 비교
-    if (watchedValues.categoryFields && convertedFormData.categoryFields) {
-      const currentCategoryFields = watchedValues.categoryFields;
-      const initialCategoryFields = convertedFormData.categoryFields;
-
-      // 모든 카테고리 필드 키 확인
-      const allKeys = new Set([
-        ...Object.keys(currentCategoryFields),
-        ...Object.keys(initialCategoryFields),
-      ]);
-
-      for (const key of allKeys) {
-        if (currentCategoryFields[key] !== initialCategoryFields[key]) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }, [watchedValues, convertedFormData]);
-
-  const getChangedFields = (): Partial<ProductUpdateFormData> => {
-    if (!watchedValues || !convertedFormData) return {};
-
-    const changedData: Partial<ProductUpdateFormData> = {};
-
-    // 텍스트 필드들 체크
-    const textFields = ["name", "mainFeature"] as const;
-    for (const field of textFields) {
-      if (watchedValues[field] !== convertedFormData[field]) {
-        changedData[field] = watchedValues[field];
-      }
-    }
-
-    // 파일 필드들 체크
-    const fileFields = [
-      "datasheetFile",
-      "drawingFile",
-      "manualFile",
-      "catalogFile",
-    ] as const;
-    for (const field of fileFields) {
-      const currentFile = watchedValues[field];
-      const initialFile = convertedFormData[field];
-
-      if (
-        !!currentFile !== !!initialFile ||
-        (currentFile instanceof File &&
-          initialFile instanceof File &&
-          currentFile !== initialFile)
-      ) {
-        changedData[field] = currentFile;
-      }
-    }
-
-    // 이미지 배열 체크
-    const imageFields = ["productImages", "specImages"] as const;
-    for (const field of imageFields) {
-      const currentImages = watchedValues[field] || [];
-      const initialImages = convertedFormData[field] || [];
-
-      let isChanged = false;
-      if (currentImages.length !== initialImages.length) {
-        isChanged = true;
-      } else {
-        for (let i = 0; i < currentImages.length; i++) {
-          if (currentImages[i] !== initialImages[i]) {
-            isChanged = true;
-            break;
-          }
-        }
-      }
-
-      if (isChanged) {
-        changedData[field] = currentImages;
-      }
-    }
-
-    // categoryFields 체크
-    if (watchedValues.categoryFields && convertedFormData.categoryFields) {
-      const currentCategoryFields = watchedValues.categoryFields;
-      const initialCategoryFields = convertedFormData.categoryFields;
-
-      const allKeys = new Set([
-        ...Object.keys(currentCategoryFields),
-        ...Object.keys(initialCategoryFields),
-      ]);
-
-      let categoryChanged = false;
-      const changedCategoryFields: Record<string, unknown> = {};
-
-      for (const key of allKeys) {
-        if (currentCategoryFields[key] !== initialCategoryFields[key]) {
-          categoryChanged = true;
-          changedCategoryFields[key] = currentCategoryFields[key];
-        }
-      }
-
-      if (categoryChanged) {
-        changedData.categoryFields = changedCategoryFields as Record<
-          string,
-          string
-        >;
-      }
-    }
-
-    return changedData;
-  };
+  const hasFormChanges = hasChanges(convertedFormData);
 
   useEffect(() => {
     if (convertedFormData) {
@@ -241,6 +91,7 @@ function UpdateProductPage({
           const productFiles = await urlsToFiles(data.productImageUrls);
           convertedData.productImages = productFiles;
         } catch (error) {
+          showToast.error("Failed to load product images.");
           console.warn("Failed to load product images:", error);
           convertedData.productImages = [];
         }
@@ -251,6 +102,7 @@ function UpdateProductPage({
           const specFiles = await urlsToFiles(data.specImageUrls);
           convertedData.specImages = specFiles;
         } catch (error) {
+          showToast.error("Failed to load spec images.");
           console.warn("Failed to load spec images:", error);
           convertedData.specImages = [];
         }
@@ -285,202 +137,49 @@ function UpdateProductPage({
   };
 
   if (isLoading) {
-    return (
-      <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-60 md:px-10">
-        <div className="flex min-h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="border-main mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
-            <p className="text-gray-600">파일을 로딩중입니다...</p>
-          </div>
-        </div>
-      </main>
-    );
+    return <LoadingState />;
   }
 
   if (error) {
     return (
-      <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-60 md:px-10">
-        <div className="flex min-h-64 items-center justify-center">
-          <div className="text-center">
-            <div className="mb-4 text-red-500">
-              <svg
-                className="mx-auto mb-2 h-12 w-12"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <h3 className="mb-2 text-lg font-medium text-gray-900">
-              파일 로딩 실패
-            </h3>
-            <p className="mb-4 text-gray-600">
-              {error instanceof Error
-                ? error.message
-                : "알 수 없는 오류가 발생했습니다."}
-            </p>
-            <div className="space-x-4">
-              <button
-                onClick={() => refetch()}
-                className="bg-main hover:bg-main-dark focus:ring-main inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white focus:ring-2 focus:ring-offset-2 focus:outline-none"
-              >
-                다시 시도
-              </button>
-              <button
-                onClick={() => {
-                  reset(initialData);
-                }}
-                className="focus:ring-main inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:outline-none"
-              >
-                파일 없이 진행
-              </button>
-            </div>
-          </div>
-        </div>
-      </main>
+      <ErrorState
+        error={error}
+        onRetry={() => refetch()}
+        onSkip={() => reset(initialData)}
+      />
     );
   }
 
   const updateCompleteProduct = async (
     data: ProductUpdateFormData,
   ): Promise<void> => {
-    // 변경된 필드만 가져오기
-    const changedFields = getChangedFields();
+    const changedFields = getChangedFields(convertedFormData);
 
-    const uploadImages = async (images: File[]): Promise<string[]> => {
-      const formData = new FormData();
-      images.forEach((image) => {
-        formData.append("files", image);
-      });
-      const response = await protectApi.post<string[]>(
-        "/api/uploads/images",
-        formData,
-      );
-      return response.data.map((url: string) => url);
-    };
-
-    const uploadDocument = async (file: File): Promise<string> => {
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await protectApi.post(
-        "/api/uploads/documents",
-        formData,
-      );
-      return response.data.url;
-    };
-
-    // 카테고리별로 올바른 API 타입 사용
-    if (selectedCategory === CategoriesEnum.LIGHT) {
-      // LIGHT 카테고리 처리
-      const transformedData: LightProductUpdateApiData = {
+    const apiProcessor = createProductApiProcessor(
+      uploadService,
+      {
         id: productId,
-        category: CategoriesEnum.LIGHT,
-      };
+      },
+      true,
+    );
 
-      if (changedFields.name) {
-        transformedData.name = changedFields.name;
-      }
+    const transformedData = await apiProcessor.processData(data, changedFields);
 
-      // PDF 파일은 변경된 경우에만 업로드
-      if (changedFields.catalogFile) {
-        const catalogUrl = await uploadDocument(changedFields.catalogFile);
-        transformedData.catalogUrl = catalogUrl;
-      }
-
+    if (selectedCategory === CategoriesEnum.LIGHT) {
+      const lightData = transformedData as LightProductUpdateApiData;
       if (changedFields.categoryFields) {
-        transformedData.light = {
+        lightData.light = {
           id: categoryId,
           ...changedFields.categoryFields,
         };
       }
 
-      console.log(transformedData);
-
-      // API 호출
-      const response = await protectApi.patch(
+      await protectApi.patch(
         `/api/product/update/${productId}?category=${data.category}`,
-        transformedData,
+        lightData,
       );
-
-      console.log(response.data);
     } else {
-      // 표준 제품들 (CAMERA, LENS, FRAMEGRABBER, SOFTWARE)
-      const transformedData: StandardProductUpdateApiData = {
-        id: productId,
-      };
-
-      if (changedFields.name) {
-        transformedData.name = changedFields.name;
-      }
-
-      if (changedFields.mainFeature) {
-        transformedData.mainFeature = changedFields.mainFeature;
-      }
-
-      // 이미지 처리 - 변경된 이미지만 업로드
-      let allImages: Array<{
-        order: number;
-        type: "PRODUCT" | "SPEC";
-        path: string;
-      }> = [];
-
-      // 제품 이미지가 변경된 경우만 업로드
-      if (
-        changedFields.productImages &&
-        changedFields.productImages.length > 0
-      ) {
-        const productImageUrls = await uploadImages(
-          changedFields.productImages,
-        );
-        const newProductImages = productImageUrls.map(
-          (path: string, index: number) => ({
-            order: index,
-            type: "PRODUCT" as const,
-            path,
-          }),
-        );
-        allImages = [...allImages, ...newProductImages];
-      }
-
-      // 스펙 이미지가 변경된 경우만 업로드
-      if (changedFields.specImages && changedFields.specImages.length > 0) {
-        const specImageUrls = await uploadImages(changedFields.specImages);
-        const newSpecImages = specImageUrls.map(
-          (path: string, index: number) => ({
-            order: index,
-            type: "SPEC" as const,
-            path,
-          }),
-        );
-        allImages = [...allImages, ...newSpecImages];
-      }
-
-      // 이미지 변경사항이 있으면 전송
-      if (allImages.length > 0) {
-        transformedData.images = allImages;
-      }
-
-      // 문서 파일 업로드 - 변경된 경우에만
-      if (changedFields.datasheetFile) {
-        const datasheetUrl = await uploadDocument(changedFields.datasheetFile);
-        transformedData.datasheetUrl = datasheetUrl;
-      }
-
-      if (changedFields.drawingFile) {
-        const drawingUrl = await uploadDocument(changedFields.drawingFile);
-        transformedData.drawingUrl = drawingUrl;
-      }
-
-      if (changedFields.manualFile) {
-        const manualUrl = await uploadDocument(changedFields.manualFile);
-        transformedData.manualUrl = manualUrl;
-      }
-
-      // 카테고리별 필드
+      const standardData = transformedData as StandardProductUpdateApiData;
       if (changedFields.categoryFields) {
         const categoryKey = CategoryRelationMapKebab[data.category].replace(
           "-",
@@ -490,32 +189,26 @@ function UpdateProductPage({
           "camera" | "frameGrabber" | "lens" | "software"
         >;
 
-        transformedData[categoryKey] = {
+        standardData[categoryKey] = {
           id: categoryId,
           ...changedFields.categoryFields,
         };
       }
 
-      console.log(transformedData);
-
-      // API 호출 - PATCH 요청으로 변경된 필드만 전송
-      const response = await protectApi.patch(
+      await protectApi.patch(
         `/api/product/update/${productId}?category=${data.category}`,
-        transformedData,
+        standardData,
       );
-
-      console.log(response.data);
     }
+
+    // router.back();
+
+    // showToast.success("제품이 성공적으로 수정되었습니다.");
   };
 
   return (
-    <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-60 md:px-10">
+    <ProductFormLayout title="제품수정">
       <form onSubmit={handleSubmit(updateCompleteProduct)}>
-        <hr className="border-gray200 absolute left-0 w-screen border-t" />
-        <div className="border-main mb-5 border-b py-5.5 sm:gap-0">
-          <h2 className="text-main text-2xl font-bold">제품수정</h2>
-        </div>
-
         <CategorySection selectedCategory={selectedCategory} />
 
         <InfoSection control={control} selectedCategory={selectedCategory} />
@@ -531,24 +224,13 @@ function UpdateProductPage({
           />
         )}
 
-        <button
-          type="submit"
-          disabled={isSubmitting || !hasChanges}
-          className="group border-gray300 ml-auto flex w-64 border-b py-2.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <div className="text-gray300 flex w-full items-center justify-end gap-5 text-xl font-normal group-hover:font-semibold">
-            수정하기
-            <div className="border-gray300 group-hover:bg-gray100 flex size-9 items-center justify-center rounded-full border bg-white">
-              {isSubmitting ? (
-                <Loader2 className="text-gray300 h-4 w-4 animate-spin" />
-              ) : (
-                <ArrowRight className="text-gray300" />
-              )}
-            </div>
-          </div>
-        </button>
+        <SubmitButton
+          isSubmitting={isSubmitting}
+          disabled={!hasFormChanges}
+          text="수정하기"
+        />
       </form>
-    </main>
+    </ProductFormLayout>
   );
 }
 

@@ -5,7 +5,7 @@ import {
   selectCategoryOptions,
 } from "../_const/constants";
 import { ProductFormData } from "../_types/product.type";
-import { SelectInput } from "./form-inputs";
+import { SelectInput } from "../../_components/shared-form-inputs";
 
 interface CategorySectionProps {
   control: Control<ProductFormData>;
@@ -25,7 +25,6 @@ export const CategorySection = ({
           control={control}
           label="제품선택"
           options={selectProductOptions}
-          required
           className="flex w-1/2 flex-col gap-2"
         />
 

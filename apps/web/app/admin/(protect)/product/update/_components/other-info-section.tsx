@@ -1,11 +1,9 @@
 import { Control } from "react-hook-form";
 import { CategoriesEnum } from "@humming-vision/shared";
 import { categoryFieldOptions } from "../_const/constants";
-import {
-  CategoryFieldOption,
-  ProductUpdateFormData,
-} from "../_types/product-update.type";
-import { TextInput, SelectInput } from "./form-inputs";
+import { ProductUpdateFormData } from "../_types/product-update.type";
+import { TextInput, SelectInput } from "../../_components/shared-form-inputs";
+import { CategoryFieldOption } from "../../create/_types/product.type";
 
 interface CategoryFieldProps {
   field: CategoryFieldOption;
@@ -25,7 +23,6 @@ export const CategoryField = ({ field, control }: CategoryFieldProps) => {
         control={control}
         label={label}
         options={field.options || []}
-        required={field.required}
         className={className}
       />
     );
@@ -37,7 +34,6 @@ export const CategoryField = ({ field, control }: CategoryFieldProps) => {
       control={control}
       label={label}
       placeholder={field.placeholder}
-      required={field.required}
       className={className}
       inputClassName="text-gray600 border-gray200 focus-visible:border-gray200 rounded-none text-base outline-none placeholder:text-sm focus-visible:ring-0"
     />
