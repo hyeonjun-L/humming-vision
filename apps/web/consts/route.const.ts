@@ -29,6 +29,7 @@ export enum AdminRoutePath {
   CONTACT = "/contact",
   PRODUCTS = "/products",
   PRODUCT_CREATE = "/product/create",
+  PRODUCT_UPDATE = "/product/update",
 }
 export interface NavItemWithSubmenu {
   name: string;

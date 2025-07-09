@@ -139,11 +139,10 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
         return (
           <div className="flex justify-center gap-2">
             <Link
-              href={`${ADMIN_ROUTE_PATH}${AdminRoutePath.PRODUCT_CREATE}`}
+              href={`${ADMIN_ROUTE_PATH}${AdminRoutePath.PRODUCT_UPDATE}?id=${product.id}&category=${product.categories}`}
               className="bg-main px-4 py-1 whitespace-nowrap text-white"
-              // onClick={() => handleProductModalOpen(Product)}
             >
-              상세
+              수정
             </Link>
             <button
               className="bg-gray300 px-4 py-1 whitespace-nowrap text-white"

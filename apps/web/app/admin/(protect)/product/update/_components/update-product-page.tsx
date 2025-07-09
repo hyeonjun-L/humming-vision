@@ -201,9 +201,12 @@ function UpdateProductPage({
       );
     }
 
-    // router.back();
-
-    // showToast.success("제품이 성공적으로 수정되었습니다.");
+    showToast.success("제품이 성공적으로 수정되었습니다.", {
+      autoClose: 1500,
+      onClose: () => {
+        router.back();
+      },
+    });
   };
 
   return (
