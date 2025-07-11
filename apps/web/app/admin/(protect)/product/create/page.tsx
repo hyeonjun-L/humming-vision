@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import {
   CategoriesEnum,
   CategoryRelationMapKebab,
@@ -19,6 +20,8 @@ import { createProductApiProcessor } from "../_utils/productApiProcessor";
 import { ProductFormLayout, SubmitButton } from "../_components/shared-ui";
 
 function CreateProductPage() {
+  const [formKey, setFormKey] = useState(0);
+
   const {
     control,
     handleSubmit,
@@ -77,7 +80,9 @@ function CreateProductPage() {
         manualFile: undefined,
         catalogFile: undefined,
         categoryFields: {},
-      } as Partial<ProductFormData>);
+      });
+
+      setFormKey((prev) => prev + 1);
 
       window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -95,7 +100,7 @@ function CreateProductPage() {
 
   return (
     <ProductFormLayout title="제품등록">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form key={formKey} onSubmit={handleSubmit(onSubmit)}>
         {sectionVisibility[selectedCategory].categorySection && (
           <CategorySection
             control={control}

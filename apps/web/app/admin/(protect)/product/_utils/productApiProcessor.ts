@@ -1,5 +1,6 @@
 import {
   CategoriesEnum,
+  CategoryRelationMap,
   CategoryRelationMapKebab,
 } from "@humming-vision/shared";
 import { UploadService, createImageData } from "./uploadService";
@@ -14,6 +15,7 @@ export interface ProductApiProcessor<TFormData, TApiData> {
 interface ProductFormData {
   category: CategoriesEnum;
   name?: string;
+  subCategory?: string;
   mainFeature?: string;
   productImages?: File[];
   specImages?: File[];
@@ -26,7 +28,7 @@ interface ProductFormData {
 
 export const createProductApiProcessor = <
   TFormData extends ProductFormData,
-  TApiData extends { category: CategoriesEnum; id: number },
+  TApiData extends { category: string; id: number },
 >(
   uploadService: UploadService,
   baseData: Partial<TApiData>,
@@ -49,12 +51,31 @@ export const createProductApiProcessor = <
       transformedData.mainFeature = fieldsToProcess.mainFeature;
     }
 
+    if (fieldsToProcess.subCategory) {
+      const subCategoryMapping: Partial<Record<CategoriesEnum, string>> = {
+        [CategoriesEnum.CAMERA]: "type",
+        [CategoriesEnum.LENS]: "type",
+        [CategoriesEnum.FRAMEGRABBER]: "interface",
+        [CategoriesEnum.SOFTWARE]: "maker",
+      };
+
+      const fieldKey = subCategoryMapping[formData.category];
+      if (fieldKey) {
+        const updatedCategoryFields = {
+          [fieldKey]: fieldsToProcess.subCategory,
+          ...fieldsToProcess.categoryFields,
+        };
+
+        fieldsToProcess.categoryFields = updatedCategoryFields;
+      }
+    }
+
     if (formData.category === CategoriesEnum.LIGHT) {
       if (fieldsToProcess.catalogFile) {
         const catalogUrl = await uploadService.uploadDocument(
           fieldsToProcess.catalogFile,
         );
-        transformedData.catalogUrl = catalogUrl;
+        fieldsToProcess.categoryFields = { catalogUrl };
       }
 
       if (fieldsToProcess.categoryFields) {
@@ -110,10 +131,7 @@ export const createProductApiProcessor = <
       }
 
       if (fieldsToProcess.categoryFields) {
-        const categoryKey = CategoryRelationMapKebab[formData.category].replace(
-          "-",
-          "",
-        );
+        const categoryKey = CategoryRelationMap[formData.category];
         transformedData[categoryKey] = isUpdate
           ? {
               id: transformedData.categoryId,
@@ -122,6 +140,8 @@ export const createProductApiProcessor = <
           : fieldsToProcess.categoryFields;
       }
     }
+
+    delete transformedData.category;
 
     return transformedData as TApiData;
   };
