@@ -32,7 +32,7 @@ export function FormField<TName extends FieldPath<ProductFormData>>({
   children,
 }: FormFieldProps<TName>) {
   return (
-    <div className={className}>
+    <div data-field={name} className={className}>
       <label className="text-gray400 font-semibold">{label}</label>
 
       <Controller

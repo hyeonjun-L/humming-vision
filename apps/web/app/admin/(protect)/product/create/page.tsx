@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   CategoriesEnum,
   CategoryRelationMapKebab,
@@ -18,6 +18,7 @@ import { useProductForm } from "../_hooks/useProductForm";
 import { createUploadService } from "../_utils/uploadService";
 import { createProductApiProcessor } from "../_utils/productApiProcessor";
 import { ProductFormLayout, SubmitButton } from "../_components/shared-ui";
+import { getFormSchema } from "./_schemas/product.schema";
 
 function CreateProductPage() {
   const [formKey, setFormKey] = useState(0);
@@ -45,9 +46,16 @@ function CreateProductPage() {
 
   const selectedCategory = watchedValues.category || CategoriesEnum.CAMERA;
 
+  const formSchema = useMemo(
+    () => getFormSchema(selectedCategory),
+    [selectedCategory],
+  );
+
   const uploadService = createUploadService();
 
   const createCompleteProduct = async (data: ProductFormData) => {
+    formSchema.parse(data);
+
     const apiProcessor = createProductApiProcessor(
       uploadService,
       { category: data.category },

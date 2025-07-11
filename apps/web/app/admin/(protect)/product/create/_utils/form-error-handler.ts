@@ -133,11 +133,8 @@ function focusOrScrollToField(
   fieldName: keyof ProductFormData,
   setFocus: UseFormSetFocus<ProductFormData>,
 ) {
-  try {
-    setFocus(fieldName);
-  } catch {
-    scrollToField(fieldName);
-  }
+  scrollToField(fieldName);
+  setFocus(fieldName);
 }
 
 function scrollToField(fieldName: keyof ProductFormData) {
