@@ -8,7 +8,7 @@ export function getHeaderClassName(state: HeaderState): string {
     "group/header fixed top-0 z-(--z-header) flex w-full flex-col",
     "scroll-header",
     isClient && {
-      "bg-white text-black fill-black": headerVariant === "admin",
+      "bg-white text-black fill-black shadow-sm": headerVariant === "admin",
       "text-white lg:hover:bg-white lg:hover:text-black fill-white":
         headerVariant === "home",
     },
@@ -22,7 +22,7 @@ export function getNavClassName(state: HeaderState): string {
   return cn(
     "relative flex items-center max-w-8xl justify-between px-5 pt-10.5 sm:px-10 lg:items-start lg:justify-evenly lg:px-0",
     headerVariant === "admin" &&
-      "gap-10 xl:gap-20 lg:justify-normal lg:mx-auto xl:w-7xl",
+      "gap-10 xl:gap-20 lg:justify-normal lg:mx-auto xl:w-7xl pb-10.5 lg:pb-0",
     headerVariant === "home" && "mb-10.5",
   );
 }

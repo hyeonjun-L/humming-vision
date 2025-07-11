@@ -113,13 +113,15 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
         return (
           <>
             {product.images[0]?.path ? (
-              <Image
-                src={product.images[0].path}
-                alt={product.name}
-                width={80}
-                height={54}
-                className="mx-auto"
-              />
+              <div className="relative mx-auto aspect-[80/54] w-[80px]">
+                <Image
+                  src={product.images[0].path}
+                  alt={product.name}
+                  fill
+                  sizes="80px"
+                  className="object-cover"
+                />
+              </div>
             ) : (
               <Box className="text-gray300 mx-auto size-10" />
             )}
