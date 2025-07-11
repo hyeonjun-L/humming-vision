@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useMemo } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CategoriesEnum,
   CategoryRelationMapKebab,
@@ -29,6 +29,8 @@ import { OtherInfoSection } from "./other-info-section";
 import { protectApi } from "libs/axios";
 import { showToast } from "utils/toast-config";
 import { useRouter } from "next/navigation";
+import { getUpdateFormSchema } from "../_schemas/product-update.schema";
+import { handleUpdateFormErrors } from "../_utils/form-error-handler";
 
 interface UpdateProductPageProps {
   productId: number;
@@ -45,6 +47,8 @@ function UpdateProductPage({
 }: UpdateProductPageProps) {
   const router = useRouter();
 
+  const queryClient = useQueryClient();
+
   const {
     data: convertedFormData,
     isLoading,
@@ -57,9 +61,17 @@ function UpdateProductPage({
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
+  const formSchema = useMemo(
+    () => getUpdateFormSchema(selectedCategory),
+    [selectedCategory],
+  );
+
   const {
     control,
     handleSubmit,
+    setError,
+    setFocus,
+    clearErrors,
     reset,
     formState: { isSubmitting },
     getChangedFields,
@@ -136,23 +148,11 @@ function UpdateProductPage({
     }
   };
 
-  if (isLoading) {
-    return <LoadingState />;
-  }
-
-  if (error) {
-    return (
-      <ErrorState
-        error={error}
-        onRetry={() => refetch()}
-        onSkip={() => reset(initialData)}
-      />
-    );
-  }
-
   const updateCompleteProduct = async (
     data: ProductUpdateFormData,
   ): Promise<void> => {
+    formSchema.parse(data);
+
     const changedFields = getChangedFields(convertedFormData);
 
     const apiProcessor = createProductApiProcessor(
@@ -200,18 +200,47 @@ function UpdateProductPage({
         standardData,
       );
     }
-
-    showToast.success("제품이 성공적으로 수정되었습니다.", {
-      autoClose: 1500,
-      onClose: () => {
-        router.back();
-      },
-    });
   };
+
+  const updateProductMutation = useMutation({
+    mutationFn: updateCompleteProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+
+      showToast.success("제품이 성공적으로 수정되었습니다.", {
+        autoClose: 1500,
+        onClose: () => {
+          router.back();
+        },
+      });
+    },
+    onError: (error: unknown) => {
+      handleUpdateFormErrors(error, setError, setFocus);
+    },
+  });
+
+  const onSubmit = (data: ProductUpdateFormData) => {
+    clearErrors();
+    updateProductMutation.mutate(data);
+  };
+
+  if (isLoading) {
+    return <LoadingState />;
+  }
+
+  if (error) {
+    return (
+      <ErrorState
+        error={error}
+        onRetry={() => refetch()}
+        onSkip={() => reset(initialData)}
+      />
+    );
+  }
 
   return (
     <ProductFormLayout title="제품수정">
-      <form onSubmit={handleSubmit(updateCompleteProduct)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <CategorySection selectedCategory={selectedCategory} />
 
         <InfoSection control={control} selectedCategory={selectedCategory} />

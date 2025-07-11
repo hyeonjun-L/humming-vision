@@ -12,7 +12,7 @@ import { OtherInfoSection } from "./_components/other-info-section";
 import { ProductFormData } from "./_types/product.type";
 import { protectApi } from "libs/axios";
 import { handleFormErrors } from "./_utils/form-error-handler";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "utils/toast-config";
 import { useProductForm } from "../_hooks/useProductForm";
 import { createUploadService } from "../_utils/uploadService";
@@ -22,6 +22,8 @@ import { getFormSchema } from "./_schemas/product.schema";
 
 function CreateProductPage() {
   const [formKey, setFormKey] = useState(0);
+
+  const queryClient = useQueryClient();
 
   const {
     control,
@@ -93,6 +95,8 @@ function CreateProductPage() {
       setFormKey((prev) => prev + 1);
 
       window.scrollTo({ top: 0, behavior: "smooth" });
+
+      queryClient.invalidateQueries({ queryKey: ["products"] });
 
       showToast.success("제품이 성공적으로 등록되었습니다.");
     },

@@ -65,6 +65,8 @@ function handleZodErrors(
   if (firstErrorField) {
     focusOrScrollToField(firstErrorField as keyof ProductFormData, setFocus);
   }
+
+  showToast.error("입력한 정보를 다시 확인해주세요.");
 }
 
 function handleApiErrors(
