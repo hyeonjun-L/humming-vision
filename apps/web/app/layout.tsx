@@ -18,6 +18,11 @@ const gothamBookFont = localFont({
   variable: "--font-gotham-book",
 });
 
+const gothamBoldFont = localFont({
+  src: "./font/gotham-bold.otf",
+  variable: "--font-gotham-bold",
+});
+
 export const metadata: Metadata = {
   title: "허밍비전(주) | 혁신적인 머신비전 시각 솔루션",
   description:
@@ -79,7 +84,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${gothamBookFont.variable} ${notoSansKRFont.variable}`}>
+      <body
+        className={`${gothamBookFont.variable} ${notoSansKRFont.variable} ${gothamBoldFont.variable} font-sans`}
+      >
         <ToastContainer />
         <QueryProvider>
           <ModalRoot />
