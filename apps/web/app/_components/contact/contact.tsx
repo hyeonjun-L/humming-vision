@@ -22,7 +22,7 @@ function Contact() {
           </dl>
         </div>
         <ContactForm />
-        <div className="order-4 mt-28 w-full md:mt-20 xl:col-start-2 xl:mt-20">
+        <div className="order-4 mt-28 mb-24 w-full md:mt-20 xl:col-start-2 xl:mt-20">
           <Map />
         </div>
       </div>
