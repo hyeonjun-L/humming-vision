@@ -25,6 +25,7 @@ export function getNavClassName(state: HeaderState): string {
     headerVariant === "admin" &&
       "gap-10 xl:gap-20 lg:justify-normal lg:mx-auto xl:w-7xl pb-10.5 lg:pb-0",
     headerVariant === "home" && "mb-7",
+    headerVariant !== "home" && headerVariant !== "admin" && "hover:mb-7",
   );
 }
 

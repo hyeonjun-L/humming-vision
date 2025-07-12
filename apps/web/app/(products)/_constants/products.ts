@@ -45,11 +45,3 @@ export enum RouteCategory {
   LIGHT = "light",
   ETC = "etc",
 }
-
-export const ROUTE_CATEGORY_DISPLAY_NAMES = {
-  [RouteCategory.FRAMEGRABBER]: "Frame Grabber",
-  [RouteCategory.CAMERA]: "Camera",
-  [RouteCategory.LENS]: "Lens",
-  [RouteCategory.LIGHT]: "Light",
-  [RouteCategory.ETC]: "ETC",
-} as const;
