@@ -8,9 +8,10 @@ export function getHeaderClassName(state: HeaderState): string {
     "group/header fixed top-0 z-(--z-header) flex w-full flex-col",
     "scroll-header",
     isClient && {
-      "bg-white text-black fill-black shadow-sm": headerVariant === "admin",
+      "text-black fill-black shadow-sm": headerVariant === "admin",
       "text-white lg:hover:bg-white lg:hover:text-black fill-white":
         headerVariant === "home",
+      "bg-white": headerVariant !== "home",
     },
     isAdminLoginPage && "hidden",
   );
