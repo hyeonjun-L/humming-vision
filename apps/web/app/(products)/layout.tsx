@@ -1,4 +1,5 @@
 import Banner from "./_components/banner";
+import TypeNav from "./_components/type-nav";
 
 function layout({
   children,
@@ -8,6 +9,7 @@ function layout({
   return (
     <main className="mt-32">
       <Banner />
+      <TypeNav />
       {children}
     </main>
   );

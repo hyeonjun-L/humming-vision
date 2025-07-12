@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { RouteCategory } from "../_constants/products";
+import {
+  ROUTE_CATEGORY_DISPLAY_NAMES,
+  RouteCategory,
+} from "../_constants/products";
 import {
   cameraBanner,
   frameGrabberBanner,
@@ -13,9 +16,9 @@ import {
 import cn from "libs/cn";
 
 function Banner() {
-  const router = usePathname();
+  const pathname = usePathname();
 
-  const currentCategory = router.split("/")[1] as RouteCategory;
+  const currentCategory = pathname.split("/")[1] as RouteCategory;
 
   const BANNER_IMAGE = {
     [RouteCategory.CAMERA]: cameraBanner,
@@ -23,14 +26,6 @@ function Banner() {
     [RouteCategory.FRAMEGRABBER]: frameGrabberBanner,
     [RouteCategory.ETC]: etcBanner,
     [RouteCategory.LIGHT]: lightBanner,
-  } as const;
-
-  const ROUTE_CATEGORY_DISPLAY_NAMES = {
-    [RouteCategory.FRAMEGRABBER]: "Frame Grabber",
-    [RouteCategory.CAMERA]: "Camera",
-    [RouteCategory.LENS]: "Lens",
-    [RouteCategory.LIGHT]: "Light",
-    [RouteCategory.ETC]: "ETC",
   } as const;
 
   return (
