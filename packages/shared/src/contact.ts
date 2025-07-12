@@ -32,3 +32,5 @@ export type GetContactResponse = {
   data: Contact[];
   total: number;
 };
+
+export type CreateContactDto = components["schemas"]["CreateContactDto"];

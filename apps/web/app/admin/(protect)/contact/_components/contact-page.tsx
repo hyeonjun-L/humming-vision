@@ -83,7 +83,7 @@ function ContactPage({
 
   const handleDeleteContact = async (id: number) => {
     try {
-      await publicApi.delete(`/api/contact/delete?id=${id}`);
+      await publicApi.delete(`/api/contact?id=${id}`);
 
       queryClient.setQueryData(
         ["contacts", currentPage, activeSearchField, activeSearchValue],
