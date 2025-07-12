@@ -1,7 +1,6 @@
 import Script from "next/script";
 import Contact from "./_components/contact/contact";
 import MainBanner from "./_components/main-banner";
-import Map from "./_components/map";
 import Product from "./_components/product";
 import { ENV_NAVER_CLIENT_ID_KEY } from "consts/env-keys.const";
 
