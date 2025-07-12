@@ -98,10 +98,10 @@ function ContactForm() {
 
   return (
     <form
-      className="flex flex-col gap-5 xl:flex-row"
+      className="flex w-full flex-col gap-5 xl:flex-row"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="mb-5 grid w-full grid-cols-[auto_1fr] items-center gap-y-7 sm:w-xl xl:order-2 xl:mb-0 xl:ml-16">
+      <div className="mb-5 grid w-full grid-cols-[auto_1fr] items-center gap-y-7 xl:order-2 xl:mb-0 xl:ml-16">
         {CONTACT_FIELDS.map(({ id, label, placeholder, required, type }) => {
           const fieldError = errors[id];
 
