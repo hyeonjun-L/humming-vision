@@ -23,7 +23,7 @@ export function getNavClassName(state: HeaderState): string {
     "relative flex items-center max-w-8xl justify-between px-5 pt-10.5 sm:px-10 lg:items-start lg:justify-evenly lg:px-0",
     headerVariant === "admin" &&
       "gap-10 xl:gap-20 lg:justify-normal lg:mx-auto xl:w-7xl pb-10.5 lg:pb-0",
-    headerVariant === "home" && "mb-10.5",
+    headerVariant === "home" && "mb-7",
   );
 }
 

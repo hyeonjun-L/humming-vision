@@ -14,23 +14,40 @@ const SIZE_STYLES = {
   default: "data-[size=default]:h-10 data-[size=default]:py-2",
 } as const;
 
+const VARIANT_STYLES = {
+  default:
+    "data-[variant=default]:border data-[variant=default]:border-input data-[variant=default]:rounded-md",
+  underline:
+    "data-[variant=underline]:border-0 data-[variant=underline]:border-b data-[variant=underline]:border-b-input data-[variant=underline]:rounded-none data-[variant=underline]:bg-transparent w-full focus:outline-none focus-visible:ring-0 focus-visible:border-b-input",
+} as const;
+
 interface InputProps extends Omit<React.ComponentProps<"input">, "size"> {
   size?: "sm" | "default";
+  variant?: "default" | "underline";
 }
 
-function Input({ className, type, size = "default", ...props }: InputProps) {
+function Input({
+  className,
+  type,
+  size = "default",
+  variant = "default",
+  ...props
+}: InputProps) {
   return (
     <input
       type={type}
       data-slot="input"
       data-size={size}
+      data-variant={variant}
       className={cn(
         ...BASE_INPUT_STYLES,
-        "placeholder:text-muted-foreground border-input rounded-md",
+        "placeholder:text-muted-foreground",
         "data-[size=sm]:px-2",
         "data-[size=default]:px-3",
         SIZE_STYLES.sm,
         SIZE_STYLES.default,
+        VARIANT_STYLES.default,
+        VARIANT_STYLES.underline,
         className,
       )}
       {...props}

@@ -95,7 +95,7 @@ function Product() {
 
   return (
     <section className="flex w-full flex-col items-center justify-center py-10 md:py-20 lg:py-32">
-      <h2 className="text-gray600 mb-10 text-[30px] font-bold md:mb-[60px] md:text-[40px] lg:mb-24 lg:text-[50px]">
+      <h2 className="text-gray600 font-gotham-bold mb-10 text-[30px] md:mb-[60px] md:text-[40px] lg:mb-24 lg:text-[50px]">
         Product
       </h2>
       <ul className="flex flex-wrap justify-center gap-5 sm:mx-10 lg:mx-0">

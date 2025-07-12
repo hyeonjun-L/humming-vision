@@ -17,8 +17,9 @@ import { showToast } from "utils/toast-config";
 import { useProductForm } from "../_hooks/useProductForm";
 import { createUploadService } from "../_utils/uploadService";
 import { createProductApiProcessor } from "../_utils/productApiProcessor";
-import { ProductFormLayout, SubmitButton } from "../_components/shared-ui";
+import { ProductFormLayout } from "../_components/shared-ui";
 import { getFormSchema } from "./_schemas/product.schema";
+import SubmitButton from "components/submit-button";
 
 function CreateProductPage() {
   const [formKey, setFormKey] = useState(0);

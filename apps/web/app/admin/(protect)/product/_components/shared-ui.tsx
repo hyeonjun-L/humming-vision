@@ -5,9 +5,9 @@ interface LoadingStateProps {
   message?: string;
 }
 
-export const LoadingState: React.FC<LoadingStateProps> = ({
+export const LoadingState = ({
   message = "파일을 로딩중입니다...",
-}) => (
+}: LoadingStateProps) => (
   <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-60 md:px-10">
     <div className="flex min-h-64 items-center justify-center">
       <div className="text-center">
@@ -26,13 +26,13 @@ interface ErrorStateProps {
   skipText?: string;
 }
 
-export const ErrorState: React.FC<ErrorStateProps> = ({
+export const ErrorState = ({
   error,
   onRetry,
   onSkip,
   retryText = "다시 시도",
   skipText = "파일 없이 진행",
-}) => (
+}: ErrorStateProps) => (
   <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-60 md:px-10">
     <div className="flex min-h-64 items-center justify-center">
       <div className="text-center">
@@ -85,10 +85,10 @@ interface ProductFormLayoutProps {
   children: React.ReactNode;
 }
 
-export const ProductFormLayout: React.FC<ProductFormLayoutProps> = ({
+export const ProductFormLayout = ({
   title,
   children,
-}) => (
+}: ProductFormLayoutProps) => (
   <main className="mx-auto max-w-7xl px-5 py-33 sm:pb-60 md:px-10">
     <hr className="border-gray200 absolute left-0 w-screen border-t" />
     <div className="border-main mb-5 border-b py-5.5 sm:gap-0">
@@ -96,35 +96,4 @@ export const ProductFormLayout: React.FC<ProductFormLayoutProps> = ({
     </div>
     {children}
   </main>
-);
-
-interface SubmitButtonProps {
-  isSubmitting: boolean;
-  disabled?: boolean;
-  text: string;
-  loadingText?: string;
-}
-
-export const SubmitButton: React.FC<SubmitButtonProps> = ({
-  isSubmitting,
-  disabled = false,
-  text,
-  loadingText,
-}) => (
-  <button
-    type="submit"
-    disabled={isSubmitting || disabled}
-    className="group border-gray300 ml-auto flex w-64 border-b py-2.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-  >
-    <div className="text-gray300 flex w-full items-center justify-end gap-5 text-xl font-normal group-hover:font-semibold">
-      {isSubmitting && loadingText ? loadingText : text}
-      <div className="border-gray300 group-hover:bg-gray100 flex size-9 items-center justify-center rounded-full border bg-white">
-        {isSubmitting ? (
-          <Loader2 className="text-gray300 h-4 w-4 animate-spin" />
-        ) : (
-          <ArrowRight className="text-gray300" />
-        )}
-      </div>
-    </div>
-  </button>
 );

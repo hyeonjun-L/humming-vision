@@ -17,7 +17,7 @@ function MainBanner() {
           <p className="text-gray100 font-gotham animate-fade-in-up motion-safe:animate-fade-in-up text-sm tracking-widest opacity-0 transition-all duration-700 [animation-delay:0.1s] [animation-fill-mode:forwards] motion-reduce:animate-none md:text-xl lg:text-[22px]">
             HUMMING VISION
           </p>
-          <p className="font-gotham animate-fade-in-up motion-safe:animate-fade-in-up text-xl font-bold opacity-0 transition-all duration-700 [animation-delay:0.3s] [animation-fill-mode:forwards] motion-reduce:animate-none md:text-[40px] lg:text-[50px]">
+          <p className="font-gotham-bold animate-fade-in-up motion-safe:animate-fade-in-up text-xl opacity-0 transition-all duration-700 [animation-delay:0.3s] [animation-fill-mode:forwards] motion-reduce:animate-none md:text-[40px] lg:text-[50px]">
             We enjoy MORE than vision
           </p>
           <p className="animate-fade-in-up motion-safe:animate-fade-in-up text-lg font-bold opacity-0 transition-all duration-700 [animation-delay:0.5s] [animation-fill-mode:forwards] motion-reduce:animate-none md:text-[26px] lg:text-4xl">

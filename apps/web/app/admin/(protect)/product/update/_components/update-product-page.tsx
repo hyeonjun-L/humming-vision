@@ -18,7 +18,6 @@ import {
   LoadingState,
   ErrorState,
   ProductFormLayout,
-  SubmitButton,
 } from "../../_components/shared-ui";
 import { CategorySection } from "./category-section";
 import { InfoSection } from "./info-section";
@@ -31,6 +30,7 @@ import { showToast } from "utils/toast-config";
 import { useRouter } from "next/navigation";
 import { getUpdateFormSchema } from "../_schemas/product-update.schema";
 import { handleUpdateFormErrors } from "../_utils/form-error-handler";
+import SubmitButton from "components/submit-button";
 
 interface UpdateProductPageProps {
   productId: number;

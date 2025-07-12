@@ -1,3 +1,4 @@
+import Contact from "./_components/contact";
 import MainBanner from "./_components/main-banner";
 import Product from "./_components/product";
 
@@ -6,6 +7,7 @@ export default function Home() {
     <main>
       <MainBanner />
       <Product />
+      <Contact />
     </main>
   );
 }
