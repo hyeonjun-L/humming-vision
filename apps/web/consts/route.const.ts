@@ -22,6 +22,14 @@ export enum RoutePathWithCategory {
   ACCESSORY = "/accessory",
 }
 
+export enum RoutePathETC {
+  MATROX = "/matrox",
+  EURESYS = "/euresys",
+  CONVERTER = "/converter",
+  CABLE = "/cable",
+  BRACKET = "/bracket",
+}
+
 export const ADMIN_ROUTE_PATH = "/admin";
 
 export enum AdminRoutePath {

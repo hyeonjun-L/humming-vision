@@ -37,3 +37,19 @@ export const PRODUCT_TYPES = {
     },
   },
 } as const;
+
+export enum RouteCategory {
+  FRAMEGRABBER = "frame-grabber",
+  CAMERA = "camera",
+  LENS = "lens",
+  LIGHT = "light",
+  ETC = "etc",
+}
+
+export const ROUTE_CATEGORY_DISPLAY_NAMES = {
+  [RouteCategory.FRAMEGRABBER]: "Frame Grabber",
+  [RouteCategory.CAMERA]: "Camera",
+  [RouteCategory.LENS]: "Lens",
+  [RouteCategory.LIGHT]: "Light",
+  [RouteCategory.ETC]: "ETC",
+} as const;
