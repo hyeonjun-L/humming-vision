@@ -117,11 +117,11 @@ export const NAV_ITEMS: NavItem[] = [
     hrefs: [
       {
         name: "Software",
-        href: `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
+        href: `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}${RoutePathETC.MATROX}`,
       },
       {
         name: "Accessory",
-        href: `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
+        href: `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}${RoutePathETC.CONVERTER}`,
       },
     ],
   },

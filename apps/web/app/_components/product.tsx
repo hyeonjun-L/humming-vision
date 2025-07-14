@@ -1,4 +1,8 @@
-import { RoutePath, RoutePathWithCategory } from "consts/route.const";
+import {
+  RoutePath,
+  RoutePathETC,
+  RoutePathWithCategory,
+} from "consts/route.const";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -83,11 +87,11 @@ function Product() {
       hrefs: [
         {
           name: "Software",
-          href: `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
+          href: `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}${RoutePathETC.MATROX}`,
         },
         {
           name: "Accessory",
-          href: `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
+          href: `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}${RoutePathETC.CONVERTER}`,
         },
       ],
     },

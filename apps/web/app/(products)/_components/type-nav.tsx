@@ -13,10 +13,18 @@ function TypeNav() {
   const isActiveRoute = (route: string) => {
     if (pathname === route) return true;
 
-    if (route.startsWith("/etc/") && pathname.startsWith(route)) return true;
+    if (
+      route.startsWith(`/${RouteCategory.ETC}/`) &&
+      pathname.startsWith(route)
+    )
+      return true;
 
-    if (route === "/light" && pathname === "/light") return true;
-    if (route === "/light/download" && pathname === "/light/download")
+    if (route === `${RoutePath.LIGHT}` && pathname === `${RoutePath.LIGHT}`)
+      return true;
+    if (
+      route === `${RoutePath.LIGHT}${RoutePathWithCategory.DOWNLOAD}` &&
+      pathname === `${RoutePath.LIGHT}${RoutePathWithCategory.DOWNLOAD}`
+    )
       return true;
 
     return false;
