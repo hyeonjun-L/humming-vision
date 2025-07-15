@@ -1,16 +1,33 @@
 "use client";
 
 import Accordion from "components/accordion";
-import { RadioGroup, RadioGroupItem } from "components/radio-group";
-import { Slider } from "components/slider";
-import cn from "libs/cn";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
-import { debounce } from "utils/debounce";
 import DynamicFilter from "./dynamic-range-filter";
+import StaticFilter from "./static-filter";
+import { useValidatedSearchParam } from "./validator/useValidatedSearchParam";
+import { z } from "zod";
+import NumberRangeTuple from "./validator/number-range-tuple-schemas";
+import {
+  CameraInterface,
+  CameraMaker,
+  CameraType,
+} from "@humming-vision/shared";
+import { usePathname } from "next/navigation";
 
-type CameraMaker = "CREVIS" | "VIEWORKS" | "BASLER" | "HIK" | "HUARAY" | "JAI";
-type CameraInterface = "GIGE" | "USB" | "CAMERA_LINK" | "COAXPRESS";
+const CameraMakerEnum = z.enum([
+  "CREVIS",
+  "VIEWORKS",
+  "BASLER",
+  "HIK",
+  "HUARAY",
+  "JAI",
+] as [CameraMaker, ...CameraMaker[]]);
+
+const CameraInterfaceEnum = z.enum([
+  "GIGE",
+  "USB",
+  "CAMERA_LINK",
+  "COAXPRESS",
+] as [CameraInterface, ...CameraInterface[]]);
 
 const CAMERA_MAKERS: { value: CameraMaker; label: string }[] = [
   { value: "CREVIS", label: "CREVIS" },
@@ -29,166 +46,82 @@ const CAMERA_INTERFACES: { value: CameraInterface; label: string }[] = [
 ];
 
 function CameraFilter() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const pathName = usePathname();
 
-  const updateSearchParams = useCallback(
-    (key: string, value: string | null) => {
-      const params = new URLSearchParams(searchParams.toString());
+  const currentType = pathName.split("/")[2]?.toUpperCase() as CameraType;
 
-      if (value === null || value === "") {
-        params.delete(key);
-      } else {
-        params.set(key, value);
-      }
-
-      params.set("page", "1");
-
-      router.replace(`?${params.toString()}`);
-    },
-    [router, searchParams],
-  );
-
-  const handleMakerChange = (maker: CameraMaker | "") => {
-    updateSearchParams("camera__maker__equal", maker || null);
-  };
-
-  const handleInterfaceChange = (interfaceType: CameraInterface | "") => {
-    updateSearchParams("camera__interface__equal", interfaceType || null);
-  };
-
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      updateSearchParams("where__name__i_like", value || null);
-    },
-    [updateSearchParams],
-  );
-
-  const currentMaker = searchParams.get(
+  const currentMaker = useValidatedSearchParam(
     "camera__maker__equal",
-  ) as CameraMaker | null;
-  const currentInterface = searchParams.get(
+    CameraMakerEnum,
+  );
+  const currentInterface = useValidatedSearchParam(
     "camera__interface__equal",
-  ) as CameraInterface | null;
-
+    CameraInterfaceEnum,
+  );
   const currentResolution =
-    searchParams.get("_camera__resolution__between")?.split(",") || [];
+    useValidatedSearchParam("_camera__resolution__between", NumberRangeTuple) ??
+    [];
   const currentSpeed =
-    searchParams.get("camera__speed__between")?.split(",") || [];
+    useValidatedSearchParam("camera__speed__between", NumberRangeTuple) ?? [];
 
   return (
     <>
-      <Accordion title="제조사" className="border-gray200 border-b">
-        <RadioGroup
-          value={currentMaker || ""}
-          onValueChange={(value) =>
-            handleMakerChange(value as CameraMaker | "")
-          }
-        >
-          {CAMERA_MAKERS.map((maker, index) => (
-            <div
-              key={maker.value}
-              className={cn(
-                "border-gray200 flex items-center space-x-3 border-b py-2.5",
-                {
-                  "border-b-0": index === CAMERA_MAKERS.length - 1,
-                },
-              )}
-            >
-              <RadioGroupItem value={maker.value} id={`maker-${maker.value}`} />
-              <label
-                htmlFor={`maker-${maker.value}`}
-                className="cursor-pointer text-sm font-medium"
-              >
-                {maker.label}
-              </label>
-            </div>
-          ))}
-        </RadioGroup>
-      </Accordion>
-
-      <Accordion title="인터페이스" className="border-gray200 border-b">
-        <RadioGroup
-          value={currentInterface || ""}
-          onValueChange={(value) =>
-            handleInterfaceChange(value as CameraInterface | "")
-          }
-        >
-          {CAMERA_INTERFACES.map((interfaceItem, index) => (
-            <div
-              key={interfaceItem.value}
-              className={cn(
-                "border-gray200 flex items-center space-x-3 border-b py-2.5",
-                {
-                  "border-b-0": index === CAMERA_INTERFACES.length - 1,
-                },
-              )}
-            >
-              <RadioGroupItem
-                value={interfaceItem.value}
-                id={`interface-${interfaceItem.value}`}
-              />
-              <label
-                htmlFor={`interface-${interfaceItem.value}`}
-                className="cursor-pointer text-sm font-medium"
-              >
-                {interfaceItem.label}
-              </label>
-            </div>
-          ))}
-        </RadioGroup>
+      <Accordion
+        title="제조사"
+        defaultOpen={!!currentMaker}
+        className="border-gray200 border-b"
+      >
+        <StaticFilter
+          filterKey="camera__maker__equal"
+          currentValue={currentMaker}
+          options={CAMERA_MAKERS}
+        />
       </Accordion>
 
       <Accordion
-        title="해상도 (MP)"
-        defaultOpen
+        title="인터페이스"
+        defaultOpen={!!currentInterface}
         className="border-gray200 border-b"
       >
-        <DynamicFilter
-          filterKey="_camera__resolution__between"
-          min={0}
-          max={155}
-          unit="M"
+        <StaticFilter
+          filterKey="camera__interface__equal"
+          currentValue={currentInterface}
+          options={CAMERA_INTERFACES}
         />
       </Accordion>
 
-      <Accordion title="촬영 속도">
-        <DynamicFilter
-          filterKey="camera__speed__between"
-          min={0}
-          max={19789}
-          unit="fps"
-        />
-      </Accordion>
+      {currentType === "AREA" && (
+        <Accordion
+          title="해상도 (MP)"
+          key={`resolution-${currentType}`}
+          defaultOpen={currentResolution.length > 0}
+          className="border-gray200 border-b"
+        >
+          <DynamicFilter
+            filterKey="_camera__resolution__between"
+            initialRangeValues={currentResolution}
+            min={0}
+            max={155}
+            unit="M"
+          />
+        </Accordion>
+      )}
 
-      <Accordion title="검색">
-        <div className="space-y-3">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="제품명으로 검색..."
-              defaultValue={searchParams.get("where__name__i_like") || ""}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm transition-all duration-200 placeholder:text-gray-400 hover:border-gray-400 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-              <svg
-                className="h-4 w-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </Accordion>
+      {currentType === "LINE" && (
+        <Accordion
+          title="촬영 속도"
+          defaultOpen={currentSpeed.length > 0}
+          className="border-gray200 border-b"
+        >
+          <DynamicFilter
+            filterKey="camera__speed__between"
+            initialRangeValues={currentSpeed}
+            min={0}
+            max={19789}
+            unit="fps"
+          />
+        </Accordion>
+      )}
     </>
   );
 }

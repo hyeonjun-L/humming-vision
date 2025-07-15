@@ -98,11 +98,11 @@ function DynamicRangeFilter({
 
       <div className="mt-6 flex justify-between text-xs text-gray-500">
         <span>
-          {selectedRange[0] ?? min}
+          {min}
           {unit}
         </span>
         <span>
-          {selectedRange[1] ?? max}
+          {max}
           {unit}
         </span>
       </div>
