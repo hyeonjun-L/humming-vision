@@ -56,10 +56,16 @@ function DynamicRangeFilter({
     <div className="flex flex-col space-y-3 pb-2">
       <div className="flex items-center gap-2.5">
         <Checkbox
-          checked={!!initialRangeValues.length}
+          checked={initialRangeValues.length > 0}
           onCheckedChange={(checked) => {
-            if (!checked) {
-              handleRangeChange("_camera__resolution__between", "", "");
+            if (checked) {
+              setSelectedRange([
+                selectedRange[0] ?? min,
+                selectedRange[1] ?? max,
+              ]);
+              updateSearchParams(filterKey, [min, max].join(","));
+            } else {
+              updateSearchParams(filterKey, null);
             }
           }}
         />
@@ -83,14 +89,14 @@ function DynamicRangeFilter({
               values[1] !== undefined
             ) {
               handleRangeChange(
-                "_camera__resolution__between",
+                filterKey,
                 values[0].toString(),
                 values[1].toString(),
               );
             }
           }}
           className="w-full"
-          disabled={!selectedRange.length}
+          disabled={!initialRangeValues.length}
         />
       </div>
 
