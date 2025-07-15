@@ -2,7 +2,6 @@
 import { Checkbox } from "components/checkbox";
 import { Slider } from "components/slider";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
-import { useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { debounce } from "utils/debounce";
 
@@ -11,6 +10,7 @@ interface DynamicRangeFilterProps {
   unit: string;
   min: number;
   max: number;
+  initialRangeValues?: number[];
 }
 
 function DynamicRangeFilter({
@@ -18,15 +18,11 @@ function DynamicRangeFilter({
   unit,
   min,
   max,
+  initialRangeValues = [],
 }: DynamicRangeFilterProps) {
-  const searchParams = useSearchParams();
-
-  const initialRangeValues =
-    searchParams.get(filterKey)?.split(",").map(Number) || [];
-
   const [selectedRange, setSelectedRange] = useState(initialRangeValues);
 
-  const updateSearchParams = useUpdateSearchParams();
+  const { updateSearchParams } = useUpdateSearchParams();
 
   const debouncedUpdate = useMemo(
     () =>

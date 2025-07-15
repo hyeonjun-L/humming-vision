@@ -22,5 +22,15 @@ export function useUpdateSearchParams() {
     [router, searchParams],
   );
 
-  return updateSearchParams;
+  const deleteSearchParams = useCallback(
+    (key: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete(key);
+      params.set("page", "1");
+      router.replace(`?${params.toString()}`);
+    },
+    [router, searchParams],
+  );
+
+  return { updateSearchParams, deleteSearchParams };
 }
