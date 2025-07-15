@@ -1,7 +1,11 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { RouteCategory, TYPE_DISPLAY_NAMES } from "../_constants/products";
-import { RoutePath, RoutePathWithCategory } from "consts/route.const";
+import {
+  RoutePath,
+  RoutePathETC,
+  RoutePathWithCategory,
+} from "consts/route.const";
 import Link from "next/link";
 import cn from "libs/cn";
 
@@ -13,14 +17,25 @@ function TypeNav() {
   const isActiveRoute = (route: string) => {
     if (pathname === route) return true;
 
-    if (
-      route.startsWith(`/${RouteCategory.ETC}/`) &&
-      pathname.startsWith(route)
-    )
-      return true;
+    const ETC_SOFTWARE_PREFIX = `/${RouteCategory.ETC}${RoutePathWithCategory.SOFTWARE}`;
+    const ETC_ACCESSORY_PREFIX = `/${RouteCategory.ETC}${RoutePathWithCategory.ACCESSORY}`;
 
-    if (route === `${RoutePath.LIGHT}` && pathname === `${RoutePath.LIGHT}`)
+    if (
+      route.startsWith(ETC_SOFTWARE_PREFIX) &&
+      pathname.startsWith(ETC_SOFTWARE_PREFIX)
+    ) {
       return true;
+    }
+
+    if (
+      route.startsWith(ETC_ACCESSORY_PREFIX) &&
+      pathname.startsWith(ETC_ACCESSORY_PREFIX)
+    ) {
+      return true;
+    }
+
+    if (route === RoutePath.LIGHT && pathname === RoutePath.LIGHT) return true;
+
     if (
       route === `${RoutePath.LIGHT}${RoutePathWithCategory.DOWNLOAD}` &&
       pathname === `${RoutePath.LIGHT}${RoutePathWithCategory.DOWNLOAD}`
@@ -50,8 +65,8 @@ function TypeNav() {
       DOWNLOAD: `${RoutePath.LIGHT}${RoutePathWithCategory.DOWNLOAD}`,
     },
     [RouteCategory.ETC]: {
-      SOFTWARE: `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
-      ACCESSORY: `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
+      SOFTWARE: `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}${RoutePathETC.MATROX}`,
+      ACCESSORY: `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}${RoutePathETC.CONVERTER}`,
     },
   } as const;
 

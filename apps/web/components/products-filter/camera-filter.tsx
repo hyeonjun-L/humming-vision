@@ -90,38 +90,33 @@ function CameraFilter() {
         />
       </Accordion>
 
-      {currentType === "AREA" && (
-        <Accordion
-          title="해상도 (MP)"
-          key={`resolution-${currentType}`}
-          defaultOpen={currentResolution.length > 0}
-          className="border-gray200 border-b"
-        >
-          <DynamicFilter
-            filterKey="_camera__resolution__between"
-            initialRangeValues={currentResolution}
-            min={0}
-            max={155}
-            unit="M"
-          />
-        </Accordion>
-      )}
+      <Accordion
+        title={`해상도 (${currentType === "AREA" ? "MP" : "k"})`}
+        defaultOpen={currentResolution.length > 0}
+        className="border-gray200 border-b"
+      >
+        <DynamicFilter
+          filterKey="_camera__resolution__between"
+          initialRangeValues={currentResolution}
+          min={0}
+          max={currentType === "AREA" ? 250 : 18}
+          unit={currentType === "AREA" ? "MP" : "k"}
+        />
+      </Accordion>
 
-      {currentType === "LINE" && (
-        <Accordion
-          title="촬영 속도"
-          defaultOpen={currentSpeed.length > 0}
-          className="border-gray200 border-b"
-        >
-          <DynamicFilter
-            filterKey="camera__speed__between"
-            initialRangeValues={currentSpeed}
-            min={0}
-            max={19789}
-            unit="fps"
-          />
-        </Accordion>
-      )}
+      <Accordion
+        title={`촬영 속도 (${currentType === "LINE" ? "kHz" : "fps"})`}
+        defaultOpen={currentSpeed.length > 0}
+        className="border-gray200 border-b"
+      >
+        <DynamicFilter
+          filterKey="camera__speed__between"
+          initialRangeValues={currentSpeed}
+          min={0}
+          max={currentType === "LINE" ? 500 : 1000}
+          unit={currentType === "LINE" ? "kHz" : "fps"}
+        />
+      </Accordion>
     </>
   );
 }

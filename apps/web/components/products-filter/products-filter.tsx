@@ -1,21 +1,18 @@
 "use client";
 import { RouteCategory } from "@/(products)/_constants/products";
 import { usePathname } from "next/navigation";
-import {
-  GetCameraQuery,
-  GetFrameGrabberQuery,
-  GetLensQuery,
-  GetSoftwareQuery,
-} from "@humming-vision/shared";
 import CameraFilter from "./camera-filter";
+import FrameGrabberFilter from "./frame-grabber-filter";
+import LensFilter from "./lens-filter";
+import ETCFilter from "./etc-filter";
 
 function ProductsFilter() {
   const FILTER_OPTIONS = {
     [RouteCategory.CAMERA]: <CameraFilter />,
-    [RouteCategory.FRAMEGRABBER]: <div></div>,
-    [RouteCategory.LENS]: <div></div>,
+    [RouteCategory.FRAMEGRABBER]: <FrameGrabberFilter />,
+    [RouteCategory.LENS]: <LensFilter />,
     [RouteCategory.LIGHT]: <div></div>,
-    [RouteCategory.ETC]: <div></div>,
+    [RouteCategory.ETC]: <ETCFilter />,
   };
 
   const pathname = usePathname();

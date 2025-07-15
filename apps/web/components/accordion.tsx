@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import cn from "libs/cn";
 
 interface AccordionProps {
@@ -18,6 +18,10 @@ function Accordion({
   className,
 }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  useEffect(() => {
+    setIsOpen(defaultOpen);
+  }, [defaultOpen]);
 
   return (
     <div className={cn("w-full", className)}>
