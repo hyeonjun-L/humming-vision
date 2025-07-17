@@ -5,6 +5,7 @@ import TypeNav from "./type-nav";
 import { usePathname } from "next/navigation";
 import { CategoryRelationMapKebab } from "@humming-vision/shared";
 import cn from "libs/cn";
+import RefreshButton from "components/products-filter/refresh-button";
 
 function DetailedSearch({
   children,
@@ -28,6 +29,7 @@ function DetailedSearch({
       >
         <h3 className="text-gray600 mb-5 text-2xl font-bold">상세 검색</h3>
         <ProductsFilter />
+        <RefreshButton />
       </div>
       <div
         className={cn(
