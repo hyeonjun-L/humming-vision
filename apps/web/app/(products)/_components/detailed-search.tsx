@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { CategoryRelationMapKebab } from "@humming-vision/shared";
 import cn from "libs/cn";
 import RefreshButton from "components/products-filter/refresh-button";
+import SearchProduct from "@/_components/search-product";
 
 function DetailedSearch({
   children,
@@ -18,14 +19,17 @@ function DetailedSearch({
 
   return (
     <section
-      className={cn("relative flex justify-center", {
-        "mr-54": currentCategory !== "light",
+      className={cn("relative mx-5 flex justify-center", {
+        "md:mr-54": currentCategory !== "light",
       })}
     >
       <div
-        className={cn("sticky top-0 mr-5 h-fit w-52 pt-48", {
-          hidden: currentCategory === "light",
-        })}
+        className={cn(
+          "sticky top-0 mr-5 hidden h-fit w-52 pt-48 md:block md:pl-5",
+          {
+            hidden: currentCategory === "light",
+          },
+        )}
       >
         <h3 className="text-gray600 mb-5 text-2xl font-bold">상세 검색</h3>
         <ProductsFilter />
@@ -35,12 +39,16 @@ function DetailedSearch({
         className={cn(
           "flex w-full max-w-screen-lg flex-col items-center border-gray-200",
           {
-            "border-l": currentCategory !== "light",
+            "md:border-l": currentCategory !== "light",
           },
         )}
       >
         <TypeNav />
-        {children}
+
+        <div className="flex w-full flex-col sm:ml-5">
+          <SearchProduct />
+          {children}
+        </div>
       </div>
     </section>
   );
