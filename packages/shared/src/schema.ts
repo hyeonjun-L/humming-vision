@@ -426,9 +426,7 @@ export interface components {
         UpdateCameraDto: {
             id: number;
         };
-        UpdateImageDto: {
-            id: number;
-        };
+        UpdateImageDto: Record<string, never>;
         UpdateCameraProductDto: {
             camera?: components["schemas"]["UpdateCameraDto"];
             id: number;
@@ -469,6 +467,8 @@ export interface components {
             camera__speed__between?: string[];
             /** @enum {string} */
             camera__interface__equal?: "GIGE" | "USB" | "CAMERA_LINK" | "COAXPRESS";
+            /** @enum {string} */
+            camera__type__equal?: "AREA" | "LINE";
             where__name__i_like?: string;
             /** @enum {string} */
             order__name?: "ASC" | "DESC";

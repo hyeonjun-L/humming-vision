@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { ArrayMinSize, IsArray, IsEnum, IsOptional } from 'class-validator';
 import { BasePaginateProductDto } from 'src/product/dto/paginate-product.dto';
-import { CameraModelMaker } from '../camera.const';
+import { CameraModelMaker, CameraModelType } from '../camera.const';
 import { InterfaceEnum } from 'src/product/const/interface.const';
 
 export class PaginateCameraDto extends BasePaginateProductDto {
@@ -32,4 +32,8 @@ export class PaginateCameraDto extends BasePaginateProductDto {
   @IsOptional()
   @IsEnum(InterfaceEnum)
   camera__interface__equal?: InterfaceEnum;
+
+  @IsOptional()
+  @IsEnum(CameraModelType)
+  camera__type__equal?: CameraModelType;
 }
