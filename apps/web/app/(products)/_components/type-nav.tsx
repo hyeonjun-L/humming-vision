@@ -1,6 +1,9 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { RouteCategory, TYPE_DISPLAY_NAMES } from "../_constants/products";
+import {
+  RouteCategory,
+  TYPE_DISPLAY_NAMES,
+} from "../_constants/products.const";
 import {
   RoutePath,
   RoutePathETC,

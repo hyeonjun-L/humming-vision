@@ -10,7 +10,11 @@ async function layout({
     <main className="mt-32 w-full">
       <Banner />
 
-      <DetailedSearch>{children}</DetailedSearch>
+      <DetailedSearch>
+        <div className="border-main h-screen w-full max-w-[1119px] border-t">
+          {children}
+        </div>
+      </DetailedSearch>
     </main>
   );
 }

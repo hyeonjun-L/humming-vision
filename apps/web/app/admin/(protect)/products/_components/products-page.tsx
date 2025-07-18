@@ -194,7 +194,6 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
       ) : productsData?.data && productsData?.data.length > 0 ? (
         <>
           <Table data={productsData?.data || []} columns={columns} />
-          <ul className="mt-5 flex flex-col gap-2.5 sm:hidden"></ul>
 
           <div className="mt-8 flex w-full justify-center">
             <Pagination

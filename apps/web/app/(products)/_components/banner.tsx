@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   ROUTE_CATEGORY_DISPLAY_NAMES,
   RouteCategory,
-} from "../_constants/products";
+} from "../_constants/products.const";
 import {
   cameraBanner,
   frameGrabberBanner,

@@ -1,5 +1,5 @@
 "use client";
-import { RouteCategory } from "@/(products)/_constants/products";
+import { RouteCategory } from "@/(products)/_constants/products.const";
 import { usePathname } from "next/navigation";
 import CameraFilter from "./camera-filter";
 import FrameGrabberFilter from "./frame-grabber-filter";
