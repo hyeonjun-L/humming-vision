@@ -103,16 +103,16 @@ export class ProductsService {
       {},
       (qb, dto) => {
         if ('_camera__resolution__between' in dto) {
-          const [min, max] = dto._camera__resolution__between! as [
+          const [minMP, maxMP] = dto._camera__resolution__between! as [
             number,
             number,
           ];
 
           qb.andWhere(
-            'camera.resolutionX * camera.resolutionY BETWEEN :min AND :max',
+            `CAST(camera.resolutionX AS bigint) * CAST(camera.resolutionY AS bigint) / 1000000 BETWEEN :minMP AND :maxMP`,
             {
-              min,
-              max,
+              minMP,
+              maxMP,
             },
           );
         }
