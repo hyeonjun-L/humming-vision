@@ -28,7 +28,7 @@ export default function Table<T>({ data, columns }: TableProps<T>) {
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="text-gray600 p-2 py-5 text-base font-normal"
+                  className="text-gray600 p-2 py-2.5 text-base font-normal whitespace-nowrap"
                 >
                   {flexRender(
                     header.column.columnDef.header,

@@ -15,7 +15,9 @@ export function useUpdateSearchParams() {
         params.set(key, value);
       }
 
-      params.set("page", "1");
+      if (key !== "page") {
+        params.set("page", "1");
+      }
 
       router.replace(`?${params.toString()}`);
     },

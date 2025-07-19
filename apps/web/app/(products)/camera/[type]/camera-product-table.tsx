@@ -1,61 +1,29 @@
 "use client";
 
+import { TAKE } from "@/(products)/_constants/paginate.const";
 import {
   CameraProduct,
   CategoriesEnum,
-  CategoryRelationMapKebab,
   GetCameraQuery,
-  GetCameraResponse,
   GetProductResponse,
-  GetProductResponseByCategory,
 } from "@humming-vision/shared";
-import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import axios from "axios";
+import Pagination from "components/pagination";
 import Table from "components/table";
+import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
+import { Box } from "lucide-react";
 import Image from "next/image";
 
 interface CameraProductTableProps {
-  initCameraData: GetProductResponse<CategoriesEnum.CAMERA>;
+  productsData: GetProductResponse<CategoriesEnum.CAMERA>;
   searchParams: GetCameraQuery;
 }
 
 function CameraProductTable({
-  initCameraData,
+  productsData,
   searchParams,
 }: CameraProductTableProps) {
-  console.log("initCameraData", initCameraData);
-
-  if (!initCameraData) {
-    return <div>Loading...</div>;
-  }
-
-  const { data: productsData, isLoading } = useQuery<
-    GetProductResponse<CategoriesEnum.CAMERA>
-  >({
-    queryKey: ["products", searchParams],
-    queryFn: async () => {
-      const url = new URL(`/product/camera`);
-      for (const [key, value] of Object.entries(searchParams)) {
-        if (value !== undefined) {
-          if (Array.isArray(value)) {
-            url.searchParams.append(key, value.join(","));
-          } else {
-            url.searchParams.append(key, String(value));
-          }
-        }
-      }
-
-      const res = await axios.get<GetProductResponse<CategoriesEnum.CAMERA>>(
-        url.toString(),
-        {
-          adapter: "fetch",
-        },
-      );
-      return res.data;
-    },
-    initialData: initCameraData,
-  });
+  const { updateSearchParams } = useUpdateSearchParams();
 
   const columns: ColumnDef<CameraProduct>[] = [
     {
@@ -63,50 +31,117 @@ function CameraProductTable({
       header: "제조사/모델명",
       cell: ({ row }) => {
         const product = row.original;
+
+        const representativeImage = product.images
+          .filter((img) => img.type === "PRODUCT")
+          .reduce<null | (typeof product.images)[0]>((prev, curr) => {
+            if (!prev || curr.order < prev.order) return curr;
+            return prev;
+          }, null);
+
         return (
-          <div className="flex items-center gap-2">
-            {/* <div className="relative mx-auto aspect-[64/54] w-[64px]">
-                            <Image
-                              src={product.images[0].path}
-                              alt={product.name}
-                              fill
-                              sizes="64px"
-                              className="object-cover"
-                            />
+          <div className="flex items-center gap-1.5">
+            {representativeImage?.path ? (
+              <div className="relative aspect-[64/54] w-[64px]">
+                <Image
+                  src={representativeImage.path}
+                  alt={product.name}
+                  fill
+                  sizes="80px"
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <Box className="text-gray300 aspect-[64/54] h-14 w-[64px]" />
+            )}
+            <div className="flex flex-col">
+              <span className="text-gray400 mr-auto text-sm">
+                {product.camera.maker.charAt(0) +
+                  product.camera.maker.slice(1).toLowerCase()}
+              </span>
+              <span className="text-gray600 mr-auto">{product.name}</span>
             </div>
-            <span className="text-sm font-semibold">{product.manufacturer}</span>
-            <span className="text-sm text-gray-500">{product.model}</span> */}
           </div>
         );
       },
     },
     {
-      accessorKey: "image",
-      header: "이미지",
+      accessorKey: "resolution",
+      header: "해상도",
       cell: ({ row }) => {
         const product = row.original;
         return (
-          <>
-            <div className="relative mx-auto aspect-[80/54] w-[80px]"></div>
-          </>
+          <p className="text-gray600">
+            {`${product.camera.resolutionX} x ${product.camera.resolutionY}`}
+          </p>
         );
       },
     },
     {
-      accessorKey: "name",
-      header: "상품명",
-    },
-    {
-      accessorKey: "management",
-      header: "관리",
+      accessorKey: "speed",
+      header: "속도",
       cell: ({ row }) => {
         const product = row.original;
-        return <div className="flex justify-center gap-2"></div>;
+        return <p className="text-gray600">{product.camera.speed}fps</p>;
+      },
+    },
+    {
+      accessorKey: "pixelSize",
+      header: "픽셀사이즈",
+      cell: ({ row }) => {
+        const product = row.original;
+        return <p className="text-gray600">{product.camera.pixelSize}um</p>;
+      },
+    },
+    {
+      accessorKey: "formatSize",
+      header: "포멧사이즈",
+      cell: ({ row }) => {
+        const product = row.original;
+        return <p className="text-gray600">{product.camera.formatSize}</p>;
+      },
+    },
+    {
+      accessorKey: "mountType",
+      header: "마운트",
+      cell: ({ row }) => {
+        const product = row.original;
+        return <p className="text-gray600">{product.camera.mountType}</p>;
+      },
+    },
+    {
+      accessorKey: "sensor",
+      header: "센서",
+      cell: ({ row }) => {
+        const product = row.original;
+        return <p className="text-gray600">{product.camera.sensor}</p>;
+      },
+    },
+    {
+      accessorKey: "interface",
+      header: "인터페이스",
+      cell: ({ row }) => {
+        const product = row.original;
+        return <p className="text-gray600">{product.camera.interface}</p>;
       },
     },
   ];
 
-  return <Table data={[]} columns={columns} />;
+  return (
+    <>
+      <Table data={productsData.data} columns={columns} />
+      <div className="mt-8 flex w-full justify-center">
+        <Pagination
+          currentPage={Number(searchParams.page) || 1}
+          take={TAKE}
+          total={productsData?.total || 0}
+          onPageChange={(page: number) => {
+            updateSearchParams("page", String(page));
+          }}
+        />
+      </div>
+    </>
+  );
 }
 
 export default CameraProductTable;

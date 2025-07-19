@@ -45,7 +45,7 @@ async function page({ searchParams: initSearchParams, params }: Props) {
     {
       ...searchParams,
       camera__type__equal: type.toUpperCase(),
-      page: String(searchParams.page),
+      page: String(searchParams.page || 1),
       take: String(TAKE),
     },
     GetCameraQuerySchema,
@@ -70,7 +70,7 @@ async function page({ searchParams: initSearchParams, params }: Props) {
 
     return (
       <CameraProductTable
-        initCameraData={cameraData.data}
+        productsData={cameraData.data}
         searchParams={searchParams}
       />
     );

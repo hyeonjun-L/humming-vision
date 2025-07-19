@@ -37,7 +37,7 @@ function DetailedSearch({
       </div>
       <div
         className={cn(
-          "flex w-full max-w-screen-lg flex-col items-center border-gray-200",
+          "flex w-full max-w-[1119px] flex-col items-center border-gray-200",
           {
             "md:border-l": currentCategory !== "light",
           },
