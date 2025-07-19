@@ -43,7 +43,7 @@ function DetailedSearch({
         <TypeNav />
         <FilterCrumbs currentCategory={currentCategory} />
         <div className="flex w-full flex-col sm:ml-5">
-          <SearchProduct />
+          <SearchProduct className="hidden w-[309px] md:block" />
           {children}
         </div>
       </div>

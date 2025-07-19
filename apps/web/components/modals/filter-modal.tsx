@@ -1,9 +1,7 @@
 "use client";
 
-import { Contact } from "@humming-vision/shared";
-import { formatDate, formatRelativeTime } from "utils/date";
 import { useModalStore } from "stores/use-modal.store";
-import { Mail, Calendar, User, X } from "lucide-react";
+import { X } from "lucide-react";
 import { ArrowSVG } from "public/svg";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
@@ -13,6 +11,7 @@ import {
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
 import ProductsFilter from "components/products-filter/products-filter";
 import RefreshButton from "components/products-filter/refresh-button";
+import SearchProduct from "@/_components/search-product";
 
 type FilterModalProps = {};
 
@@ -28,14 +27,6 @@ function FilterModal({}: FilterModalProps) {
   const closeModal = useModalStore((state) => state.closeModal);
 
   const { deleteSearchParams } = useUpdateSearchParams();
-
-  const handleDeleteContact = async () => {
-    try {
-      closeModal();
-    } catch (error) {
-      console.error("Failed to delete contact:", error);
-    }
-  };
 
   const formatFilterValue = (value: string | null, title: string) => {
     if (!value) return title;
@@ -83,6 +74,7 @@ function FilterModal({}: FilterModalProps) {
           );
         })}
       </div>
+      <SearchProduct className="mt-5 w-full" />
       <ProductsFilter />
       <RefreshButton />
     </section>

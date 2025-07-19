@@ -1,14 +1,22 @@
-import { CameraProduct } from "@humming-vision/shared";
+import {
+  CameraProduct,
+  FrameGrabberProduct,
+  LensProduct,
+} from "@humming-vision/shared";
 import Accordion from "components/accordion";
 import { Box } from "lucide-react";
 import Image from "next/image";
-import { CAMERA_CARD_FIELDS } from "../_constants/products.const";
 
-interface ProductCardProps {
-  product: CameraProduct;
+interface ProductCardProps<
+  T extends CameraProduct | LensProduct | FrameGrabberProduct,
+> {
+  product: T;
+  productFields: { label: string; accessor: (product: T) => React.ReactNode }[];
 }
 
-function ProductCard({ product }: ProductCardProps) {
+function ProductCard<
+  T extends CameraProduct | LensProduct | FrameGrabberProduct,
+>({ product, productFields }: ProductCardProps<T>) {
   const representativeImage = product.images
     .filter((img) => img.type === "PRODUCT")
     .reduce<null | (typeof product.images)[0]>((prev, curr) => {
@@ -17,7 +25,7 @@ function ProductCard({ product }: ProductCardProps) {
     }, null);
 
   return (
-    <li className="flex w-40 flex-col items-center gap-2.5 sm:w-52">
+    <li className="flex w-[48%] flex-col items-center gap-2.5 sm:w-[31%]">
       {representativeImage ? (
         <div className="relative aspect-[64/54] w-[64px]">
           <Image
@@ -31,10 +39,24 @@ function ProductCard({ product }: ProductCardProps) {
       ) : (
         <Box className="text-gray300 aspect-[64/54] h-14 w-[64px]" />
       )}
-      <span className="text-gray400 mr-auto text-sm">
-        {product.camera.maker.charAt(0) +
-          product.camera.maker.slice(1).toLowerCase()}
-      </span>
+      {product.camera && (
+        <span className="text-gray400 mr-auto text-sm">
+          {product.camera.maker.charAt(0) +
+            product.camera.maker.slice(1).toLowerCase()}
+        </span>
+      )}
+      {product.frameGrabber && (
+        <span className="text-gray400 mr-auto text-sm">
+          {product.frameGrabber.maker.charAt(0) +
+            product.frameGrabber.maker.slice(1).toLowerCase()}
+        </span>
+      )}
+      {product.lens && (
+        <span className="text-gray400 mr-auto text-sm">
+          {product.lens.maker.charAt(0) +
+            product.lens.maker.slice(1).toLowerCase()}
+        </span>
+      )}
       <span className="text-gray600 mr-auto">{product.name}</span>
       <Accordion
         title="상세 정보"
@@ -42,7 +64,7 @@ function ProductCard({ product }: ProductCardProps) {
         buttonClassName="py-0"
       >
         <dl className="border-gray200 mt-2.5 flex flex-col border-t pt-5">
-          {CAMERA_CARD_FIELDS.map(({ label, accessor }) => (
+          {productFields.map(({ label, accessor }) => (
             <div key={label} className="flex gap-2.5 text-xs">
               <dt className="text-[#666970]">{label}</dt>
               <dd className="text-gray600">{accessor(product)}</dd>

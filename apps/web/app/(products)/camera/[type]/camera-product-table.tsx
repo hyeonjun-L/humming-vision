@@ -81,9 +81,13 @@ function CameraProductTable({
       <div className="hidden lg:block">
         <Table data={productsData.data} columns={columns} />
       </div>
-      <div className="flex flex-wrap gap-x-5 gap-y-10 py-10 lg:hidden">
+      <div className="flex flex-wrap gap-x-3 gap-y-10 py-10 lg:hidden">
         {productsData.data.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            productFields={CAMERA_CARD_FIELDS}
+          />
         ))}
       </div>
       <div className="my-8 flex w-full justify-center">
