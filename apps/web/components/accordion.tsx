@@ -9,6 +9,7 @@ interface AccordionProps {
   children: ReactNode;
   defaultOpen?: boolean;
   className?: string;
+  buttonClassName?: string;
 }
 
 function Accordion({
@@ -16,6 +17,7 @@ function Accordion({
   children,
   defaultOpen = false,
   className,
+  buttonClassName = "",
 }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -24,12 +26,15 @@ function Accordion({
   }, [defaultOpen]);
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full font-medium", className)}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="hover:bg-gray100/30 flex w-full items-center justify-between py-4 text-left transition-colors"
+        className={cn(
+          "hover:bg-gray100/30 flex w-full items-center justify-between py-4 text-left transition-colors",
+          buttonClassName,
+        )}
       >
-        <span className="text-gray600 font-medium">{title}</span>
+        <span className="text-gray600">{title}</span>
         <ChevronDown
           className={cn(
             "text-gray400 size-5 transition-transform duration-200",

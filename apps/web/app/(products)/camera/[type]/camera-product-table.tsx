@@ -1,13 +1,15 @@
 "use client";
 
+import ProductCard from "@/(products)/_components/product-card";
 import { TAKE } from "@/(products)/_constants/paginate.const";
+import { CAMERA_CARD_FIELDS } from "@/(products)/_constants/products.const";
 import {
   CameraProduct,
   CategoriesEnum,
   GetCameraQuery,
   GetProductResponse,
 } from "@humming-vision/shared";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import Pagination from "components/pagination";
 import Table from "components/table";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
@@ -65,72 +67,26 @@ function CameraProductTable({
         );
       },
     },
-    {
-      accessorKey: "resolution",
-      header: "해상도",
-      cell: ({ row }) => {
-        const product = row.original;
-        return (
-          <p className="text-gray600">
-            {`${product.camera.resolutionX} x ${product.camera.resolutionY}`}
-          </p>
-        );
-      },
-    },
-    {
-      accessorKey: "speed",
-      header: "속도",
-      cell: ({ row }) => {
-        const product = row.original;
-        return <p className="text-gray600">{product.camera.speed}fps</p>;
-      },
-    },
-    {
-      accessorKey: "pixelSize",
-      header: "픽셀사이즈",
-      cell: ({ row }) => {
-        const product = row.original;
-        return <p className="text-gray600">{product.camera.pixelSize}um</p>;
-      },
-    },
-    {
-      accessorKey: "formatSize",
-      header: "포멧사이즈",
-      cell: ({ row }) => {
-        const product = row.original;
-        return <p className="text-gray600">{product.camera.formatSize}</p>;
-      },
-    },
-    {
-      accessorKey: "mountType",
-      header: "마운트",
-      cell: ({ row }) => {
-        const product = row.original;
-        return <p className="text-gray600">{product.camera.mountType}</p>;
-      },
-    },
-    {
-      accessorKey: "sensor",
-      header: "센서",
-      cell: ({ row }) => {
-        const product = row.original;
-        return <p className="text-gray600">{product.camera.sensor}</p>;
-      },
-    },
-    {
-      accessorKey: "interface",
-      header: "인터페이스",
-      cell: ({ row }) => {
-        const product = row.original;
-        return <p className="text-gray600">{product.camera.interface}</p>;
-      },
-    },
+    ...CAMERA_CARD_FIELDS.map(({ label, accessor }) => ({
+      header: label,
+      accessorKey: label,
+      cell: ({ row }: { row: Row<CameraProduct> }) => (
+        <p className="text-gray600">{accessor(row.original)}</p>
+      ),
+    })),
   ];
 
   return (
     <>
-      <Table data={productsData.data} columns={columns} />
-      <div className="mt-8 flex w-full justify-center">
+      <div className="hidden lg:block">
+        <Table data={productsData.data} columns={columns} />
+      </div>
+      <div className="flex flex-wrap gap-x-5 gap-y-10 py-10 lg:hidden">
+        {productsData.data.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+      <div className="my-8 flex w-full justify-center">
         <Pagination
           currentPage={Number(searchParams.page) || 1}
           take={TAKE}

@@ -20,7 +20,7 @@ export default function Table<T>({ data, columns }: TableProps<T>) {
   });
 
   return (
-    <div className="hidden overflow-x-auto sm:block">
+    <div className="overflow-x-auto">
       <table className="min-w-full table-fixed">
         <thead className="border-gray200 border-b">
           {table.getHeaderGroups().map((headerGroup) => (
