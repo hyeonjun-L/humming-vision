@@ -1,6 +1,10 @@
 import {
+  CameraProduct,
   CameraTypeEnum,
   FrameGrabberInterfaceEnum,
+  GetCameraQuery,
+  GetFrameGrabberQuery,
+  GetLensQuery,
   LensTypeEnum,
   SoftwareMakerEnum,
 } from "@humming-vision/shared";
@@ -53,6 +57,17 @@ export const ROUTE_CATEGORY_DISPLAY_NAMES = {
   [RouteCategory.ETC]: "ETC",
 } as const;
 
+export type CategoryQueryMap = {
+  [RouteCategory.CAMERA]: GetCameraQuery;
+  [RouteCategory.FRAMEGRABBER]: GetFrameGrabberQuery;
+  [RouteCategory.LENS]: GetLensQuery;
+  [RouteCategory.LIGHT]: null;
+  [RouteCategory.ETC]: null;
+};
+
+export type GetProductQuery<C extends keyof CategoryQueryMap> =
+  CategoryQueryMap[C];
+
 export const TYPE_DISPLAY_NAMES = {
   AREA: "Area Camera",
   LINE: "Line Scan Camera",
@@ -71,3 +86,97 @@ export const TYPE_DISPLAY_NAMES = {
   SOFTWARE: "Software",
   ACCESSORY: "Accessory",
 } as const;
+
+export const CAMERA_CARD_FIELDS: {
+  label: string;
+  accessor: (product: CameraProduct) => React.ReactNode;
+}[] = [
+  {
+    label: "해상도",
+    accessor: (product) =>
+      `${product.camera.resolutionX} x ${product.camera.resolutionY}`,
+  },
+  {
+    label: "속도",
+    accessor: (product) =>
+      `${product.camera.speed}${product.camera.type === "AREA" ? "fps" : "k"}`,
+  },
+  {
+    label: "픽셀사이즈",
+    accessor: (product) => `${product.camera.pixelSize}um`,
+  },
+  {
+    label: "포맷사이즈",
+    accessor: (product) => product.camera.formatSize,
+  },
+  {
+    label: "마운트",
+    accessor: (product) => product.camera.mountType,
+  },
+  {
+    label: "센서",
+    accessor: (product) => product.camera.sensor,
+  },
+  {
+    label: "인터페이스",
+    accessor: (product) => product.camera.interface,
+  },
+];
+
+export const FILTER_CONFIGS: {
+  [key in keyof CategoryQueryMap]?: {
+    key: keyof GetProductQuery<key>;
+    title: string;
+  }[];
+} = {
+  camera: [
+    {
+      key: "camera__maker__equal",
+      title: "제조사",
+    },
+    {
+      key: "camera__interface__equal",
+      title: "인터페이스",
+    },
+    {
+      key: "_camera__resolution__between",
+      title: "해상도",
+    },
+    {
+      key: "camera__speed__between",
+      title: "촬영 속도",
+    },
+    {
+      key: "where__name__i_like",
+      title: "모델명",
+    },
+  ],
+  lens: [
+    {
+      key: "lens__mount__equal",
+      title: "마운트",
+    },
+    {
+      key: "lens__focalLength__between",
+      title: "초점거리",
+    },
+    {
+      key: "lens__formatSize__between",
+      title: "포맷사이즈",
+    },
+    {
+      key: "where__name__i_like",
+      title: "모델명",
+    },
+  ],
+  "frame-grabber": [
+    {
+      key: "frameGrabber__maker__equal",
+      title: "제조사",
+    },
+    {
+      key: "where__name__i_like",
+      title: "모델명",
+    },
+  ],
+};

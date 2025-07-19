@@ -8,6 +8,7 @@ import cn from "libs/cn";
 import RefreshButton from "components/products-filter/refresh-button";
 import SearchProduct from "@/_components/search-product";
 import FilterCrumbs from "./filter-crumbs";
+import { RouteCategory } from "../_constants/products.const";
 
 function DetailedSearch({
   children,
@@ -16,7 +17,7 @@ function DetailedSearch({
 }>) {
   const pathname = usePathname();
 
-  const currentCategory = pathname.split("/")[1] as CategoryRelationMapKebab;
+  const currentCategory = pathname.split("/")[1] as RouteCategory;
 
   return (
     <section className={cn("relative mx-5 flex justify-center")}>

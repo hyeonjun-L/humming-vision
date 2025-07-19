@@ -14,7 +14,7 @@ function SearchProduct() {
   };
 
   return (
-    <div className="mr-auto mb-5 w-full sm:w-[309px]">
+    <div className="mr-auto mb-5 hidden w-[309px] md:block">
       <SearchInput
         onSubmit={handleSearchSubmit}
         placeholder="모델명을 검색해주세요"
