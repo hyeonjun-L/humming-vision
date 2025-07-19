@@ -24,6 +24,12 @@ function ProductCard<
       return prev;
     }, null);
 
+  const makerInfo = [
+    product.camera?.maker,
+    product.frameGrabber?.maker,
+    product.lens?.maker,
+  ].filter(Boolean) as string[];
+
   return (
     <li className="flex w-[48%] flex-col items-center gap-2.5 sm:w-[31%]">
       {representativeImage ? (
@@ -39,25 +45,14 @@ function ProductCard<
       ) : (
         <Box className="text-gray300 aspect-[64/54] h-14 w-[64px]" />
       )}
-      {product.camera && (
-        <span className="text-gray400 mr-auto text-sm">
-          {product.camera.maker.charAt(0) +
-            product.camera.maker.slice(1).toLowerCase()}
-        </span>
-      )}
-      {product.frameGrabber && (
-        <span className="text-gray400 mr-auto text-sm">
-          {product.frameGrabber.maker.charAt(0) +
-            product.frameGrabber.maker.slice(1).toLowerCase()}
-        </span>
-      )}
-      {product.lens && (
-        <span className="text-gray400 mr-auto text-sm">
-          {product.lens.maker.charAt(0) +
-            product.lens.maker.slice(1).toLowerCase()}
-        </span>
-      )}
-      <span className="text-gray600 mr-auto">{product.name}</span>
+      <div className="flex w-full flex-col">
+        {makerInfo.map((maker, idx) => (
+          <span key={idx} className="text-gray400 mr-auto text-sm">
+            {maker.charAt(0) + maker.slice(1).toLowerCase()}
+          </span>
+        ))}
+        <span className="text-gray600 mr-auto">{product.name}</span>
+      </div>
       <Accordion
         title="상세 정보"
         className="w-full px-5 py-2.5 font-normal shadow-[0_0_4px_rgba(0,0,0,0.15)]"

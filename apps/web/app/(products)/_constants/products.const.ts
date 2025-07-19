@@ -5,6 +5,7 @@ import {
   GetCameraQuery,
   GetFrameGrabberQuery,
   GetLensQuery,
+  LensProduct,
   LensTypeEnum,
   SoftwareMakerEnum,
 } from "@humming-vision/shared";
@@ -120,6 +121,36 @@ export const CAMERA_CARD_FIELDS: {
   {
     label: "인터페이스",
     accessor: (product) => product.camera.interface,
+  },
+];
+
+export const LENS_CARD_FIELDS: {
+  label: string;
+  accessor: (product: LensProduct) => React.ReactNode;
+}[] = [
+  {
+    label: "초점거리",
+    accessor: (product) => `${product.lens.focalLength}mm`,
+  },
+  {
+    label: "해상력",
+    accessor: (product) => `${product.lens.resolution}MP`,
+  },
+  {
+    label: "N/A",
+    accessor: (product) => product.lens.numericAperture,
+  },
+  {
+    label: "F/#",
+    accessor: (product) => product.lens.fNumnber,
+  },
+  {
+    label: "포맷사이즈",
+    accessor: (product) => product.lens.formatSize,
+  },
+  {
+    label: "마운트",
+    accessor: (product) => product.lens.mount,
   },
 ];
 

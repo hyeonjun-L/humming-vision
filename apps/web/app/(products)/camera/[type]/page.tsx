@@ -26,11 +26,7 @@ const GetCameraQuerySchema = z.object({
   camera__interface__equal: z
     .enum(["GIGE", "USB", "CAMERA_LINK", "COAXPRESS"])
     .optional(),
-  camera__type__equal: z.enum(["AREA", "LINE"]).optional(),
   where__name__i_like: z.string().optional(),
-  order__name: z.enum(["ASC", "DESC"]).optional(),
-  order__createdAt: z.enum(["ASC", "DESC"]).optional(),
-  order__id: z.enum(["ASC", "DESC"]).optional(),
   page: z.preprocess((v) => Number(v), z.number().min(1)).optional(),
   take: z.preprocess((v) => Number(v), z.number().min(1)).optional(),
 });
