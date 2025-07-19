@@ -5,6 +5,7 @@ import { useModalStore, ModalProps } from "stores/use-modal.store";
 import { useEffect, useState } from "react";
 import { ModalEnum } from "consts/modal.const";
 import ContactModal from "components/modals/contact-modal";
+import FilterModal from "components/modals/filter-modal";
 
 export default function ModalRoot() {
   const { modalType, modalProps } = useModalStore();
@@ -48,6 +49,10 @@ export default function ModalRoot() {
       case ModalEnum.CONTACT:
         return (
           <ContactModal {...(modalProps as ModalProps[ModalEnum.CONTACT])} />
+        );
+      case ModalEnum.FILTER:
+        return (
+          <FilterModal {...(modalProps as ModalProps[ModalEnum.FILTER])} />
         );
       default:
         return null;

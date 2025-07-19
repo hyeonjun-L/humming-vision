@@ -3,7 +3,6 @@
 import ProductsFilter from "components/products-filter/products-filter";
 import TypeNav from "./type-nav";
 import { usePathname } from "next/navigation";
-import { CategoryRelationMapKebab } from "@humming-vision/shared";
 import cn from "libs/cn";
 import RefreshButton from "components/products-filter/refresh-button";
 import SearchProduct from "@/_components/search-product";

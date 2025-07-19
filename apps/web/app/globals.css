@@ -5,6 +5,7 @@
 
 :root {
   --main-blue: #00319b;
+  --blue200: #022879;
   --gray600: #010202;
   --gray400: #6f6f6f;
   --gray300: #929292;
@@ -51,6 +52,7 @@
   --color-foreground: var(--gray600);
   --color-background: var(--background);
   --color-main: var(--main-blue);
+  --color-blue200: var(--blue200);
   --color-gray600: var(--gray600);
   --color-gray400: var(--gray400);
   --color-gray300: var(--gray300);

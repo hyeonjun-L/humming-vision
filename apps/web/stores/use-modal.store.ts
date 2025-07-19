@@ -10,6 +10,7 @@ export interface ModalProps {
     data: Contact;
     onDelete: (id: number) => Promise<void>;
   };
+  [ModalEnum.FILTER]: Record<string, never>;
 }
 
 interface ModalState {
