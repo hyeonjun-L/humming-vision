@@ -23,6 +23,7 @@ function DetailedSearch({
 
   const isSoftwareType = currentCategory === "etc" && type === "software";
   const isAccessoryType = currentCategory === "etc" && type === "accessory";
+  const isLightType = currentCategory === "light" && type === undefined;
 
   return (
     <section className={cn("relative mx-5 flex justify-center")}>
@@ -30,7 +31,7 @@ function DetailedSearch({
         className={cn(
           "sticky top-0 mr-5 hidden h-fit w-52 shrink-0 pt-48 md:block md:pl-5",
           {
-            hidden: currentCategory === "light",
+            "md:hidden": currentCategory === "light",
           },
         )}
       >
@@ -51,7 +52,7 @@ function DetailedSearch({
         <div className="flex w-full flex-col sm:ml-5">
           <SearchProduct
             className={cn("hidden w-[309px] md:block", {
-              "md:hidden": isAccessoryType,
+              "md:hidden": isAccessoryType || isLightType,
               "block w-full sm:w-[309px]": isSoftwareType,
             })}
           />
