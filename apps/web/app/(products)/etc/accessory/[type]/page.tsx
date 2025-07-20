@@ -9,6 +9,7 @@ import {
 } from "consts/route.const";
 import { redirect } from "next/navigation";
 import Converter from "./converter";
+import Cable from "./cable";
 
 type AccessoryType =
   keyof (typeof PRODUCT_TYPES)[RouteCategory.ETC]["ACCESSORY"];
@@ -24,7 +25,7 @@ async function page({ params }: Props) {
     case "CONVERTER":
       return <Converter />;
     case "CABLE":
-      return <div></div>;
+      return <Cable />;
     case "BRACKET":
       return <div></div>;
     default:
