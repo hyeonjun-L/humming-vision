@@ -10,6 +10,7 @@ import {
 import { redirect } from "next/navigation";
 import Converter from "./converter";
 import Cable from "./cable";
+import Bracket from "./bracket";
 
 type AccessoryType =
   keyof (typeof PRODUCT_TYPES)[RouteCategory.ETC]["ACCESSORY"];
@@ -27,7 +28,7 @@ async function page({ params }: Props) {
     case "CABLE":
       return <Cable />;
     case "BRACKET":
-      return <div></div>;
+      return <Bracket />;
     default:
       redirect(
         `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}${RoutePathETC.CONVERTER}`,
