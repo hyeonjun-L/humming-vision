@@ -46,6 +46,7 @@ import {
   CreateCategoryDtoMap,
   UpdateCategoryDtoMap,
 } from './types/category-dto.type';
+import { PaginateLightDto } from './light/dto/paginate-light.dto';
 
 @Controller('product')
 export class ProductsController {
@@ -136,6 +137,7 @@ export class ProductsController {
     PaginateLensDto,
     PaginateFrameGrabberDto,
     PaginateSoftwareDto,
+    PaginateLightDto,
   )
   @IsPublic()
   async paginateProducts(
@@ -146,7 +148,8 @@ export class ProductsController {
       | PaginateCameraDto
       | PaginateLensDto
       | PaginateFrameGrabberDto
-      | PaginateSoftwareDto;
+      | PaginateSoftwareDto
+      | PaginateLightDto;
 
     if (category === CategoriesEnum.CAMERA) {
       dto = plainToInstance(PaginateCameraDto, query, {
@@ -165,7 +168,7 @@ export class ProductsController {
         enableImplicitConversion: true,
       });
     } else if (category === CategoriesEnum.LIGHT) {
-      dto = plainToInstance(PaginateSoftwareDto, query, {
+      dto = plainToInstance(PaginateLightDto, query, {
         enableImplicitConversion: true,
       });
     } else {

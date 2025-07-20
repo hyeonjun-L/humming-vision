@@ -535,6 +535,19 @@ export interface components {
             /** @default 10 */
             take: number;
         };
+        PaginateLightDto: {
+            where__name__i_like?: string;
+            /** @enum {string} */
+            order__name?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__createdAt?: "ASC" | "DESC";
+            /** @enum {string} */
+            order__id?: "ASC" | "DESC";
+            /** @default 1 */
+            page: number;
+            /** @default 10 */
+            take: number;
+        };
         RegisterAdminDto: {
             /** Format: email */
             email: string;
