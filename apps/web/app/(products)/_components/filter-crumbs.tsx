@@ -1,17 +1,19 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { FILTER_CONFIGS, RouteCategory } from "../_constants/products.const";
 import cn from "libs/cn";
 import { ChevronDown, X } from "lucide-react";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
 import { useModalStore } from "stores/use-modal.store";
 import { ModalEnum } from "consts/modal.const";
+import { RoutePath } from "consts/route.const";
 
 interface FilterCrumbsProps {
   currentCategory: RouteCategory;
 }
 
 function FilterCrumbs({ currentCategory }: FilterCrumbsProps) {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const { deleteSearchParams } = useUpdateSearchParams();
@@ -30,6 +32,13 @@ function FilterCrumbs({ currentCategory }: FilterCrumbsProps) {
 
     return value;
   };
+
+  if (
+    pathname.startsWith(RoutePath.ETC) ||
+    pathname.startsWith(RoutePath.LIGHT)
+  ) {
+    return null;
+  }
 
   return (
     <div

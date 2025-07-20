@@ -1,5 +1,6 @@
 "use client";
 
+import { RoutePath } from "consts/route.const";
 import { usePathname, useRouter } from "next/navigation";
 import { ResetSVG } from "public/svg";
 
@@ -10,6 +11,13 @@ function RefreshButton() {
   const handleClick = () => {
     router.replace(pathname);
   };
+
+  if (
+    pathname.startsWith(RoutePath.ETC) ||
+    pathname.startsWith(RoutePath.LIGHT)
+  ) {
+    return null;
+  }
 
   return (
     <button
