@@ -2,6 +2,7 @@ import {
   CameraProduct,
   CameraTypeEnum,
   FrameGrabberInterfaceEnum,
+  FrameGrabberProduct,
   GetCameraQuery,
   GetFrameGrabberQuery,
   GetLensQuery,
@@ -130,7 +131,8 @@ export const LENS_CARD_FIELDS: {
 }[] = [
   {
     label: "초점거리",
-    accessor: (product) => `${product.lens.focalLength}mm`,
+    accessor: (product) =>
+      `${product.lens.focalLength}${product.lens.type === "CCTV" ? "mm" : "x"}`,
   },
   {
     label: "해상력",
@@ -151,6 +153,28 @@ export const LENS_CARD_FIELDS: {
   {
     label: "마운트",
     accessor: (product) => product.lens.mount,
+  },
+];
+
+export const FRAME_GRABBER_CARD_FIELDS: {
+  label: string;
+  accessor: (product: FrameGrabberProduct) => React.ReactNode;
+}[] = [
+  {
+    label: "인터페이스",
+    accessor: (product) => product.frameGrabber.interface,
+  },
+  {
+    label: "Memory",
+    accessor: (product) => `${product.frameGrabber.memory}GB`,
+  },
+  {
+    label: "PC Slot",
+    accessor: (product) => product.frameGrabber.pcSlot,
+  },
+  {
+    label: "Connector",
+    accessor: (product) => product.frameGrabber.connector,
   },
 ];
 

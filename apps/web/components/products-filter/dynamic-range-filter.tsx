@@ -2,7 +2,8 @@
 import { Checkbox } from "components/checkbox";
 import { Slider } from "components/slider";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
-import { useCallback, useMemo, useState } from "react";
+import cn from "libs/cn";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { debounce } from "utils/debounce";
 
 interface DynamicRangeFilterProps {
@@ -21,6 +22,14 @@ function DynamicRangeFilter({
   initialRangeValues = [],
 }: DynamicRangeFilterProps) {
   const [selectedRange, setSelectedRange] = useState(initialRangeValues);
+
+  const [minInput, setMinInput] = useState(String(selectedRange[0] ?? min));
+  const [maxInput, setMaxInput] = useState(String(selectedRange[1] ?? max));
+  const [minInputWidth, setMinInputWidth] = useState(20);
+  const [maxInputWidth, setMaxInputWidth] = useState(20);
+
+  const minSpanRef = useRef<HTMLSpanElement>(null);
+  const maxSpanRef = useRef<HTMLSpanElement>(null);
 
   const { updateSearchParams } = useUpdateSearchParams();
 
@@ -48,6 +57,19 @@ function DynamicRangeFilter({
     [debouncedUpdate],
   );
 
+  const updateWidths = () => {
+    if (minSpanRef.current) {
+      setMinInputWidth(minSpanRef.current.offsetWidth + 4);
+    }
+    if (maxSpanRef.current) {
+      setMaxInputWidth(maxSpanRef.current.offsetWidth + 4);
+    }
+  };
+
+  useEffect(() => {
+    updateWidths();
+  }, [minInput, maxInput]);
+
   return (
     <div className="flex flex-col space-y-3 pb-2">
       <div className="flex items-center gap-2.5">
@@ -65,10 +87,106 @@ function DynamicRangeFilter({
             }
           }}
         />
+
         <div className="text-main flex items-center gap-1.5 pb-0.5">
-          {selectedRange[0] ?? min} <span className="text-gray600">~</span>{" "}
-          {selectedRange[1] ?? max} <span className="text-gray600">{unit}</span>
+          <input
+            name="dynamic-range-min"
+            className="inline-block min-w-0 appearance-none border-none bg-transparent text-center text-sm outline-none"
+            style={{ width: `${minInputWidth}px` }}
+            value={minInput}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              setMinInput(val);
+
+              const intVal = parseInt(val);
+              const intMax = parseInt(maxInput || String(max));
+
+              if (
+                !isNaN(intVal) &&
+                intVal >= min &&
+                intVal <= max &&
+                intVal <= intMax
+              ) {
+                handleRangeChange(filterKey, val, maxInput || String(max));
+              }
+            }}
+            onBlur={() => {
+              const intVal = parseInt(minInput);
+              const intMax = parseInt(maxInput || String(max));
+              if (isNaN(intVal) || intVal < min) {
+                const corrected = String(min);
+                setMinInput(corrected);
+                handleRangeChange(
+                  filterKey,
+                  corrected,
+                  maxInput || String(max),
+                );
+              } else if (intVal > intMax) {
+                const corrected = String(intMax);
+                setMinInput(corrected);
+                handleRangeChange(
+                  filterKey,
+                  corrected,
+                  maxInput || String(max),
+                );
+              }
+            }}
+          />
+          <span className="text-gray600">~</span>
+          <input
+            name="dynamic-range-max"
+            className="inline-block min-w-0 appearance-none border-none bg-transparent text-center text-sm outline-none"
+            style={{ width: `${maxInputWidth}px` }}
+            value={maxInput}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              setMaxInput(val);
+
+              const intVal = parseInt(val);
+              const intMin = parseInt(minInput || String(min));
+
+              if (
+                !isNaN(intVal) &&
+                intVal >= min &&
+                intVal <= max &&
+                intVal >= intMin
+              ) {
+                handleRangeChange(filterKey, minInput || String(min), val);
+              }
+            }}
+            onBlur={() => {
+              const intVal = parseInt(maxInput);
+              const intMin = parseInt(minInput || String(min));
+              if (isNaN(intVal) || intVal > max) {
+                const corrected = String(max);
+                setMaxInput(corrected);
+                handleRangeChange(
+                  filterKey,
+                  minInput || String(min),
+                  corrected,
+                );
+              } else if (intVal < intMin) {
+                const corrected = String(intMin);
+                setMaxInput(corrected);
+                handleRangeChange(
+                  filterKey,
+                  minInput || String(min),
+                  corrected,
+                );
+              }
+            }}
+          />
+          <span className="text-gray600">{unit}</span>
         </div>
+      </div>
+
+      <div className="invisible absolute h-0 overflow-hidden whitespace-pre">
+        <span ref={minSpanRef} className="text-sm">
+          {minInput || min}
+        </span>
+        <span ref={maxSpanRef} className="text-sm">
+          {maxInput || max}
+        </span>
       </div>
 
       <div className="px-3">
@@ -76,7 +194,7 @@ function DynamicRangeFilter({
           min={min}
           max={max}
           step={1}
-          value={[selectedRange[0] ?? min, selectedRange[1] ?? max]}
+          value={[Number(minInput) || min, Number(maxInput) || max]}
           onValueChange={(values) => {
             if (
               values &&
@@ -84,6 +202,8 @@ function DynamicRangeFilter({
               values[0] !== undefined &&
               values[1] !== undefined
             ) {
+              setMinInput(String(values[0]));
+              setMaxInput(String(values[1]));
               handleRangeChange(
                 filterKey,
                 values[0].toString(),

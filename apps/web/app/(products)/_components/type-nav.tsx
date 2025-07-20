@@ -76,7 +76,7 @@ function TypeNav() {
   return (
     <div className="mt-6 mb-16 flex flex-col items-center gap-5">
       <p className="text-gray600 text-[26px] font-bold">Type</p>
-      <nav className="flex gap-2.5">
+      <nav className="flex flex-wrap justify-center gap-2.5">
         {Object.entries(PRODUCT_TYPE_ROUTE[currentCategory]).map(
           ([typeName, route]) => (
             <Link
