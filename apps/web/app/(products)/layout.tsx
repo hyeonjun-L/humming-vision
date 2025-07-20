@@ -11,9 +11,7 @@ async function layout({
       <Banner />
 
       <DetailedSearch>
-        <div className="border-main w-full max-w-[1119px] border-t">
-          {children}
-        </div>
+        <div className="w-full max-w-[1119px]">{children}</div>
       </DetailedSearch>
     </main>
   );

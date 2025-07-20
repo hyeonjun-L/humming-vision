@@ -7,7 +7,7 @@ import cn from "libs/cn";
 import RefreshButton from "components/products-filter/refresh-button";
 import SearchProduct from "@/_components/search-product";
 import FilterCrumbs from "./filter-crumbs";
-import { RouteCategory } from "../_constants/products.const";
+import { PRODUCT_TYPES, RouteCategory } from "../_constants/products.const";
 
 function DetailedSearch({
   children,
@@ -17,6 +17,12 @@ function DetailedSearch({
   const pathname = usePathname();
 
   const currentCategory = pathname.split("/")[1] as RouteCategory;
+  const type = pathname.split(
+    "/",
+  )[2] as keyof (typeof PRODUCT_TYPES)[RouteCategory];
+
+  const isSoftwareType = currentCategory === "etc" && type === "software";
+  const isAccessoryType = currentCategory === "etc" && type === "accessory";
 
   return (
     <section className={cn("relative mx-5 flex justify-center")}>
@@ -45,7 +51,8 @@ function DetailedSearch({
         <div className="flex w-full flex-col sm:ml-5">
           <SearchProduct
             className={cn("hidden w-[309px] md:block", {
-              "block w-full sm:w-[309px]": currentCategory === "etc",
+              "md:hidden": isAccessoryType,
+              "block w-full sm:w-[309px]": isSoftwareType,
             })}
           />
           {children}

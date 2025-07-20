@@ -7,6 +7,7 @@ import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
 import { useModalStore } from "stores/use-modal.store";
 import { ModalEnum } from "consts/modal.const";
 import { RoutePath } from "consts/route.const";
+import ETCFilter from "components/products-filter/etc-filter";
 
 interface FilterCrumbsProps {
   currentCategory: RouteCategory;
@@ -33,10 +34,15 @@ function FilterCrumbs({ currentCategory }: FilterCrumbsProps) {
     return value;
   };
 
-  if (
-    pathname.startsWith(RoutePath.ETC) ||
-    pathname.startsWith(RoutePath.LIGHT)
-  ) {
+  if (pathname.startsWith(RoutePath.ETC)) {
+    return (
+      <div className="border-gray200 relative mb-5 w-full overflow-hidden border-y py-5 md:hidden">
+        <ETCFilter className="mt-0 w-full flex-row items-center" />
+      </div>
+    );
+  }
+
+  if (pathname.startsWith(RoutePath.LIGHT)) {
     return null;
   }
 

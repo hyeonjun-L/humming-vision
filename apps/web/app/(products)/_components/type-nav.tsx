@@ -74,7 +74,7 @@ function TypeNav() {
   } as const;
 
   return (
-    <div className="mt-6 mb-16 flex flex-col items-center gap-5">
+    <div className="mt-6 mb-5 flex flex-col items-center gap-5 sm:mb-16">
       <p className="text-gray600 text-[26px] font-bold">Type</p>
       <nav className="flex flex-wrap justify-center gap-2.5">
         {Object.entries(PRODUCT_TYPE_ROUTE[currentCategory]).map(
@@ -85,8 +85,8 @@ function TypeNav() {
               className={cn(
                 "flex w-[170px] items-center justify-center rounded-sm border py-2 transition-all duration-200",
                 isActiveRoute(route)
-                  ? "border-main text-main bg-[#F5F5FC]"
-                  : "border-gray200 text-gray600 hover:border-main/50 hover:text-main hover:bg-[#F5F5FC]/50",
+                  ? "border-main text-main bg-gray150"
+                  : "border-gray200 text-gray600 hover:border-main/50 hover:text-main hover:bg-gray150/50",
               )}
             >
               {TYPE_DISPLAY_NAMES[

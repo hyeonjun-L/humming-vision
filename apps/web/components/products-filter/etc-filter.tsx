@@ -35,7 +35,11 @@ const ACCESSORY_LINKS: { name: string; link: string }[] = [
   },
 ];
 
-function ETCFilter() {
+interface ETCFilterProps {
+  className?: string;
+}
+
+function ETCFilter({ className }: ETCFilterProps) {
   const pathName = usePathname();
 
   const currentType = pathName.split("/")[2] as "software" | "accessory";
@@ -44,7 +48,7 @@ function ETCFilter() {
     currentType === "software" ? SOFTWARE_LINKS : ACCESSORY_LINKS;
 
   return (
-    <div className="mt-5 flex flex-col gap-2.5">
+    <div className={cn("mt-5 flex flex-col gap-2.5", className)}>
       {LINK_LIST.map(({ name, link }) => (
         <Link
           key={name}

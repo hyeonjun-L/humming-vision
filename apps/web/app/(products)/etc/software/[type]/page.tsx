@@ -11,6 +11,7 @@ import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import { handleApiError } from "utils/api-error-handler";
 import { z } from "zod";
 import SoftwareProductTable from "./software-product-table";
+import ETCFilter from "components/products-filter/etc-filter";
 
 type Props = {
   searchParams: Promise<GetSoftwareQuery>;
