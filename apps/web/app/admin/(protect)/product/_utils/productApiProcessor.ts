@@ -1,8 +1,4 @@
-import {
-  CategoriesEnum,
-  CategoryRelationMap,
-  CategoryRelationMapKebab,
-} from "@humming-vision/shared";
+import { CategoriesEnum, CategoryRelationMap } from "@humming-vision/shared";
 import { UploadService, createImageData } from "./uploadService";
 
 export interface ProductApiProcessor<TFormData, TApiData> {

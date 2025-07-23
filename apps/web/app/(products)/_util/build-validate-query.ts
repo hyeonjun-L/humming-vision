@@ -12,7 +12,7 @@ export function buildValidatedQuery<T extends ZodTypeAny>(
   rawParams: Record<string, string | string[] | undefined>,
   schema: T,
 ): URLSearchParams {
-  const parsedParams: Record<string, any> = {};
+  const parsedParams: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(rawParams)) {
     if (value == null) continue;

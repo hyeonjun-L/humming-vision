@@ -1,7 +1,7 @@
 import { CategoriesEnum } from "@humming-vision/shared";
 import {
-  StandardProductApiData,
   LightProductApiData,
+  StandardProductApiData,
 } from "../../create/_types/product.type";
 
 export interface ProductUpdateFormData {
@@ -24,15 +24,12 @@ export interface ProductUpdateFormData {
   catalogFileUrl?: string;
 }
 
-// create 페이지의 ProductApiData를 기반으로 update용 타입 생성
-// 모든 필드를 optional로 만들고 id만 필수로 추가
 export type BaseProductUpdateApiData = {
-  id: number; // productId 필수
+  id: number;
 };
 
 export type StandardProductUpdateApiData = BaseProductUpdateApiData &
   Partial<StandardProductApiData> & {
-    // update에서만 필요한 추가 필드들
     images?: Array<{
       order: number;
       type: "PRODUCT" | "SPEC";
@@ -41,7 +38,6 @@ export type StandardProductUpdateApiData = BaseProductUpdateApiData &
     datasheetUrl?: string;
     drawingUrl?: string;
     manualUrl?: string;
-    // 카테고리별 필드들 (update시에는 id 포함)
     camera?: { id: number; [key: string]: string | number };
     frameGrabber?: { id: number; [key: string]: string | number };
     lens?: { id: number; [key: string]: string | number };
@@ -50,164 +46,10 @@ export type StandardProductUpdateApiData = BaseProductUpdateApiData &
 
 export type LightProductUpdateApiData = BaseProductUpdateApiData &
   Partial<LightProductApiData> & {
-    // update에서만 필요한 추가 필드들
     catalogUrl?: string;
-    light?: { id: number; [key: string]: string | number }; // categoryId 포함
+    light?: { id: number; [key: string]: string | number };
   };
 
 export type ProductUpdateApiData =
   | StandardProductUpdateApiData
   | LightProductUpdateApiData;
-
-// export type CameraUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.CAMERA]["camera"];
-// export type FrameGrabberUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.FRAMEGRABBER]["frameGrabber"];
-// export type LensUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.LENS]["lens"];
-// export type SoftwareUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.SOFTWARE]["software"];
-// export type LightUpdateFields =
-//   UpdateCategoryDtoMap[CategoriesEnum.LIGHT]["light"];
-
-// export type UpdateCategoryFields =
-//   | CameraUpdateFields
-//   | FrameGrabberUpdateFields
-//   | LensUpdateFields
-//   | SoftwareUpdateFields
-//   | LightUpdateFields;
-
-// export type CategoryFieldOption = {
-//   required: boolean;
-//   fieldName: string;
-//   label: string;
-//   type: "select" | "input";
-//   placeholder?: string;
-//   unit?: string;
-//   options?: { value: string; label: string }[];
-// };
-
-// export type CategoryOptionsMap = {
-//   [key in CategoriesEnum]: CategoryFieldOption[];
-// };
-
-// export type BaseProductUpdateFormData = {
-//   id: number;
-//   category: CategoriesEnum;
-//   name: string;
-// };
-
-// export type StandardProductUpdateFormData = BaseProductUpdateFormData & {
-//   subCategory?: string;
-//   mainFeature: string;
-//   productImages: (File | string)[];
-//   specImages: (File | string)[];
-//   datasheetFile?: File | string;
-//   drawingFile?: File | string;
-//   manualFile?: File | string;
-//   categoryFields: Record<string, string>;
-// };
-
-// export type LightProductUpdateFormData = BaseProductUpdateFormData & {
-//   category: CategoriesEnum.LIGHT;
-//   catalogFile?: File | string;
-//   categoryFields: Record<string, string>;
-// };
-
-// export type ProductUpdateFormData =
-//   | StandardProductUpdateFormData
-//   | LightProductUpdateFormData;
-
-// export type SectionVisibility = {
-//   categorySection: boolean;
-//   infoSection: boolean;
-//   specSection: boolean;
-//   otherInfoSection: boolean;
-// };
-
-// export type InfoSectionFields = {
-//   name: boolean;
-//   mainFeature: boolean;
-//   productImages: boolean;
-//   datasheetFile: boolean;
-//   drawingFile: boolean;
-//   manualFile: boolean;
-//   catalogFile: boolean;
-// };
-
-// export const isLightProductUpdate = (
-//   data: ProductUpdateFormData,
-// ): data is LightProductUpdateFormData => {
-//   return data.category === CategoriesEnum.LIGHT;
-// };
-
-// export const isStandardProductUpdate = (
-//   data: ProductUpdateFormData,
-// ): data is StandardProductUpdateFormData => {
-//   return data.category !== CategoriesEnum.LIGHT;
-// };
-
-// export type StandardProductUpdateApiData = Omit<
-//   StandardProductUpdateFormData,
-//   | "productImages"
-//   | "specImages"
-//   | "datasheetFile"
-//   | "drawingFile"
-//   | "manualFile"
-// > & {
-//   productImages: string[];
-//   specImages: string[];
-//   datasheetFile?: string | null;
-//   drawingFile?: string | null;
-//   manualFile?: string | null;
-//   categoryFields: Record<string, string>;
-// };
-
-// export type LightProductUpdateApiData = Omit<
-//   LightProductUpdateFormData,
-//   "catalogFile"
-// > & {
-//   catalogFile?: string | null;
-// };
-
-// export type ProductUpdateApiData =
-//   | StandardProductUpdateApiData
-//   | LightProductUpdateApiData;
-
-// export type ValidatedLightProductUpdateData = {
-//   id: number;
-//   name: string;
-//   category: CategoriesEnum.LIGHT;
-//   catalogFile?: File | string;
-//   categoryFields: Record<string, string>;
-// };
-
-// export type ValidatedStandardProductUpdateData = {
-//   id: number;
-//   name: string;
-//   category: CategoriesEnum;
-//   subCategory?: string;
-//   mainFeature: string;
-//   productImages: (File | string)[];
-//   specImages: (File | string)[];
-//   datasheetFile?: File | string;
-//   drawingFile?: File | string;
-//   manualFile?: File | string;
-//   categoryFields: Record<string, string>;
-// };
-
-// // 기존 제품 데이터를 폼 데이터로 변환하는 타입
-// export type ExistingProductData = {
-//   id: number;
-//   name: string;
-//   category: CategoriesEnum;
-//   subCategory?: string;
-//   mainFeature?: string;
-//   datasheetUrl?: string;
-//   drawingUrl?: string;
-//   manualUrl?: string;
-//   catalogUrl?: string;
-//   productImages: string[];
-//   specImages: string[];
-//   categoryFields: Record<string, string>;
-// };

@@ -10,7 +10,7 @@ import {
 
 export const POST = async (
   request: NextRequest,
-  { params }: { params: { category: string } },
+  { params }: { params: Promise<{ category: string }> },
 ) => {
   const body = await request.json();
   const { category } = await params;

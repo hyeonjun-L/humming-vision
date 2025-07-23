@@ -20,7 +20,7 @@ import {
 
 type Props = {
   searchParams: Promise<GetSoftwareQuery>;
-  params: { type: string };
+  params: Promise<{ type: string }>;
 };
 
 const GetSoftwareQuerySchema = z.object({

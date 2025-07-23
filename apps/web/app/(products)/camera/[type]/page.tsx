@@ -16,7 +16,7 @@ import { RoutePath, RoutePathWithCategory } from "consts/route.const";
 
 type Props = {
   searchParams: Promise<GetCameraQuery>;
-  params: { type: string };
+  params: Promise<{ type: string }>;
 };
 
 const GetCameraQuerySchema = z.object({

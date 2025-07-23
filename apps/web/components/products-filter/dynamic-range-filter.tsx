@@ -2,7 +2,6 @@
 import { Checkbox } from "components/checkbox";
 import { Slider } from "components/slider";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
-import cn from "libs/cn";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { debounce } from "utils/debounce";
 

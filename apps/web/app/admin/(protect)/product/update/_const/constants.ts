@@ -10,7 +10,7 @@ import {
   LensTypeEnum,
   SoftwareMakerEnum,
 } from "@humming-vision/shared";
-import { CategoryOptionsMap } from "../_types/product-update.type";
+import { CategoryOptionsMap } from "../../create/_types/product.type";
 
 export const sectionVisibility = {
   [CategoriesEnum.CAMERA]: {

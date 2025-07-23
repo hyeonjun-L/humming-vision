@@ -13,9 +13,7 @@ import ProductsFilter from "components/products-filter/products-filter";
 import RefreshButton from "components/products-filter/refresh-button";
 import SearchProduct from "@/_components/search-product";
 
-type FilterModalProps = {};
-
-function FilterModal({}: FilterModalProps) {
+function FilterModal() {
   const pathname = usePathname();
 
   const searchParams = useSearchParams();

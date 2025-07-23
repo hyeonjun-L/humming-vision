@@ -16,7 +16,7 @@ type AccessoryType =
   keyof (typeof PRODUCT_TYPES)[RouteCategory.ETC]["ACCESSORY"];
 
 type Props = {
-  params: { type: AccessoryType };
+  params: Promise<{ type: AccessoryType }>;
 };
 
 async function page({ params }: Props) {
