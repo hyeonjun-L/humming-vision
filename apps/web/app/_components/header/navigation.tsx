@@ -1,6 +1,11 @@
 import Link from "next/link";
 import cn from "libs/cn";
-import { type NavItem, type NavItemWithSubmenu } from "consts/route.const";
+import {
+  RoutePath,
+  RoutePathWithCategory,
+  type NavItem,
+  type NavItemWithSubmenu,
+} from "consts/route.const";
 import { HeaderState } from "./hooks/use-header-state.hook";
 
 interface NavigationProps {
@@ -46,20 +51,40 @@ export function Navigation({ navItems, state }: NavigationProps) {
             </Link>
             <div className="group/sub invisible flex h-0 max-w-28 min-w-20 flex-col gap-5 group-hover/header:visible group-hover/header:h-auto">
               {hasSubmenus(item) &&
-                item.hrefs?.map(({ name: subName, href: subHref }) => (
-                  <Link
-                    key={subName}
-                    href={subHref}
-                    className={cn(
-                      "hover:text-main w-full min-w-max text-base hover:font-bold",
-                      isClient &&
-                        pathname === subHref &&
-                        "text-main roup-hover/sub:font-normal group-hover/sub:text-blacgk font-bold",
-                    )}
-                  >
-                    {subName}
-                  </Link>
-                ))}
+                item.hrefs?.map(({ name: subName, href: subHref }) => {
+                  const isETCSoftware = subHref.startsWith(
+                    `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
+                  );
+                  const isETCAccessory = subHref.startsWith(
+                    `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
+                  );
+
+                  const isActive =
+                    (isETCSoftware &&
+                      pathname.startsWith(
+                        `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
+                      )) ||
+                    (isETCAccessory &&
+                      pathname.startsWith(
+                        `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
+                      )) ||
+                    pathname === subHref;
+
+                  return (
+                    <Link
+                      key={subName}
+                      href={subHref}
+                      className={cn(
+                        "hover:text-main w-full min-w-max text-base hover:font-bold",
+                        isClient &&
+                          isActive &&
+                          "text-main roup-hover/sub:font-normal group-hover/sub:text-blacgk font-bold",
+                      )}
+                    >
+                      {subName}
+                    </Link>
+                  );
+                })}
             </div>
           </div>
         );

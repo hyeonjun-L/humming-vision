@@ -3,6 +3,8 @@ import {
   ADMIN_NAV_ITEMS,
   ADMIN_ROUTE_PATH,
   NAV_ITEMS,
+  RoutePath,
+  RoutePathWithCategory,
   type NavItem,
 } from "consts/route.const";
 import Link from "next/link";
@@ -104,20 +106,40 @@ function HeaderNavModal() {
               )}
               <div className="group flex flex-col gap-5">
                 {hasSubmenu(item) &&
-                  item.hrefs.map(({ name: subName, href: subHref }) => (
-                    <Link
-                      key={subName}
-                      href={subHref}
-                      onClick={(e) => handleNavigation(e, subHref)}
-                      className={cn(
-                        "hover:text-main w-full min-w-max text-base hover:font-bold",
-                        pathname === subHref &&
-                          "text-main font-bold group-hover:font-normal group-hover:text-black",
-                      )}
-                    >
-                      {subName}
-                    </Link>
-                  ))}
+                  item.hrefs.map(({ name: subName, href: subHref }) => {
+                    const isETCSoftware = subHref.startsWith(
+                      `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
+                    );
+                    const isETCAccessory = subHref.startsWith(
+                      `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
+                    );
+
+                    const isActive =
+                      (isETCSoftware &&
+                        pathname.startsWith(
+                          `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}`,
+                        )) ||
+                      (isETCAccessory &&
+                        pathname.startsWith(
+                          `${RoutePath.ETC}${RoutePathWithCategory.ACCESSORY}`,
+                        )) ||
+                      pathname === subHref;
+
+                    return (
+                      <Link
+                        key={subName}
+                        href={subHref}
+                        onClick={(e) => handleNavigation(e, subHref)}
+                        className={cn(
+                          "hover:text-main w-full min-w-max text-base hover:font-bold",
+                          isActive &&
+                            "text-main font-bold group-hover:font-normal group-hover:text-black",
+                        )}
+                      >
+                        {subName}
+                      </Link>
+                    );
+                  })}
               </div>
             </li>
           );
