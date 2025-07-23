@@ -49,6 +49,11 @@ function CreateProductPage() {
 
   const selectedCategory = watchedValues.category || CategoriesEnum.CAMERA;
 
+  const subCategory =
+    watchedValues.category !== CategoriesEnum.LIGHT
+      ? watchedValues.subCategory || ""
+      : "";
+
   const formSchema = useMemo(
     () => getFormSchema(selectedCategory),
     [selectedCategory],
@@ -131,6 +136,7 @@ function CreateProductPage() {
           <OtherInfoSection
             control={control}
             selectedCategory={selectedCategory}
+            subCategory={subCategory}
           />
         )}
 

@@ -7,12 +7,24 @@ import { TextInput, SelectInput } from "../../_components/shared-form-inputs";
 interface CategoryFieldProps {
   field: CategoryFieldOption;
   control: Control<ProductFormData>;
+  subCategory?: string;
 }
 
-export const CategoryField = ({ field, control }: CategoryFieldProps) => {
+export const CategoryField = ({
+  field,
+  control,
+  subCategory,
+}: CategoryFieldProps) => {
   const fieldName =
     `categoryFields.${field.fieldName}` as keyof ProductFormData;
-  const label = field.label + (field.unit ? ` (${field.unit})` : "");
+  const value =
+    subCategory && Object.prototype.hasOwnProperty.call(field, subCategory)
+      ? field[subCategory as keyof typeof field]
+      : undefined;
+
+  const label =
+    field.label +
+    (field.unit ? ` (${field.unit})` : value ? ` (${value})` : "");
   const className = "flex w-full flex-col gap-2 lg:w-[calc(50%-10px)]";
 
   if (field.type === "select") {
@@ -42,11 +54,13 @@ export const CategoryField = ({ field, control }: CategoryFieldProps) => {
 interface OtherInfoSectionProps {
   control: Control<ProductFormData>;
   selectedCategory: CategoriesEnum;
+  subCategory?: string;
 }
 
 export const OtherInfoSection = ({
   control,
   selectedCategory,
+  subCategory,
 }: OtherInfoSectionProps) => {
   const categoryFields = categoryOptions[selectedCategory];
 
@@ -60,6 +74,7 @@ export const OtherInfoSection = ({
               key={`category-field-${index}`}
               field={field}
               control={control}
+              subCategory={subCategory}
             />
           ))}
         </div>

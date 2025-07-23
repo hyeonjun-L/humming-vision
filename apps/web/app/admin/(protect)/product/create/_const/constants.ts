@@ -182,7 +182,8 @@ export const categoryOptions: CategoryOptionsMap = {
       type: "input",
       required: true,
       placeholder: "속도 입력",
-      unit: "fps",
+      AREA: "fps",
+      LINE: "kHz",
     },
     {
       fieldName: "color",
@@ -297,7 +298,8 @@ export const categoryOptions: CategoryOptionsMap = {
       type: "input",
       required: true,
       placeholder: "초점거리 입력",
-      unit: "mm",
+      CCTV: "mm",
+      TCL: "x",
     },
     {
       fieldName: "numericAperture",

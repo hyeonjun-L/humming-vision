@@ -1,4 +1,9 @@
-import { CategoriesEnum, CreateCategoryDtoMap } from "@humming-vision/shared";
+import {
+  CameraType,
+  CategoriesEnum,
+  CreateCategoryDtoMap,
+  LensType,
+} from "@humming-vision/shared";
 
 export type CameraFields =
   CreateCategoryDtoMap[CategoriesEnum.CAMERA]["camera"];
@@ -16,7 +21,7 @@ export type CreateCategoryFields =
   | SoftwareFields
   | LightFields;
 
-export type CategoryFieldOption = {
+type CategoryFieldBase = {
   required: boolean;
   fieldName: string;
   label: string;
@@ -25,6 +30,10 @@ export type CategoryFieldOption = {
   unit?: string;
   options?: { value: string; label: string }[];
 };
+
+type CategoryFieldValues = Partial<Record<CameraType | LensType, string>>;
+
+export type CategoryFieldOption = CategoryFieldBase & CategoryFieldValues;
 
 export type CategoryOptionsMap = {
   [key in CategoriesEnum]: CategoryFieldOption[];
