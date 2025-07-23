@@ -18,6 +18,7 @@ type Props = {
 };
 
 const GetCameraQuerySchema = z.object({
+  camera__type__equal: z.enum(["LINE", "AREA"]).optional(),
   camera__maker__equal: z
     .enum(["CREVIS", "VIEWORKS", "BASLER", "HIK", "HUARAY", "JAI"])
     .optional(),
@@ -46,6 +47,8 @@ async function page({ searchParams: initSearchParams, params }: Props) {
     },
     GetCameraQuerySchema,
   );
+
+  console.log(`${END_POINT}/product/camera?${validatedQuery.toString()}`);
 
   try {
     const cameraData = await axios.get<

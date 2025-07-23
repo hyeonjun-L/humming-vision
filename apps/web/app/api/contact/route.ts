@@ -77,6 +77,9 @@ export const GET = async (request: NextRequest) => {
     const response = await axios.get(backendUrl, {
       headers,
       adapter: "fetch",
+      fetchOptions: {
+        cache: "no-store",
+      },
     });
 
     const data = await response.data;
