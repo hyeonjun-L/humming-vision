@@ -15,6 +15,7 @@ export const LazyLoadImage = (props: PropType) => {
           src={imgSrc}
           alt="main-banner-image"
           fill
+          sizes="100vw"
           className="object-cover"
           priority={index === 0}
         />

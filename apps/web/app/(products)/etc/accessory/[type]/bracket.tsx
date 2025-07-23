@@ -54,6 +54,7 @@ ex) C-Mount to F-Mount, M42-Mount to F-Mount
                 src={image}
                 alt={`${name} Image`}
                 fill
+                sizes="(min-width: 1024px) 405px, 100vw"
                 className={imageStyle}
               />
             </div>

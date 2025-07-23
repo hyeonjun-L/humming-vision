@@ -44,6 +44,7 @@ function Converter() {
               <Image
                 src={image}
                 alt={`${name} Image`}
+                sizes="(min-width: 1024px) 476px, (min-width: 768px) 415px, 318px"
                 fill
                 className={imageStyle}
               />

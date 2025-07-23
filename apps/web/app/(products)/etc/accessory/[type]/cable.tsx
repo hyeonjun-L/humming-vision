@@ -134,6 +134,7 @@ function Cable() {
               src={image}
               alt={`${type} Image`}
               fill
+              sizes="(min-width: 1280px) 393px, (min-width: 1024px) 240px, (min-width: 640px) 393px, 217px"
               className="object-contain"
             />
           </div>

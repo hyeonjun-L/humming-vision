@@ -44,7 +44,8 @@ function Banner() {
         src={BANNER_IMAGE[currentCategory]}
         alt={`${ROUTE_CATEGORY_DISPLAY_NAMES[currentCategory]} 배너 이미지`}
         priority
-        height={230}
+        width={1940}
+        sizes="100vw"
         className="h-[124px] w-full object-cover object-[60%_center] sm:h-[230px]"
       />
     </div>
