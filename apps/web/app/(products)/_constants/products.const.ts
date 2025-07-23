@@ -8,6 +8,7 @@ import {
   GetLensQuery,
   LensProduct,
   LensTypeEnum,
+  LightProduct,
   SoftwareMakerEnum,
 } from "@humming-vision/shared";
 
@@ -175,6 +176,25 @@ export const FRAME_GRABBER_CARD_FIELDS: {
   {
     label: "Connector",
     accessor: (product) => product.frameGrabber.connector,
+  },
+];
+
+export const LIGHT_CARD_FIELDS: {
+  label: string;
+  accessor: (product: LightProduct) => React.ReactNode;
+}[] = [
+  {
+    label: "카테고리 명",
+    accessor: (product) => product.name,
+  },
+  {
+    label: "등록일",
+    accessor: (product) =>
+      new Date(product.updatedAt).toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }),
   },
 ];
 
