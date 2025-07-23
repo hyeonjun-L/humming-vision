@@ -11,7 +11,12 @@ import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import { handleApiError } from "utils/api-error-handler";
 import { z } from "zod";
 import SoftwareProductTable from "./software-product-table";
-import ETCFilter from "components/products-filter/etc-filter";
+import { redirect } from "next/navigation";
+import {
+  RoutePath,
+  RoutePathETC,
+  RoutePathWithCategory,
+} from "consts/route.const";
 
 type Props = {
   searchParams: Promise<GetSoftwareQuery>;
@@ -30,6 +35,14 @@ async function page({ searchParams: initSearchParams, params }: Props) {
   const { type } = await params;
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
+
+  try {
+    z.enum(["MATROX", "EURESYS"]).parse(type.toUpperCase());
+  } catch {
+    redirect(
+      `${RoutePath.ETC}${RoutePathWithCategory.SOFTWARE}${RoutePathETC.MATROX}`,
+    );
+  }
 
   const validatedQuery = buildValidatedQuery(
     {

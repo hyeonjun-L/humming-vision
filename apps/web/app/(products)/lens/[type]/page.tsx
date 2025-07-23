@@ -11,6 +11,8 @@ import { buildValidatedQuery } from "@/(products)/_util/build-validate-query";
 import { handleApiError } from "utils/api-error-handler";
 import EmptyProductState from "@/(products)/_components/empty-product-state";
 import LensProductTable from "./lens-product-table";
+import { redirect } from "next/navigation";
+import { RoutePath, RoutePathWithCategory } from "consts/route.const";
 
 type Props = {
   searchParams: Promise<GetLensQuery>;
@@ -32,6 +34,12 @@ async function page({ searchParams: initSearchParams, params }: Props) {
   const { type } = await params;
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
+
+  try {
+    z.enum(["CCTV", "TCL"]).parse(type.toUpperCase());
+  } catch {
+    redirect(`${RoutePath.LENS}${RoutePathWithCategory.CCTV}`);
+  }
 
   const validatedQuery = buildValidatedQuery(
     {

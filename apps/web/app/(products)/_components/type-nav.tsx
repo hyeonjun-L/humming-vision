@@ -60,8 +60,8 @@ function TypeNav() {
     [RouteCategory.FRAMEGRABBER]: {
       COAXPRESS: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.COAXPRESS}`,
       LINK: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.LINK}`,
-      USB: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.USB}`,
       GIGE: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.GIGE}`,
+      USB: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.USB}`,
     },
     [RouteCategory.LIGHT]: {
       LIGHT: RoutePath.LIGHT,

@@ -11,6 +11,8 @@ import { z } from "zod";
 import { buildValidatedQuery } from "@/(products)/_util/build-validate-query";
 import { handleApiError } from "utils/api-error-handler";
 import EmptyProductState from "@/(products)/_components/empty-product-state";
+import { redirect } from "next/navigation";
+import { RoutePath, RoutePathWithCategory } from "consts/route.const";
 
 type Props = {
   searchParams: Promise<GetCameraQuery>;
@@ -18,7 +20,7 @@ type Props = {
 };
 
 const GetCameraQuerySchema = z.object({
-  camera__type__equal: z.enum(["LINE", "AREA"]).optional(),
+  camera__type__equal: z.enum(["LINE", "AREA"]),
   camera__maker__equal: z
     .enum(["CREVIS", "VIEWORKS", "BASLER", "HIK", "HUARAY", "JAI"])
     .optional(),
@@ -37,6 +39,12 @@ async function page({ searchParams: initSearchParams, params }: Props) {
   const { type } = await params;
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
+
+  try {
+    z.enum(["LINE", "AREA"]).parse(type.toUpperCase());
+  } catch {
+    redirect(`${RoutePath.CAMERA}${RoutePathWithCategory.AREA}`);
+  }
 
   const validatedQuery = buildValidatedQuery(
     {

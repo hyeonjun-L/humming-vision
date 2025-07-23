@@ -11,6 +11,8 @@ import { buildValidatedQuery } from "@/(products)/_util/build-validate-query";
 import { handleApiError } from "utils/api-error-handler";
 import EmptyProductState from "@/(products)/_components/empty-product-state";
 import FrameGrabberProductTable from "./frame-grabber-product-table";
+import { redirect } from "next/navigation";
+import { RoutePath, RoutePathWithCategory } from "consts/route.const";
 
 type Props = {
   searchParams: Promise<GetFrameGrabberQuery>;
@@ -36,6 +38,14 @@ async function page({ searchParams: initSearchParams, params }: Props) {
   const typeProcessed = type === "link" ? "CAMERA_LINK" : type.toUpperCase();
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
+
+  try {
+    z.enum(["GIGE", "USB", "CAMERA_LINK", "COAXPRESS"]).parse(
+      typeProcessed.toUpperCase(),
+    );
+  } catch {
+    redirect(`${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.COAXPRESS}`);
+  }
 
   const validatedQuery = buildValidatedQuery(
     {
