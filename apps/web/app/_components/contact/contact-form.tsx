@@ -3,7 +3,7 @@
 import { Input } from "components/input";
 import SubmitButton from "components/submit-button";
 import cn from "libs/cn";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -72,7 +72,15 @@ const CONTACT_FIELDS: Array<{
   },
 ] as const;
 
-function ContactForm() {
+interface ContactFormProps {
+  isContactPage?: boolean;
+}
+
+function ContactForm({ isContactPage }: ContactFormProps) {
+  const [focusedField, setFocusedField] = useState<
+    keyof ContactFormData | null
+  >(null);
+
   const {
     register,
     handleSubmit,
@@ -98,12 +106,23 @@ function ContactForm() {
 
   return (
     <form
-      className="flex w-full flex-col gap-5 xl:flex-row"
+      className={cn("flex w-full flex-col gap-5 xl:flex-row", {
+        "xl:flex-col": isContactPage,
+      })}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="mb-5 grid w-full grid-cols-[auto_1fr] items-center gap-y-7 xl:order-2 xl:mb-0 xl:ml-16">
+      <div
+        className={cn(
+          "mb-5 grid w-full grid-cols-[auto_1fr] items-center gap-y-7 xl:order-2 xl:mb-0 xl:ml-16",
+          {
+            "xl:ml-0": isContactPage,
+          },
+        )}
+      >
         {CONTACT_FIELDS.map(({ id, label, placeholder, required, type }) => {
           const fieldError = errors[id];
+
+          const { onBlur: originalOnBlur, ...fieldProps } = register(id);
 
           return (
             <Fragment key={id}>
@@ -112,6 +131,8 @@ function ContactForm() {
                   "text-gray600 border-gray300 flex h-full w-24 items-center border-b text-base font-normal",
                   {
                     "items-start pt-2.5": label === "내용",
+                    "border-b-red-500": fieldError,
+                    "text-main border-b-main": focusedField === id,
                   },
                 )}
               >
@@ -124,9 +145,15 @@ function ContactForm() {
                     variant="underline"
                     className={cn("!border-b-gray300", {
                       "!border-b-red-500": fieldError,
+                      "!border-b-main": focusedField === id,
                     })}
                     placeholder={placeholder}
-                    {...register(id)}
+                    onFocus={() => setFocusedField(id)}
+                    onBlur={(e) => {
+                      setFocusedField(null);
+                      originalOnBlur(e);
+                    }}
+                    {...fieldProps}
                   />
                 ) : (
                   <textarea
@@ -134,10 +161,16 @@ function ContactForm() {
                       "border-b-gray300 h-60 w-full resize-none border-0 border-b bg-transparent px-3 pt-2.5 text-base font-normal focus:outline-none",
                       {
                         "border-b-red-500": fieldError,
+                        "border-b-main": focusedField === id,
                       },
                     )}
                     placeholder={placeholder}
-                    {...register(id)}
+                    onFocus={() => setFocusedField(id)}
+                    onBlur={(e) => {
+                      setFocusedField(null);
+                      originalOnBlur(e);
+                    }}
+                    {...fieldProps}
                   />
                 )}
                 {fieldError && (
