@@ -12,6 +12,7 @@ import {
   HttpCode,
   ValidationPipe,
   BadRequestException,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
@@ -47,6 +48,7 @@ import {
   UpdateCategoryDtoMap,
 } from './types/category-dto.type';
 import { PaginateLightDto } from './light/dto/paginate-light.dto';
+import { ProductModel } from './product.entity';
 
 @Controller('product')
 export class ProductsController {
@@ -195,5 +197,15 @@ export class ProductsController {
     @QueryRunner() qr: QR,
   ) {
     return await this.productsService.deleteProduct(id, qr);
+  }
+
+  @Get('camera/by-sensor/:sensor')
+  @IsPublic()
+  async camerasBySensor(
+    @Param('sensor') sensor: string,
+    @Query('take', new DefaultValuePipe(3), ParseIntPipe) take: number,
+    @Query('skipId', ParseIntPipe) skipId: number,
+  ): Promise<ProductModel[]> {
+    return this.productsService.getCamerasBySensor(sensor, take, skipId);
   }
 }

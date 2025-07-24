@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { QueryRunner, Repository } from 'typeorm';
+import { Not, QueryRunner, Repository } from 'typeorm';
 import { ProductModel } from './product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommonService } from 'src/common/common.service';
@@ -85,6 +85,26 @@ export class ProductsService {
     }
 
     return product;
+  }
+
+  async getCamerasBySensor(
+    sensor: string,
+    take: number,
+    skipId: number,
+  ): Promise<ProductModel[]> {
+    return this.productRepository.find({
+      where: {
+        camera: {
+          sensor,
+        },
+        id: Not(skipId),
+      },
+      take,
+      relations: {
+        camera: true,
+        images: true,
+      },
+    });
   }
 
   async paginateProduct(dto: BasePaginateProductDto, category: CategoriesEnum) {
