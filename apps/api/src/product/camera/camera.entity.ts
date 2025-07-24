@@ -51,7 +51,7 @@ export class CameraModel {
   @Column({ type: 'int', nullable: false })
   speed: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'float', nullable: true })
   pixelSize?: number;
 
   @Column()

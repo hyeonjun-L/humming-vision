@@ -1,4 +1,11 @@
-import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 import { InterfaceEnum } from '../../const/interface.const';
 import {
   CameraModelColor,
@@ -31,7 +38,7 @@ export class BaseCameraDto {
   speed: number;
 
   @IsOptional()
-  @IsInt()
+  @IsNumber()
   pixelSize?: number;
 
   @IsString()
