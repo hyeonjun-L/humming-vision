@@ -6,6 +6,7 @@ import {
 import Accordion from "components/accordion";
 import { Box } from "lucide-react";
 import Image from "next/image";
+import getRepresentativeImage from "utils/get-representative-image";
 
 interface ProductCardProps<
   T extends CameraProduct | LensProduct | FrameGrabberProduct,
@@ -17,12 +18,7 @@ interface ProductCardProps<
 function ProductCard<
   T extends CameraProduct | LensProduct | FrameGrabberProduct,
 >({ product, productFields }: ProductCardProps<T>) {
-  const representativeImage = product.images
-    .filter((img) => img.type === "PRODUCT")
-    .reduce<null | (typeof product.images)[0]>((prev, curr) => {
-      if (!prev || curr.order < prev.order) return curr;
-      return prev;
-    }, null);
+  const representativeImage = getRepresentativeImage(product.images);
 
   const makerInfo = [
     product.camera?.maker,

@@ -15,6 +15,7 @@ import Table from "components/table";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
 import { Box } from "lucide-react";
 import Image from "next/image";
+import getRepresentativeImage from "utils/get-representative-image";
 
 interface CameraProductTableProps {
   productsData: GetProductResponse<CategoriesEnum.CAMERA>;
@@ -34,12 +35,7 @@ function CameraProductTable({
       cell: ({ row }) => {
         const product = row.original;
 
-        const representativeImage = product.images
-          .filter((img) => img.type === "PRODUCT")
-          .reduce<null | (typeof product.images)[0]>((prev, curr) => {
-            if (!prev || curr.order < prev.order) return curr;
-            return prev;
-          }, null);
+        const representativeImage = getRepresentativeImage(product.images);
 
         return (
           <div className="flex items-center gap-1.5">

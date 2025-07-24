@@ -10,6 +10,7 @@ import Pagination from "components/pagination";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
 import { Image as LucideImage } from "lucide-react";
 import Image from "next/image";
+import getRepresentativeImage from "utils/get-representative-image";
 
 interface SoftwareProductTableProps {
   productsData: GetProductResponse<CategoriesEnum.SOFTWARE>;
@@ -26,12 +27,7 @@ function SoftwareProductTable({
     <>
       <ul className="grid grid-cols-2 gap-x-3 gap-y-6 py-10 sm:grid-cols-3 lg:grid-cols-4">
         {productsData.data.map((product) => {
-          const representativeImage = product.images
-            .filter((img) => img.type === "PRODUCT")
-            .reduce<null | (typeof product.images)[0]>((prev, curr) => {
-              if (!prev || curr.order < prev.order) return curr;
-              return prev;
-            }, null);
+          const representativeImage = getRepresentativeImage(product.images);
 
           return (
             <li key={product.id} className="flex flex-col items-center gap-2.5">
