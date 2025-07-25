@@ -28,10 +28,12 @@ async function SameSensorCameras({ id, sensor }: SameSensorCamerasProps) {
       <section className="flex flex-col">
         <div className="mb-[74px] flex items-center gap-5">
           <hr className="border-gray200 grow" />
-          <h3 className="shrink-0 text-2xl font-bold">동일센서제품</h3>
+          <h3 className="shrink-0 text-xl font-bold sm:text-2xl">
+            동일센서제품
+          </h3>
           <hr className="border-gray200 grow" />
         </div>
-        <ul className="flex justify-center gap-5">
+        <ul className="flex flex-wrap gap-5 px-4 md:justify-center">
           {sameSensorCameras.data.map((camera) => (
             <CameraCard key={camera.id} product={camera} />
           ))}
@@ -54,32 +56,36 @@ function CameraCard({ product }: CameraCardProps) {
   const representativeImage = getRepresentativeImage(product.images);
 
   return (
-    <li className="w-[360px]">
+    <li className="w-full sm:w-[48%] md:w-[360px]">
       <Link
         className="flex flex-col items-center gap-2.5"
         href={`/camera/${product.camera.type.toLocaleLowerCase()}/${product.id}`}
       >
         {representativeImage && (
-          <div className="relative h-[191px] w-[340px] shrink-0">
+          <div className="relative h-[170px] w-[207px] shrink-0 sm:h-[220px] sm:w-[270px] md:h-[191px] md:w-[340px]">
             {representativeImage.path ? (
               <Image
                 src={representativeImage.path || ""}
                 alt={product.name}
                 fill
-                sizes="340px"
+                sizes="(min-width: 768px) 340px, (min-width: 640px) 270px, 207px"
                 priority
-                className="object-cover"
+                className="object-contain"
               />
             ) : (
               <ImageIcon className="size-full text-gray-300" />
             )}
           </div>
         )}
-        <div className="text-gray600 bg-gray100 h-[205px] w-full grow p-[30px]">
+        <div className="text-gray600 bg-gray100 h-[214px] w-full grow p-[30px] md:h-[205px]">
           <p className="text-main text-sm">{product.camera.maker}</p>
-          <h4 className="text-2xl font-bold">{product.name}</h4>
+          <h4 className="truncate text-xl font-bold md:text-2xl">
+            {product.name}
+          </h4>
           <hr className="border-gray400 my-5" />
-          <p className="line-clamp-2 text-sm">{product.mainFeature}</p>
+          <p className="line-clamp-3 text-sm md:line-clamp-2">
+            {product.mainFeature}
+          </p>
         </div>
       </Link>
     </li>

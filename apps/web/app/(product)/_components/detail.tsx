@@ -21,16 +21,22 @@ function Detail<T extends keyof CategoryToProductTypeMap>({
     .filter((img) => img.type === "SPEC")
     .sort((a, b) => a.order - b.order);
 
+  const DOCUMENTS = [
+    { label: "DataSheet", url: product.datasheetUrl },
+    { label: "Drawing", url: product.drawingUrl },
+    { label: "Manual", url: product.manualUrl },
+  ];
+
   return (
-    <main className="mx-auto my-33 w-full max-w-[1119px]">
-      <section className="border-gray200 mb-20 flex justify-center border-y py-[60px]">
-        <div className="relative h-[176px] w-[312px]">
+    <main className="mx-auto my-33 w-full max-w-[1119px] px-5">
+      <section className="border-gray200 mb-20 flex flex-wrap justify-center gap-10 border-y px-2 py-[40px] sm:flex-nowrap sm:gap-0 md:py-[60px]">
+        <div className="relative h-[116px] w-[207px] shrink-0 sm:w-[207px] sm:shrink md:h-[176px] md:w-[312px]">
           {productImages[0]?.path ? (
             <Image
               src={productImages[0].path || ""}
               alt={product.name}
               fill
-              sizes="312px"
+              sizes="(min-width: 768px) 312px, 207px"
               priority
               className="object-cover"
             />
@@ -38,57 +44,40 @@ function Detail<T extends keyof CategoryToProductTypeMap>({
             <ImageIcon className="size-full text-gray-300" />
           )}
         </div>
-        <div className="text-gray600 flex w-[535px] flex-col justify-center pl-4">
-          <h2 className="text-2xl font-semibold">{product.name}</h2>
-          <p className="mt-5 mb-10">{product.mainFeature}</p>
+        <div className="text-gray600 flex w-[415px] flex-col justify-center sm:pl-4 md:w-[535px]">
+          <h2 className="text-xl font-semibold md:text-2xl">{product.name}</h2>
+          <p className="mb-5 text-xs sm:mt-5 sm:mb-5 md:mb-10 md:text-base">
+            {product.mainFeature}
+          </p>
           <div className="flex gap-5">
-            {product.datasheetUrl && (
+            {DOCUMENTS.filter((doc) => !!doc.url).map((doc) => (
               <Link
-                href={product.datasheetUrl}
+                key={doc.label}
+                href={doc.url!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-[43px] w-[140px] items-center justify-center gap-2.5 border"
+                className="flex w-1/3 items-center justify-center gap-2.5 border py-2.5 text-sm md:py-[11.5px] md:text-base"
               >
-                DataSheet
+                {doc.label}
                 <Download className="text-main size-5" />
               </Link>
-            )}
-            {product.drawingUrl && (
-              <Link
-                href={product.drawingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-[43px] w-[140px] items-center justify-center gap-2.5 border"
-              >
-                Drawing
-                <Download className="text-main size-5" />
-              </Link>
-            )}
-            {product.manualUrl && (
-              <Link
-                href={product.manualUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-[43px] w-[140px] items-center justify-center gap-2.5 border"
-              >
-                Manual
-                <Download className="text-main size-5" />
-              </Link>
-            )}
+            ))}
           </div>
         </div>
       </section>
       <section className="mb-[72px] flex w-full flex-col items-center gap-8">
-        <h3 className="text-[32px] font-bold">상세스펙</h3>
+        <h3 className="text-xl font-bold sm:text-2xl md:text-[32px]">
+          상세스펙
+        </h3>
 
         {specImages.map((image) => (
-          <div key={image.order} className="relative w-[649px]">
+          <div key={image.order} className="relative w-full md:w-[649px]">
             <Image
               src={image.path || ""}
               alt={`Spec Image ${image.order}`}
               width={0}
               height={0}
-              sizes="100vw"
+              sizes="(min-width: 768px) 649px, 100vw"
               className="h-auto w-full object-contain"
             />
           </div>
