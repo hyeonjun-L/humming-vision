@@ -1,12 +1,10 @@
-import {
-  CategoryRelationMap,
-  CategoryToProductTypeMap,
-} from "@humming-vision/shared";
+import { CategoryToProductTypeMap } from "@humming-vision/shared";
 import { Download, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import SameSensorCameras from "./same-sensor-cameras";
 import { Suspense } from "react";
+import SameSensorCamerasFallback from "./same-sensor-cameras-fallback";
 
 interface DetailProps<T extends keyof CategoryToProductTypeMap> {
   product: CategoryToProductTypeMap[T];
@@ -96,7 +94,7 @@ function Detail<T extends keyof CategoryToProductTypeMap>({
           </div>
         ))}
       </section>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<SameSensorCamerasFallback />}>
         {product.camera?.sensor && (
           <SameSensorCameras id={product.id} sensor={product.camera.sensor} />
         )}
