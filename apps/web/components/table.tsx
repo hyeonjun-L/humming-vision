@@ -6,18 +6,28 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import cn from "libs/cn";
+import { usePathname, useRouter } from "next/navigation";
 
 type TableProps<T> = {
   data: T[];
   columns: ColumnDef<T>[];
+  isProductsTable?: boolean;
 };
 
-export default function Table<T>({ data, columns }: TableProps<T>) {
+export default function Table<T>({
+  data,
+  columns,
+  isProductsTable,
+}: TableProps<T>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <div className="border-main overflow-x-auto border-t">
@@ -47,7 +57,24 @@ export default function Table<T>({ data, columns }: TableProps<T>) {
             return (
               <tr
                 key={row.id}
-                className={isRead ? "bg-gray100 text-gray400" : "text-gray600"}
+                className={cn("text-gray600", {
+                  "bg-gray100 text-gray400": isRead,
+                  "cursor-pointer": isProductsTable,
+                })}
+                tabIndex={isProductsTable ? 0 : -1}
+                role={isProductsTable ? "button" : undefined}
+                onClick={() => {
+                  if (!isProductsTable) return;
+                  router.push(`${pathname}/${rowData.id}`);
+                }}
+                onKeyDown={(e) => {
+                  if (!isProductsTable) return;
+
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    router.push(`${pathname}/${rowData.id}`);
+                  }
+                }}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td

@@ -75,7 +75,7 @@ function CameraProductTable({
   return (
     <>
       <div className="hidden lg:block">
-        <Table data={productsData.data} columns={columns} />
+        <Table data={productsData.data} columns={columns} isProductsTable />
       </div>
       <ul className="flex flex-wrap gap-x-3 gap-y-10 py-10 lg:hidden">
         {productsData.data.map((product) => (

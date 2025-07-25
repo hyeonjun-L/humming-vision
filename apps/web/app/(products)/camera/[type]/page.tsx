@@ -56,8 +56,6 @@ async function page({ searchParams: initSearchParams, params }: Props) {
     GetCameraQuerySchema,
   );
 
-  console.log(`${END_POINT}/product/camera?${validatedQuery.toString()}`);
-
   try {
     const cameraData = await axios.get<
       GetProductResponse<CategoriesEnum.CAMERA>
