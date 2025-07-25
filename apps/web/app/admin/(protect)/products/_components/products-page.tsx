@@ -18,6 +18,7 @@ import { SelectBox } from "components/select-box/select-box";
 import Link from "next/link";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 import { useRouter } from "next/navigation";
+import getRepresentativeImage from "utils/get-representative-image";
 
 async function getProductsForCategory<C extends CategoryRelationMapKebab>(
   category: C,
@@ -110,12 +111,14 @@ function ProductsPage({ page, category, searchValue }: ProductsPageProps) {
       header: "이미지",
       cell: ({ row }) => {
         const product = row.original;
+        const representativeImage = getRepresentativeImage(product.images);
+
         return (
           <>
-            {product.images[0]?.path ? (
+            {representativeImage?.path ? (
               <div className="relative mx-auto aspect-[80/54] w-[80px]">
                 <Image
-                  src={product.images[0].path}
+                  src={representativeImage.path}
                   alt={product.name}
                   fill
                   sizes="80px"
