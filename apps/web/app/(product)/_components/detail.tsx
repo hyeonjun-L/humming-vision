@@ -1,10 +1,11 @@
 import { CategoryToProductTypeMap } from "@humming-vision/shared";
-import { Download, ImageIcon } from "lucide-react";
+import { Download } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import SameSensorCameras from "./same-sensor-cameras";
 import { Suspense } from "react";
 import SameSensorCamerasFallback from "./same-sensor-cameras-fallback";
+import ProductImagesCarousel from "./product-images-carousel";
 
 interface DetailProps<T extends keyof CategoryToProductTypeMap> {
   product: CategoryToProductTypeMap[T];
@@ -30,20 +31,10 @@ function Detail<T extends keyof CategoryToProductTypeMap>({
   return (
     <main className="mx-auto my-33 w-full max-w-[1119px] px-5">
       <section className="border-gray200 mb-20 flex flex-wrap justify-center gap-10 border-y px-2 py-[40px] sm:flex-nowrap sm:gap-0 md:py-[60px]">
-        <div className="relative h-[116px] w-[207px] shrink-0 sm:w-[207px] sm:shrink md:h-[176px] md:w-[312px]">
-          {productImages[0]?.path ? (
-            <Image
-              src={productImages[0].path || ""}
-              alt={product.name}
-              fill
-              sizes="(min-width: 768px) 312px, 207px"
-              priority
-              className="object-cover"
-            />
-          ) : (
-            <ImageIcon className="size-full text-gray-300" />
-          )}
-        </div>
+        <ProductImagesCarousel
+          productImages={productImages}
+          productName={product.name}
+        />
         <div className="text-gray600 flex w-[415px] flex-col justify-center sm:pl-4 md:w-[535px]">
           <h2 className="text-xl font-semibold md:text-2xl">{product.name}</h2>
           <p className="mb-5 text-xs sm:mt-5 sm:mb-5 md:mb-10 md:text-base">
