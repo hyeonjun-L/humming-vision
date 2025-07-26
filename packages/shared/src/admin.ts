@@ -16,3 +16,8 @@ export interface TokenResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface DeleteS3Response {
+  deletedKeys: string[];
+  totalDeleted: number;
+}

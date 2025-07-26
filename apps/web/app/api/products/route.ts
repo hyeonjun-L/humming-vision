@@ -138,7 +138,10 @@ export const GET = async (request: NextRequest) => {
     const response = await axios.get(backendUrl, {
       adapter: "fetch",
       fetchOptions: {
-        cache: "no-cache",
+        next: {
+          revalidate: 3600,
+        },
+        cache: "force-cache",
       },
     });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, Fragment } from "react";
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, LogOut, Trash2 } from "lucide-react";
 import { HeaderState } from "./hooks/use-header-state.hook";
 import { PersonSVG } from "public/svg/index";
 import { useAdminStore } from "stores/use-admin.store";
@@ -10,6 +10,8 @@ import { protectApi } from "libs/axios";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { showToast } from "utils/toast-config";
+import { DeleteS3Response } from "@humming-vision/shared";
+import { toast } from "react-toastify";
 
 interface AdminActionsProps {
   state: HeaderState;
@@ -45,6 +47,7 @@ function AdminActions({ state }: AdminActionsProps) {
   const logoutMutation = useMutation({
     mutationFn: handleLogout,
     onSuccess: () => {
+      toast.dismiss();
       showToast.success("로그아웃 완료", {
         autoClose: 750,
         onClose: () => {
@@ -53,11 +56,48 @@ function AdminActions({ state }: AdminActionsProps) {
       });
     },
     onMutate: () => {
+      showToast.info("로그아웃 중...", {
+        autoClose: false,
+      });
       setIsDropdownOpen(false);
     },
     onError: (error: unknown) => {
+      toast.dismiss();
       console.error("Logout error:", error);
       showToast.error("로그아웃 중 오류가 발생했습니다. 다시 시도해주세요.");
+    },
+  });
+
+  const cleanupMutation = useMutation({
+    mutationFn: async () => {
+      const response = await protectApi.delete<DeleteS3Response>(
+        "/api/admin/cleanup",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      return response.data;
+    },
+    onMutate: () => {
+      showToast.info("서버 저장공간 정리 중...", {
+        autoClose: false,
+      });
+      setIsDropdownOpen(false);
+    },
+    onSuccess: (data) => {
+      toast.dismiss();
+      showToast.success(`${data.totalDeleted}개의 서버 저장공간 정리 완료`, {
+        autoClose: 750,
+      });
+    },
+    onError: () => {
+      toast.dismiss();
+      showToast.error(
+        "서버 저장공간 정리 중 오류가 발생했습니다. 다시 시도해주세요.",
+      );
     },
   });
 
@@ -66,6 +106,15 @@ function AdminActions({ state }: AdminActionsProps) {
       label: "로그아웃",
       icon: <LogOut className="size-4" />,
       action: () => logoutMutation.mutate(),
+    },
+    {
+      label: "서버 저장공간 정리",
+      icon: cleanupMutation.isPending ? (
+        <LogOut className="size-4" />
+      ) : (
+        <Trash2 className="size-4" />
+      ),
+      action: () => cleanupMutation.mutate(),
     },
   ];
 

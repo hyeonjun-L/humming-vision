@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { getUpdateFormSchema } from "../_schemas/product-update.schema";
 import { handleUpdateFormErrors } from "../_utils/form-error-handler";
 import SubmitButton from "components/submit-button";
+import { toast } from "react-toastify";
 
 interface UpdateProductPageProps {
   productId: number;
@@ -205,6 +206,7 @@ function UpdateProductPage({
   const updateProductMutation = useMutation({
     mutationFn: updateCompleteProduct,
     onSuccess: () => {
+      toast.dismiss();
       queryClient.invalidateQueries({ queryKey: ["products"] });
 
       showToast.success("제품이 성공적으로 수정되었습니다.", {
@@ -214,7 +216,13 @@ function UpdateProductPage({
         },
       });
     },
+    onMutate: () => {
+      showToast.info("제품 수정 중...", {
+        autoClose: false,
+      });
+    },
     onError: (error: unknown) => {
+      toast.dismiss();
       handleUpdateFormErrors(error, setError, setFocus);
     },
   });

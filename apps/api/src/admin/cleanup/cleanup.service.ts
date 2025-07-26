@@ -1,3 +1,4 @@
+import { DeleteS3Response } from '@humming-vision/shared';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AwsService } from 'src/common/aws/aws.service';
@@ -12,7 +13,7 @@ export class CleanupService {
     private readonly awsService: AwsService,
   ) {}
 
-  async cleanupS3Orphans() {
+  async cleanupS3Orphans(): Promise<DeleteS3Response> {
     const allProductPdfKeys = await this.productRepository
       .createQueryBuilder('product')
       .select('product.datasheetUrl')

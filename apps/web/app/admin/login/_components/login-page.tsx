@@ -10,6 +10,8 @@ import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 import { useAdminStore } from "stores/use-admin.store";
 import axios from "axios";
 import { Admin } from "@humming-vision/shared";
+import { showToast } from "utils/toast-config";
+import { toast } from "react-toastify";
 
 const loginSchema = z.object({
   email: z
@@ -61,7 +63,13 @@ export default function AdminLoginPage() {
         throw new Error("서버 오류 발생: 로그인에 실패했습니다.");
       }
     },
+    onMutate: () => {
+      showToast.info("로그인 중...", {
+        autoClose: false,
+      });
+    },
     onSuccess: (data) => {
+      toast.dismiss();
       setAdmin(data.admin);
 
       router.push(`${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`, {

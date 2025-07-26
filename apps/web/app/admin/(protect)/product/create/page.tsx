@@ -20,6 +20,7 @@ import { createProductApiProcessor } from "../_utils/productApiProcessor";
 import { ProductFormLayout } from "../_components/shared-ui";
 import { getFormSchema } from "./_schemas/product.schema";
 import SubmitButton from "components/submit-button";
+import { toast } from "react-toastify";
 
 function CreateProductPage() {
   const [formKey, setFormKey] = useState(0);
@@ -83,6 +84,7 @@ function CreateProductPage() {
   const createProductMutation = useMutation({
     mutationFn: createCompleteProduct,
     onSuccess: () => {
+      toast.dismiss();
       const currentCategory = watchedValues.category || CategoriesEnum.CAMERA;
 
       reset({
@@ -106,7 +108,13 @@ function CreateProductPage() {
 
       showToast.success("제품이 성공적으로 등록되었습니다.");
     },
+    onMutate: () => {
+      showToast.info("제품 등록 중...", {
+        autoClose: false,
+      });
+    },
     onError: (error: unknown) => {
+      toast.dismiss();
       handleFormErrors(error, setError, setFocus);
     },
   });
