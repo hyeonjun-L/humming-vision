@@ -78,7 +78,7 @@ export const GET = async (request: NextRequest) => {
       headers,
       adapter: "fetch",
       fetchOptions: {
-        cache: "no-store",
+        cache: "no-cache",
       },
     });
 

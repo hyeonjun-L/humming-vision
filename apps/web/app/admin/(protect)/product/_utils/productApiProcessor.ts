@@ -56,10 +56,11 @@ export const createProductApiProcessor = <
       };
 
       const fieldKey = subCategoryMapping[formData.category];
+
       if (fieldKey) {
         const updatedCategoryFields = {
-          [fieldKey]: fieldsToProcess.subCategory,
           ...fieldsToProcess.categoryFields,
+          [fieldKey]: fieldsToProcess.subCategory,
         };
 
         fieldsToProcess.categoryFields = updatedCategoryFields;
