@@ -19,6 +19,9 @@ async function page({ params }: Props) {
       {
         adapter: "fetch",
         fetchOptions: {
+          next: {
+            revalidate: 3600,
+          },
           cache: "force-cache",
         },
       },

@@ -90,7 +90,7 @@ function AdminActions({ state }: AdminActionsProps) {
     onSuccess: (data) => {
       toast.dismiss();
       showToast.success(`${data.totalDeleted}개의 서버 저장공간 정리 완료`, {
-        autoClose: 750,
+        autoClose: 2000,
       });
     },
     onError: () => {
@@ -109,11 +109,7 @@ function AdminActions({ state }: AdminActionsProps) {
     },
     {
       label: "서버 저장공간 정리",
-      icon: cleanupMutation.isPending ? (
-        <LogOut className="size-4" />
-      ) : (
-        <Trash2 className="size-4" />
-      ),
+      icon: <Trash2 className="size-4" />,
       action: () => cleanupMutation.mutate(),
     },
   ];
