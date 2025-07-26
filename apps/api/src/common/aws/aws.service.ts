@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   DeleteObjectCommand,
+  DeleteObjectsCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -9,6 +10,10 @@ import { extname } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { createS3Client, getBucketName } from './s3.client';
 import { FileType } from '../const/aws.const';
+import {
+  ListObjectsV2Command,
+  ListObjectsV2CommandOutput,
+} from '@aws-sdk/client-s3';
 
 @Injectable()
 export class AwsService {
@@ -43,5 +48,44 @@ export class AwsService {
     });
 
     await this.s3.send(command);
+  }
+
+  async getAllKeysFromS3(): Promise<string[]> {
+    const keys: string[] = [];
+    let ContinuationToken: string | undefined = undefined;
+
+    do {
+      const result: ListObjectsV2CommandOutput = await this.s3.send(
+        new ListObjectsV2Command({
+          Bucket: this.bucketName,
+          // Prefix: prefix,
+          ContinuationToken,
+        }),
+      );
+
+      result.Contents?.forEach((obj) => {
+        if (obj.Key) keys.push(obj.Key);
+      });
+
+      ContinuationToken = result.IsTruncated
+        ? result.NextContinuationToken
+        : undefined;
+    } while (ContinuationToken);
+
+    return keys;
+  }
+
+  async deleteObjects(keys: string[]): Promise<void> {
+    if (keys.length === 0) return;
+
+    const deleteCommand = new DeleteObjectsCommand({
+      Bucket: this.bucketName,
+      Delete: {
+        Objects: keys.map((key) => ({ Key: key })),
+        Quiet: true,
+      },
+    });
+
+    await this.s3.send(deleteCommand);
   }
 }

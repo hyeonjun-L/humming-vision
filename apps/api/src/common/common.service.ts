@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { BaseModel } from './entity/base.entity';
 import { BasePaginationDto } from './dto/base-pagination.dto';
 import {
@@ -14,7 +13,7 @@ import { DEFAULT_PAGE, DEFAULT_TAKE } from './const/pagination.cont';
 
 @Injectable()
 export class CommonService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor() {}
 
   async paginate<T extends BaseModel>(
     dto: BasePaginationDto,
