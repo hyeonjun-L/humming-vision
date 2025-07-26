@@ -10,6 +10,7 @@ import Pagination from "components/pagination";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
 import { Image as LucideImage } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import getRepresentativeImage from "utils/get-representative-image";
 
 interface SoftwareProductTableProps {
@@ -30,23 +31,30 @@ function SoftwareProductTable({
           const representativeImage = getRepresentativeImage(product.images);
 
           return (
-            <li key={product.id} className="flex flex-col items-center gap-2.5">
-              {representativeImage?.path ? (
-                <div className="relative aspect-[4/3] w-full">
-                  <Image
-                    src={representativeImage.path}
-                    alt={product.name}
-                    fill
-                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-                    className="rounded-md object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="bg-gray100 flex aspect-[4/3] w-full items-center justify-center rounded-md">
-                  <LucideImage className="text-gray300 h-1/2 w-1/2" />
-                </div>
-              )}
-              <p className="text-gray600 text-center text-sm">{product.name}</p>
+            <li key={product.id}>
+              <Link
+                className="flex size-full flex-col items-center gap-2.5"
+                href={`/software/${product.software.maker.toLocaleLowerCase()}/${product.id}`}
+              >
+                {representativeImage?.path ? (
+                  <div className="relative aspect-[4/3] w-full">
+                    <Image
+                      src={representativeImage.path}
+                      alt={product.name}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+                      className="rounded-md object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="bg-gray100 flex aspect-[4/3] w-full items-center justify-center rounded-md">
+                    <LucideImage className="text-gray300 h-1/2 w-1/2" />
+                  </div>
+                )}
+                <p className="text-gray600 text-center text-sm">
+                  {product.name}
+                </p>
+              </Link>
             </li>
           );
         })}
