@@ -28,6 +28,8 @@ WORKDIR /app
 # 필수 파일 복사
 COPY --from=builder /app/out/json/ .
 
+COPY --from=builder /app/packages/shared ./packages/shared
+
 # 설치
 RUN npm install --frozen-lockfile
 
