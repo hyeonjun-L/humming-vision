@@ -1,11 +1,12 @@
 import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
-import { CategoriesEnum } from './const/categories.const';
 import { LensModel } from './lens/lens.entity';
 import { FrameGrabberModel } from './frame-grabber/frame-grabber.entity';
 import { ImageModel } from './image/image.entity';
 import { CameraModel } from './camera/camera.entity';
 import { SoftwareModel } from './software/software.entity';
+import { LightModel } from './light/light.entity';
+import { CategoriesEnum } from '@humming-vision/shared';
 
 @Entity()
 export class ProductModel extends BaseModel {
@@ -21,19 +22,20 @@ export class ProductModel extends BaseModel {
   })
   name: string;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text', nullable: true })
   mainFeature: string;
 
-  @Column()
+  @Column({ nullable: true })
   datasheetUrl: string;
 
-  @Column()
+  @Column({ nullable: true })
   drawingUrl: string;
 
-  @Column()
+  @Column({ nullable: true })
   manualUrl: string;
 
   @OneToMany(() => ImageModel, (image) => image.product, {
+    nullable: true,
     cascade: ['remove'],
   })
   images: ImageModel[];
@@ -61,4 +63,10 @@ export class ProductModel extends BaseModel {
     cascade: ['remove'],
   })
   software?: SoftwareModel;
+
+  @OneToOne(() => LightModel, (light) => light.product, {
+    nullable: true,
+    cascade: ['remove'],
+  })
+  light?: LightModel;
 }

@@ -6,17 +6,18 @@ type PropType = {
 };
 
 export const LazyLoadImage = (props: PropType) => {
-  const { imgSrc } = props;
+  const { imgSrc, index } = props;
 
   return (
     <div className="min-w-0 flex-[0_0_100%] transform-gpu">
       <div className="relative size-full">
         <Image
           src={imgSrc}
-          alt=""
+          alt="main-banner-image"
           fill
+          sizes="100vw"
           className="object-cover"
-          data-src={imgSrc}
+          priority={index === 0}
         />
       </div>
     </div>

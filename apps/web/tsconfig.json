@@ -10,7 +10,9 @@
     "paths": {
       "@/*": ["./app/*"],
       "@/public/*": ["../public/*"],
-      "@/components/*": ["../components/*"]
+      "@/components/*": ["../components/*"],
+      "@/stores/*": ["../stores/*"],
+      "@/types/*": ["../types/*"]
     }
   },
   "include": [

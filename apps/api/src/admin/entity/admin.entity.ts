@@ -2,7 +2,7 @@ import { BaseModel } from 'src/common/entity/base.entity';
 import { Column, Entity, OneToOne } from 'typeorm';
 import { SessionModel } from './session.entity';
 import { LogModel } from './log.entity';
-import { RolesEnum } from '../const/role.const';
+import { RolesEnum } from '@humming-vision/shared';
 import { Exclude } from 'class-transformer';
 
 @Entity()

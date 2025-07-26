@@ -3,7 +3,7 @@ import { IsUniqueFieldConstraint } from '../validator/is-unique-field.validator'
 import { EntityTarget } from 'typeorm';
 
 export function IsUnique(
-  entity: EntityTarget<any>,
+  entity: () => EntityTarget<any>,
   field: string,
   validationOptions?: ValidationOptions,
 ) {

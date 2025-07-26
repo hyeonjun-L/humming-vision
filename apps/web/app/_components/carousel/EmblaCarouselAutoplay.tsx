@@ -5,11 +5,13 @@ type UseAutoplayType = {
   autoplayIsPlaying: boolean;
   toggleAutoplay: () => void;
   onAutoplayButtonClick: (callback: () => void) => void;
+  pauseAndResumeAutoplay: (fn: () => void) => void;
 };
 
 export const useAutoplay = (
   emblaApi: EmblaCarouselType | undefined,
 ): UseAutoplayType => {
+  let autoplayTimeout: ReturnType<typeof setTimeout> | null = null;
   const [autoplayIsPlaying, setAutoplayIsPlaying] = useState(false);
 
   const onAutoplayButtonClick = useCallback(
@@ -27,6 +29,18 @@ export const useAutoplay = (
     },
     [emblaApi],
   );
+
+  const pauseAndResumeAutoplay = (fn: () => void, pause_ms = 3000) => {
+    const autoplay = emblaApi?.plugins()?.autoplay;
+    if (!autoplay) return;
+
+    autoplay.stop();
+    if (autoplayTimeout) clearTimeout(autoplayTimeout);
+    fn();
+    autoplayTimeout = setTimeout(() => {
+      autoplay.play();
+    }, pause_ms);
+  };
 
   const toggleAutoplay = useCallback(() => {
     const autoplay = emblaApi?.plugins()?.autoplay;
@@ -51,5 +65,6 @@ export const useAutoplay = (
     autoplayIsPlaying,
     toggleAutoplay,
     onAutoplayButtonClick,
+    pauseAndResumeAutoplay,
   };
 };

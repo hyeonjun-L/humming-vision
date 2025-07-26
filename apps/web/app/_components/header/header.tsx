@@ -1,22 +1,26 @@
+"use client";
 import Logo from "components/logo";
-import { ProductEntity, RoutePath } from "consts/route.const";
+import HeaderNavModalViewButton from "./header-nav-modal-view-button";
+import { useHeaderState } from "./hooks/use-header-state.hook";
+import { getHeaderClassName, getNavClassName } from "./utils/header-styles";
+import { Navigation } from "./navigation";
+import { ADMIN_ROUTE_PATH } from "consts/route.const";
+import AdminActions from "./admin-actions";
+import { useScrollHeader } from "./hooks/use-scroll-header.hook";
 
 function Header() {
-  // const NAV_ITEMS = [
-  //   { name: "Camera", href: RoutePath.PRODUCTS },
-  //   { name: "Lens", href: RoutePath.SOLUTIONS },
-  //   { name: "Frame Grabber", href: RoutePath.SUPPORT },
-  //   { name: "Light", href: RoutePath.ABOUT },
-  //   { name: "ETC", href: RoutePath.HOME },
-  //   { name: "제품문의", href: RoutePath.HOME },
-  // ];
-  const test: ProductEntity["categories"] = "SOFTWARE";
+  const state = useHeaderState();
+  useScrollHeader();
 
   return (
-    <header className="fixed top-0 z-(--z-header) w-full py-10.5">
-      <nav className="mx-auto flex justify-evenly">
+    <header className={getHeaderClassName(state)}>
+      <nav className={getNavClassName(state)}>
         <Logo />
-        dsadasdsa
+        <Navigation navItems={state.navItems} state={state} />
+        {state.pathname.startsWith(ADMIN_ROUTE_PATH) && (
+          <AdminActions state={state} />
+        )}
+        <HeaderNavModalViewButton />
       </nav>
     </header>
   );

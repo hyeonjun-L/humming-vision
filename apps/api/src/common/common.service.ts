@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { BaseModel } from './entity/base.entity';
 import { BasePaginationDto } from './dto/base-pagination.dto';
 import {
@@ -14,7 +13,7 @@ import { DEFAULT_PAGE, DEFAULT_TAKE } from './const/pagination.cont';
 
 @Injectable()
 export class CommonService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor() {}
 
   async paginate<T extends BaseModel>(
     dto: BasePaginationDto,
@@ -40,6 +39,7 @@ export class CommonService {
         take,
         skip,
         where,
+        order,
         overrideFindOptions,
         customWhereQueryBuilder,
       );
@@ -66,6 +66,7 @@ export class CommonService {
     take: number,
     skip: number,
     where: FindOptionsWhere<T>,
+    order: FindOptionsOrder<T> = {},
     overrideFindOptions: FindManyOptions<T>,
     customWhereQueryBuilder: (
       qb: SelectQueryBuilder<T>,
@@ -82,6 +83,14 @@ export class CommonService {
 
     if (where) {
       qb.andWhere(where);
+    }
+
+    if (order) {
+      Object.entries(order).forEach(([field, value]) => {
+        if (value !== undefined) {
+          qb.addOrderBy(`entity.${field}`, value as 'ASC' | 'DESC');
+        }
+      });
     }
 
     customWhereQueryBuilder(qb, dto);

@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryRunner, Repository } from 'typeorm';
+import { In, QueryRunner, Repository } from 'typeorm';
 import { ImageModel } from './image.entity';
 import { ProductModel } from '../product.entity';
 import { CreateImageDto } from './dto/create-image.dto';
@@ -34,22 +34,39 @@ export class ProductImagesService {
     return imageRepository.save(image);
   }
 
-  async updateImage(
-    updateImageDto: UpdateImageDto,
-    id: number,
+  async removeImagesByIds(imageIds: number[], qr?: QueryRunner) {
+    const imageRepository = this.getImageRepository(qr);
+    if (imageIds.length > 0) {
+      await imageRepository.delete(imageIds);
+    }
+  }
+
+  async replaceImages(
+    images: UpdateImageDto[],
+    productId: number,
     qr?: QueryRunner,
   ) {
     const imageRepository = this.getImageRepository(qr);
 
-    const image = await imageRepository.findOne({
-      where: { id: updateImageDto.id, product: { id } },
+    const existingImages = await imageRepository.find({
+      where: {
+        product: { id: productId },
+        type: In(images.map((img) => img.type)),
+      },
     });
 
-    if (!image) {
-      throw new NotFoundException('Image not found');
+    if (existingImages.length > 0) {
+      const imageIdsToDelete = existingImages.map((img) => img.id);
+      await this.removeImagesByIds(imageIdsToDelete, qr);
     }
 
-    const updatedImage = imageRepository.merge(image, updateImageDto);
-    return imageRepository.save(updatedImage);
+    const newImages = images.map((img) => {
+      return imageRepository.create({
+        ...img,
+        product: { id: productId },
+      });
+    });
+
+    return imageRepository.save(newImages);
   }
 }

@@ -1,117 +1,71 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { QueryRunner, Repository } from 'typeorm';
+import { Not, QueryRunner, Repository } from 'typeorm';
 import { ProductModel } from './product.entity';
-import { CategoriesEnum, CategoryRelationMap } from './const/categories.const';
-import { ProductImagesService } from './image/images.service';
-import { CreateProductDto } from './dto/create-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CommonService } from 'src/common/common.service';
+import { BasePaginateProductDto } from './dto/paginate-product.dto';
 import { CameraService } from './camera/camera.service';
 import { FrameGrabberService } from './frame-grabber/frame-grabber.service';
 import { LensService } from './lens/lens.service';
 import { SoftwareService } from './software/software.service';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CommonService } from 'src/common/common.service';
-import { BasePaginateProductDto } from './dto/paginate-product.dto';
+import { LightService } from './light/light.service';
+import { QueryRunner as QR } from 'typeorm';
+import { AbstractProductService } from './service/abstract-product.service';
+import {
+  CreateCategoryDtoMap,
+  UpdateCategoryDtoMap,
+} from './types/category-dto.type';
+import { CategoriesEnum, CategoryRelationMap } from '@humming-vision/shared';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    private readonly productImagesService: ProductImagesService,
     private readonly cameraService: CameraService,
     private readonly frameGrabberService: FrameGrabberService,
     private readonly lensService: LensService,
     private readonly softwareService: SoftwareService,
+    private readonly lightService: LightService,
     private readonly commonService: CommonService,
     @InjectRepository(ProductModel)
     private readonly productRepository: Repository<ProductModel>,
   ) {}
 
-  private async handleCategoryUpdate(
-    category: CategoriesEnum,
-    updateProductDto: UpdateProductDto,
-    id: number,
-    qr: QueryRunner,
-  ) {
-    switch (category) {
-      case CategoriesEnum.CAMERA:
-        if (updateProductDto.camera) {
-          await this.cameraService.updateCamera(
-            updateProductDto.camera,
-            id,
-            qr,
-          );
-        }
-        break;
-      case CategoriesEnum.FRAMEGRABBER:
-        if (updateProductDto.frameGrabber) {
-          await this.frameGrabberService.updateFrameGrabber(
-            updateProductDto.frameGrabber,
-            id,
-            qr,
-          );
-        }
-        break;
-      case CategoriesEnum.LENS:
-        if (updateProductDto.lens) {
-          await this.lensService.updateLens(updateProductDto.lens, id, qr);
-        }
-        break;
-      case CategoriesEnum.SOFTWARE:
-        if (updateProductDto.software) {
-          await this.softwareService.updateSoftware(
-            updateProductDto.software,
-            id,
-            qr,
-          );
-        }
-        break;
-    }
+  private getCategoryServiceMap() {
+    return {
+      [CategoriesEnum.CAMERA]: this.cameraService,
+      [CategoriesEnum.FRAMEGRABBER]: this.frameGrabberService,
+      [CategoriesEnum.LENS]: this.lensService,
+      [CategoriesEnum.SOFTWARE]: this.softwareService,
+      [CategoriesEnum.LIGHT]: this.lightService,
+    };
   }
 
-  private async handleCategoryCreate(
-    category: CategoriesEnum,
-    createProductDto: CreateProductDto,
-    savedProduct: ProductModel,
-    qr: QueryRunner,
+  async createGenericProduct<K extends CategoriesEnum>(
+    category: K,
+    dto: CreateCategoryDtoMap[K],
+    qr: QR,
   ) {
-    switch (category) {
-      case CategoriesEnum.CAMERA:
-        if (createProductDto.camera) {
-          await this.cameraService.createCamera(
-            createProductDto.camera,
-            savedProduct,
-            qr,
-          );
-        }
-        break;
-      case CategoriesEnum.FRAMEGRABBER:
-        if (createProductDto.frameGrabber) {
-          await this.frameGrabberService.createFrameGrabber(
-            createProductDto.frameGrabber,
-            savedProduct,
-            qr,
-          );
-        }
-        break;
-      case CategoriesEnum.LENS:
-        if (createProductDto.lens) {
-          await this.lensService.createLens(
-            createProductDto.lens,
-            savedProduct,
-            qr,
-          );
-        }
-        break;
-      case CategoriesEnum.SOFTWARE:
-        if (createProductDto.software) {
-          await this.softwareService.createSoftware(
-            createProductDto.software,
-            savedProduct,
-            qr,
-          );
-        }
-        break;
-    }
+    const serviceMap = this.getCategoryServiceMap();
+    const service = serviceMap[category] as AbstractProductService<
+      CreateCategoryDtoMap[K],
+      any
+    >;
+
+    return service.createProduct(dto, category, qr);
+  }
+
+  async updateGenericProduct<K extends CategoriesEnum>(
+    category: K,
+    dto: UpdateCategoryDtoMap[K],
+    qr: QR,
+  ) {
+    const serviceMap = this.getCategoryServiceMap();
+    const service = serviceMap[category] as AbstractProductService<
+      any,
+      UpdateCategoryDtoMap[K]
+    >;
+
+    return service.updateProduct(dto.id, category, dto, qr);
   }
 
   async getProductById(
@@ -133,6 +87,26 @@ export class ProductsService {
     return product;
   }
 
+  async getCamerasBySensor(
+    sensor: string,
+    take: number,
+    skipId: number,
+  ): Promise<ProductModel[]> {
+    return this.productRepository.find({
+      where: {
+        camera: {
+          sensor,
+        },
+        id: Not(skipId),
+      },
+      take,
+      relations: {
+        camera: true,
+        images: true,
+      },
+    });
+  }
+
   async paginateProduct(dto: BasePaginateProductDto, category: CategoriesEnum) {
     return this.commonService.paginate(
       dto,
@@ -149,95 +123,21 @@ export class ProductsService {
       {},
       (qb, dto) => {
         if ('_camera__resolution__between' in dto) {
-          const [min, max] = dto._camera__resolution__between! as [
+          const [minMP, maxMP] = dto._camera__resolution__between! as [
             number,
             number,
           ];
 
           qb.andWhere(
-            'camera.resolutionX * camera.resolutionY BETWEEN :min AND :max',
+            `CAST(camera.resolutionX AS bigint) * CAST(camera.resolutionY AS bigint) / 1000000 BETWEEN :minMP AND :maxMP`,
             {
-              min,
-              max,
+              minMP,
+              maxMP,
             },
           );
         }
       },
     );
-  }
-
-  async updateProduct(
-    id: number,
-    category: CategoriesEnum,
-    updateProductDto: UpdateProductDto,
-    qr: QueryRunner,
-  ) {
-    const productRepository =
-      qr.manager.getRepository<ProductModel>(ProductModel);
-
-    const product = await productRepository.findOne({
-      where: { id },
-      relations: {
-        [CategoryRelationMap[category]]: true,
-        images: true,
-      },
-    });
-
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-
-    const updatedProduct = productRepository.merge(product, updateProductDto);
-    const savedProduct = await productRepository.save(updatedProduct);
-
-    if (updateProductDto.images && updateProductDto.images.length > 0) {
-      await Promise.all(
-        updateProductDto.images.map((image) =>
-          this.productImagesService.updateImage(image, id, qr),
-        ),
-      );
-    }
-
-    await this.handleCategoryUpdate(category, updateProductDto, id, qr);
-
-    return productRepository.findOne({
-      where: { id: savedProduct.id },
-      relations: {
-        [CategoryRelationMap[category]]: true,
-        images: true,
-      },
-    });
-  }
-
-  async createProduct(createProductDto: CreateProductDto, qr: QueryRunner) {
-    const productRepository =
-      qr.manager.getRepository<ProductModel>(ProductModel);
-
-    const product = productRepository.create(createProductDto);
-    const savedProduct = await productRepository.save(product);
-
-    if (createProductDto.images && createProductDto.images.length > 0) {
-      await Promise.all(
-        createProductDto.images.map((image) =>
-          this.productImagesService.createImage(image, savedProduct, qr),
-        ),
-      );
-    }
-
-    await this.handleCategoryCreate(
-      createProductDto.categories,
-      createProductDto,
-      savedProduct,
-      qr,
-    );
-
-    return productRepository.findOne({
-      where: { id: savedProduct.id },
-      relations: {
-        [CategoryRelationMap[createProductDto.categories]]: true,
-        images: true,
-      },
-    });
   }
 
   async deleteProduct(id: number, qr: QueryRunner) {

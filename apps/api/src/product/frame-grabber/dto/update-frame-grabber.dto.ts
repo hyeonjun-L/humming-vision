@@ -1,8 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateFrameGrabberDto } from './create-frame-grabber.dto';
 import { IsNotEmpty, IsNumber } from 'class-validator';
+import { BaseFrameGrabberDto } from './base-frame-grabber.dto';
 
-export class UpdateFrameGrabberDto extends PartialType(CreateFrameGrabberDto) {
+export class UpdateFrameGrabberDto extends PartialType(BaseFrameGrabberDto) {
   @IsNotEmpty()
   @IsNumber()
   id: number;

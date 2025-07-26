@@ -55,7 +55,7 @@ export class AdminService {
     return existingAdmin;
   }
 
-  async loginAdmin(admin: Pick<AdminModel, 'email' | 'id'>) {
+  async loginAdmin(admin: AdminModel) {
     const accessToken = this.signToken(admin, false);
     const refreshToken = this.signToken(admin, true);
     await this.upsertSession(admin.id, refreshToken);
@@ -176,7 +176,8 @@ export class AdminService {
     const refreshExpiresMs = Number(
       this.configService.get(ENV_JWT_REFRESH_EXPIRES),
     );
-    const expiresAt = new Date(Date.now() + refreshExpiresMs);
+    const expiresAt = new Date(Date.now() + refreshExpiresMs * 1000);
+
     const session = await this.getSessionByAdminId(adminId);
 
     if (session) {
