@@ -77,6 +77,7 @@ export default function AdminLoginPage() {
       });
     },
     onError: (error: Error) => {
+      toast.dismiss();
       setError("root", {
         type: "server",
         message: error.message,
