@@ -28,7 +28,7 @@ WORKDIR /app
 # 필수 파일 복사
 COPY --from=builder /app/out/json/ .
 
-COPY --from=builder /app/packages/shared ./packages/shared
+COPY --from=builder /app/out/full/node_modules/@humming-vision/shared ./node_modules/@humming-vision/shared
 
 # 설치
 RUN npm install --frozen-lockfile
