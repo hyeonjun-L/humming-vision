@@ -4,8 +4,14 @@ import { COOKIE_NAMES } from "consts/cookie.const";
 import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 import verifyAccessToken from "utils/verify-access-token";
 
-const createRedirectUrl = (path: string, request: NextRequest) =>
-  new URL(path, request.url);
+const createRedirectUrl = (path: string, request: NextRequest) => {
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const forwardedProto = request.headers.get("x-forwarded-proto") || "https";
+  const host = forwardedHost || request.nextUrl.host;
+  const protocol = forwardedProto;
+
+  return new URL(path, `${protocol}://${host}`);
+};
 
 const createRefreshUrl = (request: NextRequest, redirectPath: string) => {
   const refreshUrl = new URL("/admin/refresh", request.url);
