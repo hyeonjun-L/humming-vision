@@ -13,10 +13,15 @@ RUN apk update && apk add --no-cache libc6-compat
 # 터보 설치 (Prune에 사용)
 RUN npm install -g turbo
 
+# 환경 변수 (빌드 타임에 전달받을 값들)
+ARG NEXT_PUBLIC_NAVER_CLIENT_ID
+ARG NEXT_PUBLIC_API_END_POINT
+
+ENV NEXT_PUBLIC_NAVER_CLIENT_ID=$NEXT_PUBLIC_NAVER_CLIENT_ID
+ENV NEXT_PUBLIC_API_END_POINT=$NEXT_PUBLIC_API_END_POINT
+
 # 전체 프로젝트 복사
 COPY . .
-COPY .env .env
-COPY .env apps/web/.env
 
 # web만 남기고 prune (이미 실행했다면 생략 가능)
 RUN turbo prune web --docker

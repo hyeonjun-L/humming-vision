@@ -26,18 +26,14 @@ jobs:
       - name: Prune for api
         run: npx turbo prune api --docker
 
-      - name: Create .env file
-        run: |
-          echo "NEXT_PUBLIC_NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
-          echo "NEXT_PUBLIC_JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "NEXT_PUBLIC_JWT_ACCESS_EXPIRES=${{ secrets.JWT_ACCESS_EXPIRES }}" >> .env
-          echo "NEXT_PUBLIC_JWT_REFRESH_EXPIRES=${{ secrets.JWT_REFRESH_EXPIRES }}" >> .env
-          echo "NEXT_PUBLIC_NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
-          echo "NEXT_PUBLIC_NAVER_SECRET=${{ secrets.NAVER_SECRET }}" >> .env
-
       - name: Build Docker images
         run: |
-          docker build -f apps/web/Dockerfile -t humming-vision-web .
+          docker build \
+            -f apps/web/Dockerfile \
+            --build-arg NEXT_PUBLIC_NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
+            --build-arg NEXT_PUBLIC_API_END_POINT=${{ secrets.API_END_POINT }} \
+            -t humming-vision-web .
+
           docker build -f apps/api/Dockerfile -t humming-vision-api .
 
       - name: Save images to tar

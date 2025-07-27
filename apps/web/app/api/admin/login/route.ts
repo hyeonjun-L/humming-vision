@@ -27,8 +27,6 @@ export const POST = async (request: NextRequest) => {
     return handleConfigError("API endpoint not configured");
   }
 
-  console.log(END_POINT);
-
   const headers: Record<string, string> = {
     Authorization: `Basic ${Buffer.from(`${email}:${password}`).toString("base64")}`,
     "Content-Type": "application/json",
