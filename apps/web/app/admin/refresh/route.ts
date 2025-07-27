@@ -31,6 +31,8 @@ export const GET = async (request: NextRequest) => {
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
   const url = new URL(request.url);
 
+  console.log(`Refresh token: ${refreshToken}`);
+
   const redirectPath =
     url.searchParams.get("redirect") ??
     `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
