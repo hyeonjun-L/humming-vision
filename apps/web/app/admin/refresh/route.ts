@@ -30,44 +30,45 @@ const createRedirectUrl = (path: string, request: NextRequest) => {
 export const GET = async (request: NextRequest) => {
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
   const url = new URL(request.url);
+  const redirectPath = url.searchParams.get("redirect");
 
-  console.log(`Refresh token: ${refreshToken}`);
-
-  const redirectPath =
-    url.searchParams.get("redirect") ??
-    `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
+  console.log("---- REFRESH HANDLER ----");
+  console.log("redirectPath:", redirectPath);
+  console.log("refreshToken:", refreshToken ? "present" : "none");
 
   if (!refreshToken) {
-    return NextResponse.redirect(createRedirectUrl(redirectPath, request));
-  }
-
-  const END_POINT = process.env[ENV_API_END_POINT_KEY];
-
-  if (!END_POINT) {
-    return NextResponse.json("API endpoint not configured", { status: 500 });
+    console.log("No refresh token, redirect to login");
+    return NextResponse.redirect(
+      createRedirectUrl(`${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`, request),
+    );
   }
 
   try {
+    const END_POINT = process.env[ENV_API_END_POINT_KEY];
+    if (!END_POINT) {
+      console.error("END_POINT not configured");
+      return NextResponse.json("API endpoint not configured", { status: 500 });
+    }
+
     const response = await axios.post<TokenResponse>(
       `${END_POINT}/admin/token/access`,
       {},
       {
         headers: {
           Authorization: `Bearer ${refreshToken}`,
-          "Content-Type": "application/json",
         },
         adapter: "fetch",
-        fetchOptions: {
-          cache: "no-cache",
-        },
+        fetchOptions: { cache: "no-cache" },
       },
     );
+
+    console.log("Token refresh successful");
 
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       response.data;
 
     const nextResponse = NextResponse.redirect(
-      createRedirectUrl(redirectPath, request),
+      createRedirectUrl(redirectPath || "/", request),
     );
 
     nextResponse.cookies.set(
@@ -83,10 +84,11 @@ export const GET = async (request: NextRequest) => {
     );
 
     return nextResponse;
-  } catch {
-    const loginPath = `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
+  } catch (e) {
+    console.error("Token refresh failed", e);
+
     const redirectResponse = NextResponse.redirect(
-      createRedirectUrl(loginPath, request),
+      createRedirectUrl(`${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`, request),
     );
 
     redirectResponse.cookies.delete(COOKIE_NAMES.REFRESH_TOKEN);
