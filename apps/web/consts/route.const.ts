@@ -142,3 +142,5 @@ export const ADMIN_NAV_ITEMS: NavItemWithLink[] = [
     href: `${ADMIN_ROUTE_PATH}${AdminRoutePath.PRODUCT_CREATE}`,
   },
 ];
+
+export const PRODUCT_DOMAIN = "www.hummingvision.com";
