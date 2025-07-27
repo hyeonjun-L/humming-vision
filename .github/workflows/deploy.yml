@@ -28,13 +28,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "API_END_POINT=${{ secrets.API_END_POINT }}" >> apps/web/.env
-          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> apps/web/.env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> apps/web/.env
-          echo "JWT_ACCESS_EXPIRES=${{ secrets.JWT_ACCESS_EXPIRES }}" >> apps/web/.env
-          echo "JWT_REFRESH_EXPIRES=${{ secrets.JWT_REFRESH_EXPIRES }}" >> apps/web/.env
-          echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> apps/web/.env
-          echo "NAVER_SECRET=${{ secrets.NAVER_SECRET }}" >> apps/web/.env
+          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
 
       - name: Build Docker images
         run: |
