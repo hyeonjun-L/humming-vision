@@ -1,4 +1,4 @@
-import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
+import { ENV_API_END_POINT_KEY, NODE_ENV_KEY } from "consts/env-keys.const";
 import {
   ACCESS_TOKEN_COOKIE_OPTIONS,
   REFRESH_TOKEN_COOKIE_OPTIONS,
@@ -9,6 +9,20 @@ import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
 import axios from "axios";
 import { TokenResponse } from "@humming-vision/shared";
 
+const createRedirectUrl = (path: string, request: NextRequest) => {
+  const isProduction = process.env[NODE_ENV_KEY] === "production";
+
+  const host = isProduction
+    ? "www.hummingvision.com"
+    : request.headers.get("x-forwarded-host") || request.nextUrl.host;
+
+  const protocol = isProduction
+    ? "https"
+    : request.headers.get("x-forwarded-proto") || "http";
+
+  return new URL(path, `${protocol}://${host}`);
+};
+
 export const GET = async (request: NextRequest) => {
   const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
   const url = new URL(request.url);
@@ -18,7 +32,7 @@ export const GET = async (request: NextRequest) => {
     `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
 
   if (!refreshToken) {
-    return NextResponse.redirect(new URL(redirectPath, request.url));
+    return NextResponse.redirect(createRedirectUrl(redirectPath, request));
   }
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
@@ -47,7 +61,7 @@ export const GET = async (request: NextRequest) => {
       response.data;
 
     const nextResponse = NextResponse.redirect(
-      new URL(redirectPath, request.url),
+      createRedirectUrl(redirectPath, request),
     );
 
     nextResponse.cookies.set(
@@ -66,7 +80,7 @@ export const GET = async (request: NextRequest) => {
   } catch {
     const loginPath = `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
     const redirectResponse = NextResponse.redirect(
-      new URL(loginPath, request.url),
+      createRedirectUrl(loginPath, request),
     );
 
     redirectResponse.cookies.delete(COOKIE_NAMES.REFRESH_TOKEN);
