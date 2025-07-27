@@ -81,6 +81,8 @@ function ContactForm({ isContactPage }: ContactFormProps) {
     keyof ContactFormData | null
   >(null);
 
+  console.log("test");
+
   const {
     register,
     handleSubmit,
