@@ -1,14 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { ENV_API_END_POINT_KEY, NODE_ENV_KEY } from "consts/env-keys.const";
 import { COOKIE_NAMES } from "consts/cookie.const";
-import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
+import {
+  ADMIN_ROUTE_PATH,
+  AdminRoutePath,
+  PRODUCT_DOMAIN,
+} from "consts/route.const";
 import verifyAccessToken from "utils/verify-access-token";
 
 const createRedirectUrl = (path: string, request: NextRequest) => {
   const isProduction = process.env[NODE_ENV_KEY] === "production";
 
   const host = isProduction
-    ? "www.hummingvision.com"
+    ? PRODUCT_DOMAIN
     : request.headers.get("x-forwarded-host") || request.nextUrl.host;
 
   const protocol = isProduction
@@ -26,7 +30,7 @@ const createRefreshUrl = (request: NextRequest, redirectPath: string) => {
   const isProduction = process.env[NODE_ENV_KEY] === "production";
 
   const host = isProduction
-    ? "www.hummingvision.com"
+    ? PRODUCT_DOMAIN
     : request.headers.get("x-forwarded-host") || request.nextUrl.host;
 
   const protocol = isProduction

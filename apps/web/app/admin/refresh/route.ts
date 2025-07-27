@@ -5,7 +5,11 @@ import {
   COOKIE_NAMES,
 } from "consts/cookie.const";
 import { NextResponse, type NextRequest } from "next/server";
-import { ADMIN_ROUTE_PATH, AdminRoutePath } from "consts/route.const";
+import {
+  ADMIN_ROUTE_PATH,
+  AdminRoutePath,
+  PRODUCT_DOMAIN,
+} from "consts/route.const";
 import axios from "axios";
 import { TokenResponse } from "@humming-vision/shared";
 
@@ -13,7 +17,7 @@ const createRedirectUrl = (path: string, request: NextRequest) => {
   const isProduction = process.env[NODE_ENV_KEY] === "production";
 
   const host = isProduction
-    ? "www.hummingvision.com"
+    ? PRODUCT_DOMAIN
     : request.headers.get("x-forwarded-host") || request.nextUrl.host;
 
   const protocol = isProduction
