@@ -34,6 +34,11 @@ jobs:
           mkdir -p out/apps/api/node_modules/@humming-vision
           cp -r packages/shared out/apps/api/node_modules/@humming-vision/shared
 
+      - name: Copy shared package into out/full for Docker
+        run: |
+          mkdir -p out/full/node_modules/@humming-vision
+          cp -r packages/shared out/full/node_modules/@humming-vision/shared
+
       - name: Build Docker images
         run: |
           docker build -f apps/web/Dockerfile -t humming-vision-web .
