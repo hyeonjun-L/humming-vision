@@ -26,6 +26,16 @@ jobs:
       - name: Prune for api
         run: npx turbo prune api --docker
 
+      - name: Create .env file
+        run: |
+          echo "API_END_POINT=${{ secrets.API_END_POINT }}" >> .env
+          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "JWT_ACCESS_EXPIRES=${{ secrets.JWT_ACCESS_EXPIRES }}" >> .env
+          echo "JWT_REFRESH_EXPIRES=${{ secrets.JWT_REFRESH_EXPIRES }}" >> .env
+          echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
+          echo "NAVER_SECRET=${{ secrets.NAVER_SECRET }}" >> .env
+
       - name: Build Docker images
         run: |
           docker build -f apps/web/Dockerfile -t humming-vision-web .

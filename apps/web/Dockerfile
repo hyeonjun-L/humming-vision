@@ -15,7 +15,7 @@ RUN npm install -g turbo
 
 # 전체 프로젝트 복사
 COPY . .
-COPY apps/web/.env .env
+COPY .env .env
 
 # web만 남기고 prune (이미 실행했다면 생략 가능)
 RUN turbo prune web --docker
