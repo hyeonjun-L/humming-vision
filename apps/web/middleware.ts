@@ -15,12 +15,28 @@ const createRedirectUrl = (path: string, request: NextRequest) => {
     ? "https"
     : request.headers.get("x-forwarded-proto") || "http";
 
-  return new URL(path, `${protocol}://${host}`);
+  const redirectUrl = new URL(path, `${protocol}://${host}`);
+
+  console.log(`Redirecting to: ${redirectUrl.toString()}`);
+
+  return redirectUrl;
 };
 
 const createRefreshUrl = (request: NextRequest, redirectPath: string) => {
-  const refreshUrl = new URL("/admin/refresh", request.url);
+  const isProduction = process.env[NODE_ENV_KEY] === "production";
+
+  const host = isProduction
+    ? "www.hummingvision.com"
+    : request.headers.get("x-forwarded-host") || request.nextUrl.host;
+
+  const protocol = isProduction
+    ? "https"
+    : request.headers.get("x-forwarded-proto") || "http";
+
+  const refreshUrl = new URL("/admin/refresh", `${protocol}://${host}`);
   refreshUrl.searchParams.set("redirect", redirectPath);
+
+  console.log(`Redirecting to refresh URL: ${refreshUrl.toString()}`);
 
   return refreshUrl;
 };
