@@ -28,12 +28,12 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "JWT_ACCESS_EXPIRES=${{ secrets.JWT_ACCESS_EXPIRES }}" >> .env
-          echo "JWT_REFRESH_EXPIRES=${{ secrets.JWT_REFRESH_EXPIRES }}" >> .env
-          echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
-          echo "NAVER_SECRET=${{ secrets.NAVER_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
+          echo "NEXT_PUBLIC_JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_JWT_ACCESS_EXPIRES=${{ secrets.JWT_ACCESS_EXPIRES }}" >> .env
+          echo "NEXT_PUBLIC_JWT_REFRESH_EXPIRES=${{ secrets.JWT_REFRESH_EXPIRES }}" >> .env
+          echo "NEXT_PUBLIC_NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> .env
+          echo "NEXT_PUBLIC_NAVER_SECRET=${{ secrets.NAVER_SECRET }}" >> .env
 
       - name: Build Docker images
         run: |
