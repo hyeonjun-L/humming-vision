@@ -36,10 +36,12 @@ COPY --from=builder /app/out/full/packages/shared ./packages/shared
 # 의존성 설치 (pnpm 기준)
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
-# 전체 소스 복사
 COPY --from=builder /app/out/full/ .
 
-# 빌드 (api만)
+# 의존성 설치
+RUN npm install --frozen-lockfile
+
+# 빌드
 RUN npx turbo run build --filter=api
 
 # ======================
