@@ -26,9 +26,6 @@ jobs:
       - name: Prune for api
         run: npx turbo prune api --docker
 
-      - name: Copy shared package into pruned output
-        run: cp -r packages/shared out/apps/api/packages/shared
-
       - name: Build Docker images
         run: |
           docker build -f apps/web/Dockerfile -t humming-vision-web .
