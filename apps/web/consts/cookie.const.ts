@@ -9,8 +9,7 @@ export const createCookieOptions = (
   maxAgeEnvKey?: string,
 ): Partial<ResponseCookie> => ({
   httpOnly: true,
-  secure: false,
-  // secure: process.env[NODE_ENV_KEY] === "production",
+  secure: process.env[NODE_ENV_KEY] === "production",
   sameSite: "strict",
   path: "/",
   maxAge:
