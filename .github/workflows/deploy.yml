@@ -26,6 +26,9 @@ jobs:
       - name: Prune for api
         run: npx turbo prune api --docker
 
+      - name: Ensure shared package path exists
+        run: mkdir -p out/apps/api/packages
+
       - name: Copy shared package into pruned output
         run: |
           mkdir -p out/apps/api/node_modules/@humming-vision
