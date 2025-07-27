@@ -25,16 +25,20 @@ RUN turbo prune api --docker
 FROM base AS installer
 WORKDIR /app
 
-# 필수 파일 복사
-COPY --from=builder /app/out/json/ .
+# 루트 패키지 관련 파일 복사
+COPY --from=builder /app/out/json/package.json ./
+COPY --from=builder /app/out/json/package-lock.json ./
 
-# 설치
-RUN npm install --frozen-lockfile
+# shared 패키지 복사
+COPY --from=builder /app/out/full/packages/shared ./packages/shared
+
+# 의존성 설치
+RUN npm ci
 
 # 전체 소스 복사
 COPY --from=builder /app/out/full/ .
 
-# 빌드 (api만)
+# API만 빌드
 RUN npx turbo run build --filter=api
 
 # ======================
