@@ -25,18 +25,16 @@ RUN turbo prune api --docker
 FROM base AS installer
 WORKDIR /app
 
-# 필수 파일 복사
+# JSON (package.json들)
 COPY --from=builder /app/out/json/ .
 
-COPY --from=builder /app/out/full/node_modules/@humming-vision/shared ./node_modules/@humming-vision/shared
-
-# 설치
-RUN npm install --frozen-lockfile
-
-# 전체 소스 복사
+# 전체 소스 복사 (node_modules 포함)
 COPY --from=builder /app/out/full/ .
 
-# 빌드 (api만)
+# 의존성 설치
+RUN npm install --frozen-lockfile
+
+# 빌드
 RUN npx turbo run build --filter=api
 
 # ======================
