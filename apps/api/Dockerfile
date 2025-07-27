@@ -25,11 +25,16 @@ RUN turbo prune api --docker
 FROM base AS installer
 WORKDIR /app
 
-# 필수 파일 복사
-COPY --from=builder /app/out/json/ .
+# 필수 파일 복사 (루트 package.json, lockfile 포함)
+COPY --from=builder /app/out/json/package.json ./package.json
+COPY --from=builder /app/out/json/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/out/json/pnpm-workspace.yaml ./pnpm-workspace.yaml
 
-# 설치
-RUN npm install --frozen-lockfile
+# 👇 shared 패키지도 같이 복사
+COPY --from=builder /app/out/full/packages/shared ./packages/shared
+
+# 의존성 설치 (pnpm 기준)
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 # 전체 소스 복사
 COPY --from=builder /app/out/full/ .
