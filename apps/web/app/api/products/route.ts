@@ -1,4 +1,5 @@
 import axios from "axios";
+import { COOKIE_NAMES } from "consts/cookie.const";
 import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import { NextRequest, NextResponse } from "next/server";
 import {
@@ -6,9 +7,23 @@ import {
   handleValidationError,
   handleConfigError,
 } from "utils/api-error-handler";
+import verifyAccessToken from "utils/verify-access-token";
+
+const checkIsAdmin = async (token?: string): Promise<boolean> => {
+  if (!token) return false;
+  try {
+    await verifyAccessToken(token);
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
+  const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;
+
+  const isAdmin = await checkIsAdmin(accessToken);
 
   const category = searchParams.get("category");
   const page = searchParams.get("page");
@@ -137,12 +152,14 @@ export const GET = async (request: NextRequest) => {
 
     const response = await axios.get(backendUrl, {
       adapter: "fetch",
-      fetchOptions: {
-        next: {
-          revalidate: 3600,
-        },
-        cache: "force-cache",
-      },
+      fetchOptions: isAdmin
+        ? { cache: "no-cache" }
+        : {
+            next: {
+              revalidate: 3600,
+            },
+            cache: "force-cache",
+          },
     });
 
     const data = response.data;

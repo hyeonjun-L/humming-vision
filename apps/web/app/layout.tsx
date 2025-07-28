@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://www.hummingvision.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fmain-banner-1.56f02c00.jpg&w=3840&q=75",
         width: 1200,
         height: 630,
         alt: "허밍비전 OG 이미지",

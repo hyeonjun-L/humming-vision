@@ -29,22 +29,12 @@ export class AdminController {
   async tokenAccess(
     @Headers('authorization') rawToken: string,
   ): Promise<TokenResponse> {
-    console.log(`Access token requested with header: ${rawToken}`);
-
     const token = this.adminService.extractTokenFromHeader(rawToken, true);
-
-    console.log(`Access token requested with token: ${token}`);
 
     const newAccessToken = this.adminService.rotateToken(token, false);
     const newRefreshToken = this.adminService.rotateToken(token, true);
 
-    console.log('Updating session with new refresh token...');
-
     await this.adminService.updateSessionByAdminId(newRefreshToken);
-
-    console.log(`New access token generated: ${newAccessToken}`);
-
-    console.log(`New refresh token generated: ${newRefreshToken}`);
 
     return {
       accessToken: newAccessToken,

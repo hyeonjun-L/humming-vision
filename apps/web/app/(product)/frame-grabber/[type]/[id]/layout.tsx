@@ -1,0 +1,50 @@
+import { Metadata } from "next";
+import { handleApiError } from "utils/api-error-handler";
+import { getFrameGrabberProduct } from "./get-frame-grabber-product";
+import { DEFAULT_DESCRIPTION, SITE_TITLE } from "consts/metadata.const";
+
+type Props = {
+  params: Promise<{ id: string }>;
+};
+// TODO: 중복코드 제거
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+
+  try {
+    const product = await getFrameGrabberProduct(id);
+
+    return {
+      title: `${product.name} | ${SITE_TITLE}`,
+      description: product.mainFeature || DEFAULT_DESCRIPTION,
+      openGraph: {
+        title: `${product.name} | ${SITE_TITLE}`,
+        description: product.mainFeature || DEFAULT_DESCRIPTION,
+        url: `https://hummingvision.co.kr/product/camera/${id}`,
+        images: product.images
+          .filter((img) => img.type === "PRODUCT")
+          .map((img) => ({ url: img.path })),
+        locale: "ko_KR",
+        siteName: "허밍비전",
+      },
+      alternates: {
+        canonical: `https://hummingvision.co.kr/product/camera/${id}`,
+      },
+    };
+  } catch (error) {
+    handleApiError(error);
+    return {
+      title: "제품 상세 | 허밍비전 HummingVision",
+      description: "제품 정보를 불러오지 못했습니다.",
+    };
+  }
+}
+
+function layout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return <>{children}</>;
+}
+
+export default layout;

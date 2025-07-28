@@ -32,12 +32,7 @@ export const GET = async (request: NextRequest) => {
   const url = new URL(request.url);
   const redirectPath = url.searchParams.get("redirect");
 
-  console.log("---- REFRESH HANDLER ----");
-  console.log("redirectPath:", redirectPath);
-  console.log("refreshToken:", refreshToken ? "present" : "none");
-
   if (!refreshToken) {
-    console.log("No refresh token, redirect to login");
     return NextResponse.redirect(
       createRedirectUrl(`${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`, request),
     );
@@ -61,8 +56,6 @@ export const GET = async (request: NextRequest) => {
         fetchOptions: { cache: "no-cache" },
       },
     );
-
-    console.log("Token refresh successful");
 
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       response.data;
