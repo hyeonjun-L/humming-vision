@@ -1,8 +1,6 @@
 import Detail from "@/(product)/_components/detail";
-import { LensProduct } from "@humming-vision/shared";
-import axios from "axios";
-import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 import { handleApiError } from "utils/api-error-handler";
+import { getSoftwareProduct } from "./get-software-product";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -11,23 +9,10 @@ type Props = {
 async function page({ params }: Props) {
   const { id } = await params;
 
-  const END_POINT = process.env[ENV_API_END_POINT_KEY];
-
   try {
-    const softwareData = await axios.get<LensProduct>(
-      `${END_POINT}/product/software/${id}`,
-      {
-        adapter: "fetch",
-        fetchOptions: {
-          next: {
-            revalidate: 3600,
-          },
-          cache: "force-cache",
-        },
-      },
-    );
+    const product = await getSoftwareProduct(id);
 
-    return <Detail product={softwareData.data} />;
+    return <Detail product={product} />;
   } catch (error) {
     handleApiError(error);
   }
