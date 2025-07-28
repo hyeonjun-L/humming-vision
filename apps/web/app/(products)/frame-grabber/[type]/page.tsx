@@ -70,6 +70,8 @@ async function page({ searchParams: initSearchParams, params }: Props) {
       },
     });
 
+    console.log(`Frame Grabber Data: `, frameGrabberData.data);
+
     if (frameGrabberData.data.data.length === 0) {
       return <EmptyProductState />;
     }
