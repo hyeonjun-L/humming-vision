@@ -21,8 +21,6 @@ const createRedirectUrl = (path: string, request: NextRequest) => {
 
   const redirectUrl = new URL(path, `${protocol}://${host}`);
 
-  console.log(`Redirecting to: ${redirectUrl.toString()}`);
-
   return redirectUrl;
 };
 
@@ -39,8 +37,6 @@ const createRefreshUrl = (request: NextRequest, redirectPath: string) => {
 
   const refreshUrl = new URL("/admin/refresh", `${protocol}://${host}`);
   refreshUrl.searchParams.set("redirect", redirectPath);
-
-  console.log(`Redirecting to refresh URL: ${refreshUrl.toString()}`);
 
   return refreshUrl;
 };
@@ -69,48 +65,29 @@ export async function middleware(request: NextRequest) {
   const loginPath = `${ADMIN_ROUTE_PATH}${AdminRoutePath.LOGIN}`;
   const contactPath = `${ADMIN_ROUTE_PATH}${AdminRoutePath.CONTACT}`;
 
-  console.log("---- MIDDLEWARE ----");
-  console.log("pathname:", pathname);
-  console.log("accessToken:", accessToken ? "present" : "none");
-  console.log("refreshToken:", refreshToken ? "present" : "none");
-  console.log("loginPath:", loginPath);
-  console.log("contactPath:", contactPath);
-
   if (pathname === loginPath) {
-    console.log("==> at login path");
     if (accessToken && (await isValidAccessToken(accessToken))) {
-      console.log("valid access token, redirect to contact page");
       return NextResponse.redirect(createRedirectUrl(contactPath, request));
     }
-    console.log("no valid token, allow to login page");
     return NextResponse.next();
   }
 
   if (accessToken) {
     if (await isValidAccessToken(accessToken)) {
-      console.log("valid access token, allow access");
       return NextResponse.next();
     }
 
     if (refreshToken) {
-      console.log(
-        "access token invalid, refresh token exists. redirect to refresh",
-      );
       return NextResponse.redirect(createRefreshUrl(request, pathname));
     }
 
-    console.log("access token invalid, no refresh token. redirect to login");
     return NextResponse.redirect(createRedirectUrl(loginPath, request));
   }
 
   if (refreshToken) {
-    console.log(
-      "no access token, but refresh token exists. redirect to refresh",
-    );
     return NextResponse.redirect(createRefreshUrl(request, pathname));
   }
 
-  console.log("no tokens at all, redirect to login");
   return NextResponse.redirect(createRedirectUrl(loginPath, request));
 }
 

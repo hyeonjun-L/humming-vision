@@ -28,12 +28,7 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build \
-            -f apps/web/Dockerfile \
-            --build-arg NEXT_PUBLIC_NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
-            --build-arg NEXT_PUBLIC_API_END_POINT=${{ secrets.API_END_POINT }} \
-            -t humming-vision-web .
-
+          docker build -f apps/web/Dockerfile -t humming-vision-web .
           docker build -f apps/api/Dockerfile -t humming-vision-api .
 
       - name: Save images to tar
