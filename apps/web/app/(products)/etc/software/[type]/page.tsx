@@ -23,6 +23,8 @@ type Props = {
   params: Promise<{ type: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 const GetSoftwareQuerySchema = z.object({
   software__maker__equal: z.enum(["MATROX", "EURESYS"]).optional(),
   where__name__i_like: z.string().optional(),

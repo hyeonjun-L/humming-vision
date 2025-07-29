@@ -16,6 +16,8 @@ type Props = {
   searchParams: Promise<GetLightQuery>;
 };
 
+export const dynamic = "force-dynamic";
+
 const GetLightQuerySchema = z.object({
   where__name__i_like: z.string().optional(),
   page: z.preprocess((v) => Number(v), z.number().min(1)).optional(),

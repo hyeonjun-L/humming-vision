@@ -153,9 +153,6 @@ export class ProductsController {
       | PaginateSoftwareDto
       | PaginateLightDto;
 
-    console.log('category:', category);
-    console.log('Query Parameters:', query);
-
     if (category === CategoriesEnum.CAMERA) {
       dto = plainToInstance(PaginateCameraDto, query, {
         enableImplicitConversion: true,

@@ -150,8 +150,6 @@ export const GET = async (request: NextRequest) => {
 
     const backendUrl = `${END_POINT}/product/${category}?${backendParams.toString()}`;
 
-    console.log("hi");
-
     const response = await axios.get(backendUrl, {
       adapter: "fetch",
       fetchOptions: isAdmin
