@@ -108,6 +108,9 @@ export class ProductsService {
   }
 
   async paginateProduct(dto: BasePaginateProductDto, category: CategoriesEnum) {
+    console.log('Paginate Product DTO:', dto);
+    console.log('Category:', category);
+
     return this.commonService.paginate(
       dto,
       this.productRepository,

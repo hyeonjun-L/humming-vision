@@ -38,6 +38,9 @@ async function page({ searchParams: initSearchParams, params }: Props) {
   const searchParams = await initSearchParams;
   const { type } = await params;
 
+  console.log("Camera Type:", type);
+  console.log("Search Params:", searchParams);
+
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
 
   try {
@@ -56,7 +59,10 @@ async function page({ searchParams: initSearchParams, params }: Props) {
     GetCameraQuerySchema,
   );
 
+  console.log("Validated Query:", validatedQuery.toString());
+
   try {
+    console.log(`${END_POINT}/product/camera?${validatedQuery.toString()}`);
     const cameraData = await axios.get<
       GetProductResponse<CategoriesEnum.CAMERA>
     >(`${END_POINT}/product/camera?${validatedQuery.toString()}`, {
@@ -68,6 +74,8 @@ async function page({ searchParams: initSearchParams, params }: Props) {
         },
       },
     });
+
+    console.log("Camera Data:", cameraData.data);
 
     if (cameraData.data.data.length === 0) {
       return <EmptyProductState />;
