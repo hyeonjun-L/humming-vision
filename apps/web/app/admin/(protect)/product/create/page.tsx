@@ -18,7 +18,10 @@ import { useProductForm } from "../_hooks/useProductForm";
 import { createUploadService } from "../_utils/uploadService";
 import { createProductApiProcessor } from "../_utils/productApiProcessor";
 import { ProductFormLayout } from "../_components/shared-ui";
-import { getFormSchema } from "./_schemas/product.schema";
+import {
+  createCompleteProductDto,
+  getFormSchema,
+} from "./_schemas/product.schema";
 import SubmitButton from "components/submit-button";
 import { toast } from "react-toastify";
 
