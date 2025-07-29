@@ -19,6 +19,8 @@ type Props = {
   params: Promise<{ type: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 const GetCameraQuerySchema = z.object({
   camera__type__equal: z.enum(["LINE", "AREA"]),
   camera__maker__equal: z
