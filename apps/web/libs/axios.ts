@@ -17,12 +17,6 @@ export const protectApi = axios.create({
 export const publicApi = axios.create({
   baseURL: process.env[ENV_API_END_POINT_KEY],
   adapter: "fetch",
-  fetchOptions: {
-    cache: "force-cache",
-    next: {
-      revalidate: 3600,
-    },
-  },
 });
 
 protectApi.interceptors.response.use(

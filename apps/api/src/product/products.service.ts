@@ -111,7 +111,7 @@ export class ProductsService {
     console.log('Paginate Product DTO:', dto);
     console.log('Category:', category);
 
-    return this.commonService.paginate(
+    const products = this.commonService.paginate(
       dto,
       this.productRepository,
       {
@@ -141,6 +141,10 @@ export class ProductsService {
         }
       },
     );
+
+    console.log('Paginated Products:', products);
+
+    return products;
   }
 
   async deleteProduct(id: number, qr: QueryRunner) {
