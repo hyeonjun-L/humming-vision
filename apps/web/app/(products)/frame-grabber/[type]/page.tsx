@@ -19,6 +19,8 @@ type Props = {
   params: Promise<{ type: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 const GetFrameGrabberQuerySchema = z.object({
   frameGrabber__maker__equal: z
     .enum(["MATROX", "EURESYS", "ADLINK", "BASLER"])

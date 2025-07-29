@@ -19,6 +19,8 @@ type Props = {
   params: Promise<{ type: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 const GetLensQuerySchema = z.object({
   lens__mount__equal: z.enum(["C", "CS", "F", "M"]).optional(),
   lens__focalLength__between: z.array(z.number()).length(2).optional(),
