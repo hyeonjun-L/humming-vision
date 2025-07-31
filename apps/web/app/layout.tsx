@@ -7,6 +7,7 @@ import ModalRoot from "./_components/modal-root";
 import { QueryProvider } from "providers/query.provider";
 import { ToastContainer } from "react-toastify";
 import Footer from "./_components/footer";
+import Head from "next/head";
 
 const notoSansKRFont = Noto_Sans_KR({
   display: "fallback",
@@ -65,6 +66,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <Head>
+        <meta
+          name="naver-site-verification"
+          content="6b4d15cd5dba94c6d6813bd8848ddbc9f197db40"
+        />
+      </Head>
       <body
         className={`${gothamBookFont.variable} ${notoSansKRFont.variable} ${gothamBoldFont.variable} font-sans`}
       >
