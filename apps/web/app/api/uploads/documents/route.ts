@@ -9,6 +9,12 @@ import {
   handleAuthError,
 } from "utils/api-error-handler";
 
+const ALLOWED_EXTENSIONS = [".pdf", ".dwg", ".stp"];
+
+function getFileExtension(filename: string): string {
+  return "." + filename.split(".").pop()?.toLowerCase();
+}
+
 export const POST = async (request: NextRequest) => {
   try {
     const formData = await request.formData();
@@ -18,8 +24,12 @@ export const POST = async (request: NextRequest) => {
       return handleValidationError("파일이 업로드되지 않았습니다.");
     }
 
-    if (!file.type.includes("pdf")) {
-      return handleValidationError("PDF 파일만 업로드 가능합니다.");
+    const ext = getFileExtension(file.name);
+
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      return handleValidationError(
+        `허용되지 않은 파일 형식입니다. (허용된 확장자: ${ALLOWED_EXTENSIONS.join(", ")})`,
+      );
     }
 
     const accessToken = request.cookies.get(COOKIE_NAMES.ACCESS_TOKEN)?.value;

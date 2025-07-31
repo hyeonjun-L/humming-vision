@@ -3,7 +3,7 @@ import { Control, FieldPath } from "react-hook-form";
 import { Input } from "components/input";
 import { SelectBox } from "components/select-box/select-box";
 import ImageUpload from "components/image-upload/image-upload";
-import PdfUpload from "components/pdf-upload";
+import FileUpload from "components/file-upload";
 import { ProductFormData } from "../create/_types/product.type";
 import { ProductUpdateFormData } from "../update/_types/product-update.type";
 import { FormField } from "../create/_components/form-field";
@@ -18,6 +18,7 @@ interface BaseInputProps<
   control: Control<T>;
   label: string;
   className?: string;
+  accept?: string[]; // 예: ['.pdf', '.dwg', '.stp']
 }
 
 interface TextInputProps<
@@ -50,7 +51,7 @@ interface ImageUploadInputProps<
   maxImages?: number;
 }
 
-type PdfUploadInputProps<
+type FileUploadInputProps<
   T extends SupportedFormData,
   TName extends FieldPath<T>,
 > = BaseInputProps<T, TName>;
@@ -167,10 +168,16 @@ export function ImageUploadInput<
   );
 }
 
-export function PdfUploadInput<
+export function FileUploadInput<
   T extends SupportedFormData,
   TName extends FieldPath<T>,
->({ name, control, label, className }: PdfUploadInputProps<T, TName>) {
+>({
+  name,
+  control,
+  label,
+  className,
+  accept, // 예: ['.pdf', '.dwg', '.stp']
+}: FileUploadInputProps<T, TName>) {
   return (
     <FormField
       name={name as any}
@@ -179,7 +186,11 @@ export function PdfUploadInput<
       className={className}
     >
       {({ field }) => (
-        <PdfUpload file={field.value} onFileChange={field.onChange} />
+        <FileUpload
+          file={field.value}
+          onFileChange={field.onChange}
+          accept={accept}
+        />
       )}
     </FormField>
   );
