@@ -58,10 +58,10 @@ function TypeNav() {
       TCL: `${RoutePath.LENS}${RoutePathWithCategory.TCL}`,
     },
     [RouteCategory.FRAMEGRABBER]: {
-      COAXPRESS: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.COAXPRESS}`,
-      LINK: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.LINK}`,
       GIGE: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.GIGE}`,
       USB: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.USB}`,
+      LINK: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.LINK}`,
+      COAXPRESS: `${RoutePath.FRAMEGRABBER}${RoutePathWithCategory.COAXPRESS}`,
     },
     [RouteCategory.LIGHT]: {
       LIGHT: RoutePath.LIGHT,

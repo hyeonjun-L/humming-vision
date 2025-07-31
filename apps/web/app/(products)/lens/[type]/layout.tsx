@@ -1,14 +1,8 @@
-import { Metadata, Viewport } from "next";
+import { Metadata } from "next";
 
 type Props = {
   params: Promise<{ type: string }>;
 };
-
-export function generateViewport(): Viewport {
-  return {
-    themeColor: "#00319b",
-  };
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { type } = await params;

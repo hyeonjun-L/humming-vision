@@ -1,10 +1,4 @@
-import { Metadata, Viewport } from "next";
-
-export function generateViewport(): Viewport {
-  return {
-    themeColor: "#00319b",
-  };
-}
+import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

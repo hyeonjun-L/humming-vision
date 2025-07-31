@@ -1,10 +1,4 @@
-import { Metadata, Viewport } from "next";
-
-export function generateViewport(): Viewport {
-  return {
-    themeColor: "#00319b",
-  };
-}
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "허밍비젼 | 제품 및 기술 문의",

@@ -1,4 +1,4 @@
-import { Metadata, Viewport } from "next";
+import { Metadata } from "next";
 import { handleApiError } from "utils/api-error-handler";
 import { getCameraProduct } from "./get-camera-product";
 import { DEFAULT_DESCRIPTION, SITE_TITLE } from "consts/metadata.const";
@@ -6,12 +6,6 @@ import { DEFAULT_DESCRIPTION, SITE_TITLE } from "consts/metadata.const";
 type Props = {
   params: Promise<{ type: string; id: string }>;
 };
-
-export function generateViewport(): Viewport {
-  return {
-    themeColor: "#00319b",
-  };
-}
 
 // TODO: 중복코드 제거
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

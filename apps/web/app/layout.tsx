@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Noto_Sans_KR } from "next/font/google";
 import localFont from "next/font/local";
@@ -24,12 +24,15 @@ const gothamBoldFont = localFont({
   variable: "--font-gotham-bold",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#00319b",
+};
+
 export const metadata: Metadata = {
   title: "주식회사 허밍비젼 HummingVision | 머신비전 하드웨어 전문기업",
   description:
     "크래비스, 바슬러, 콤퓨타, LVS등 글로벌 브랜드 머신비전 카메라, 렌즈, 조명을 공급하는 전문 기업 머신비전 하드웨어 솔루션의 최적 파트너",
   metadataBase: new URL("https://hummingvision.com"),
-  themeColor: "#00319b",
   openGraph: {
     title: "주식회사 허밍비젼 HummingVision | 머신비전 하드웨어 전문기업",
     description: "산업용 머신비전 분야에 혁신적인 시각 솔루션을 제공합니다.",
