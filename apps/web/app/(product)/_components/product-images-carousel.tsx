@@ -99,6 +99,7 @@ export default function ProductImagesCarousel({
                     fill
                     className="object-cover"
                     sizes="90px"
+                    priority
                   />
                 </button>
               ))}
