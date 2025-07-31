@@ -4,6 +4,7 @@ import {
   FileRequest,
 } from 'src/common/types/interface.types';
 import { FileType } from '../const/aws.const';
+import { extname } from 'path';
 
 /**
  * fileTypeFilter는 단일/다중 파일 업로드 모두 지원하도록 타입을 분리합니다.
@@ -16,21 +17,29 @@ export function fileTypeFilter() {
     file: Express.Multer.File,
     cb: (error: Error | null, acceptFile: boolean) => void,
   ) => {
+    if (!file || !file.originalname) {
+      return cb(
+        new BadRequestException('파일 정보가 유효하지 않습니다.'),
+        false,
+      );
+    }
+
+    const ext = extname(file.originalname).toLowerCase();
+
     if (file.mimetype.startsWith('image/')) {
       req.fileType = FileType.IMAGE;
       (file as ExtendedMulterFile).fileType = FileType.IMAGE;
       return cb(null, true);
     }
 
-    if (file.mimetype === 'application/pdf') {
+    const allowedExtensions = ['.pdf', '.dwg', '.stp'];
+
+    if (allowedExtensions.includes(ext)) {
       req.fileType = FileType.PDF;
       (file as ExtendedMulterFile).fileType = FileType.PDF;
       return cb(null, true);
     }
 
-    return cb(
-      new BadRequestException('이미지 또는 PDF 파일만 업로드할 수 있습니다.'),
-      false,
-    );
+    return cb(new BadRequestException('허용되지 않은 파일 형식입니다.'), false);
   };
 }

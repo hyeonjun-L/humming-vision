@@ -22,9 +22,16 @@ export const CategoryField = ({
       ? field[subCategory as keyof typeof field]
       : undefined;
 
-  const label =
-    field.label +
-    (field.unit ? ` (${field.unit})` : value ? ` (${value})` : "");
+  let label = field.label;
+  if (subCategory === "TCL" && value) {
+    label = "배율";
+  }
+  if (field.unit) {
+    label += ` (${field.unit})`;
+  } else if (value) {
+    label += ` (${value})`;
+  }
+
   const className = "flex w-full flex-col gap-2 lg:w-[calc(50%-10px)]";
 
   if (field.type === "select") {

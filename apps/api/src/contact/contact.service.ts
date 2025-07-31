@@ -53,7 +53,7 @@ export class ContactService {
   async sendContactEmail(contactData: CreateContactDto) {
     await this.mailerService.sendMail({
       to: this.configService.get(ENV_TO_EMAIL_KEY),
-      subject: `📩 [허밍비전 문의] ${contactData.subject || '새로운 문의가 도착했습니다'}`,
+      subject: `📩 [허밍비젼 문의] ${contactData.subject || '새로운 문의가 도착했습니다'}`,
       template: './contact',
       context: {
         name: contactData.name,

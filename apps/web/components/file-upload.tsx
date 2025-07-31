@@ -2,15 +2,28 @@
 import { useState, useRef } from "react";
 import { Upload, X, FileText } from "lucide-react";
 
-interface PdfUploadProps {
+interface UploadProps {
   file: File | null;
   onFileChange: (file: File | null) => void;
+  accept?: string[]; // 예: ['.pdf', '.dwg', '.stp']
   className?: string;
 }
 
-function PdfUpload({ file, onFileChange, className = "" }: PdfUploadProps) {
+function FileUpload({
+  file,
+  onFileChange,
+  className = "",
+  accept = [".pdf"],
+}: UploadProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const acceptedExtensions = accept.map((ext) => ext.toLowerCase());
+
+  const isAcceptedFile = (file: File) => {
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+    return acceptedExtensions.includes(`.${ext}`);
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -27,23 +40,18 @@ function PdfUpload({ file, onFileChange, className = "" }: PdfUploadProps) {
     setIsDragOver(false);
 
     const files = Array.from(e.dataTransfer.files);
-    const pdfFile = files.find((file) => file.type === "application/pdf");
-
-    if (pdfFile) {
-      onFileChange(pdfFile);
+    const acceptedFile = files.find((file) => isAcceptedFile(file));
+    if (acceptedFile) {
+      onFileChange(acceptedFile);
     }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
-
-    if (selectedFile && selectedFile.type === "application/pdf") {
+    if (selectedFile && isAcceptedFile(selectedFile)) {
       onFileChange(selectedFile);
     }
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleRemoveFile = () => {
@@ -67,7 +75,7 @@ function PdfUpload({ file, onFileChange, className = "" }: PdfUploadProps) {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".pdf,application/pdf"
+        accept={accept.join(",")}
         onChange={handleFileSelect}
         className="hidden"
       />
@@ -86,10 +94,11 @@ function PdfUpload({ file, onFileChange, className = "" }: PdfUploadProps) {
         >
           <Upload className="group-hover:text-gray600 text-gray400 mx-auto mb-4 size-12" />
           <p className="text-gray600 mb-2 text-base font-medium">
-            PDF 파일을 드래그하여 업로드하거나 클릭하세요
+            파일을 드래그하여 업로드하거나 클릭하세요
           </p>
           <p className="text-gray400 text-sm">
-            PDF 파일만 지원됩니다 (1개 파일)
+            지원 형식: {accept.join(", ").replaceAll(".", "").toUpperCase()}{" "}
+            (1개 파일)
           </p>
         </div>
       ) : (
@@ -121,4 +130,4 @@ function PdfUpload({ file, onFileChange, className = "" }: PdfUploadProps) {
   );
 }
 
-export default PdfUpload;
+export default FileUpload;

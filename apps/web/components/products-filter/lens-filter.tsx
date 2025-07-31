@@ -40,7 +40,7 @@ function LensFilter() {
   return (
     <>
       <Accordion
-        title={`초점거리 (${currentType === "CCTV" ? "mm" : "x"})`}
+        title={`${currentType === "CCTV" ? "초점거리" : "배율"} (${currentType === "CCTV" ? "mm" : "x"})`}
         defaultOpen={currentFocalLenght.length > 0}
         className="border-gray200 border-b"
       >

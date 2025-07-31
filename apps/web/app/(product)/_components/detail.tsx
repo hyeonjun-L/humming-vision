@@ -61,7 +61,7 @@ function Detail<T extends keyof CategoryToProductTypeMap>({
           상세스펙
         </h3>
 
-        {specImages.map((image) => (
+        {specImages.map((image, index) => (
           <div key={image.order} className="relative w-full md:w-[649px]">
             <Image
               src={image.path || ""}
@@ -70,6 +70,7 @@ function Detail<T extends keyof CategoryToProductTypeMap>({
               height={0}
               sizes="(min-width: 768px) 649px, 100vw"
               className="h-auto w-full object-contain"
+              priority={index < 2}
             />
           </div>
         ))}

@@ -5,7 +5,7 @@ import { infoSectionFields } from "../_const/constants";
 import {
   TextInput,
   ImageUploadInput,
-  PdfUploadInput,
+  FileUploadInput,
 } from "../../_components/shared-form-inputs";
 
 interface InfoSectionProps {
@@ -42,7 +42,7 @@ export const InfoSection = ({
       )}
 
       {fields.catalogFile && (
-        <PdfUploadInput
+        <FileUploadInput
           name="catalogFile"
           control={control}
           label="카탈로그 (PDF)"
@@ -50,15 +50,16 @@ export const InfoSection = ({
       )}
 
       {fields.datasheetFile && (
-        <PdfUploadInput
+        <FileUploadInput
           name="datasheetFile"
           control={control}
           label="Datasheet (PDF)"
+          accept={[".pdf", ".dwg", ".stp"]}
         />
       )}
 
       {fields.drawingFile && (
-        <PdfUploadInput
+        <FileUploadInput
           name="drawingFile"
           control={control}
           label="Drawing (PDF)"
@@ -66,9 +67,10 @@ export const InfoSection = ({
       )}
 
       {fields.manualFile && (
-        <PdfUploadInput
+        <FileUploadInput
           name="manualFile"
           control={control}
+          accept={[".pdf", ".dwg", ".stp", ".step"]}
           label="Manual (PDF)"
         />
       )}

@@ -28,13 +28,18 @@ function LensProductTable({
 }: LensProductTableProps) {
   const { updateSearchParams } = useUpdateSearchParams();
 
+  const focalLengthLabel = productsData.data.some(
+    (product) => product.lens.type !== "CCTV",
+  )
+    ? "배율"
+    : "초점거리";
+
   const columns: ColumnDef<LensProduct>[] = [
     {
       accessorKey: "info",
       header: "제조사/모델명",
       cell: ({ row }) => {
         const product = row.original;
-
         const representativeImage = getRepresentativeImage(product.images);
 
         return (
@@ -64,8 +69,8 @@ function LensProductTable({
       },
     },
     ...LENS_CARD_FIELDS.map(({ label, accessor }) => ({
-      header: label,
       accessorKey: label,
+      header: label === "초점거리" ? focalLengthLabel : label,
       cell: ({ row }: { row: Row<LensProduct> }) => (
         <p className="text-gray600">{accessor(row.original)}</p>
       ),

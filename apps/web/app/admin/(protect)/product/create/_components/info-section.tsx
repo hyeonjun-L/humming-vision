@@ -6,7 +6,7 @@ import {
   TextInput,
   TextAreaInput,
   ImageUploadInput,
-  PdfUploadInput,
+  FileUploadInput,
 } from "../../_components/shared-form-inputs";
 
 interface InfoSectionProps {
@@ -52,7 +52,7 @@ export const InfoSection = ({
       )}
 
       {fields.catalogFile && (
-        <PdfUploadInput
+        <FileUploadInput
           name="catalogFile"
           control={control}
           label="카탈로그 (PDF)"
@@ -60,7 +60,7 @@ export const InfoSection = ({
       )}
 
       {fields.datasheetFile && (
-        <PdfUploadInput
+        <FileUploadInput
           name="datasheetFile"
           control={control}
           label="Datasheet (PDF)"
@@ -68,15 +68,16 @@ export const InfoSection = ({
       )}
 
       {fields.drawingFile && (
-        <PdfUploadInput
+        <FileUploadInput
           name="drawingFile"
           control={control}
           label="Drawing (PDF)"
+          accept={[".pdf", ".dwg", ".stp"]}
         />
       )}
 
       {fields.manualFile && (
-        <PdfUploadInput
+        <FileUploadInput
           name="manualFile"
           control={control}
           label="Manual (PDF)"
