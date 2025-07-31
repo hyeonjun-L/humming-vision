@@ -25,24 +25,25 @@ const gothamBoldFont = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "허밍비전 HummingVision | 머신비전 하드웨어 전문기업",
+  title: "주식회사 허밍비젼 HummingVision | 머신비전 하드웨어 전문기업",
   description:
-    "크래비스, 바슬러, 콤퓨타, LVS 등 글로벌 브랜드의 머신비전 카메라, 렌즈, 조명을 공급하는 전문 기업. 머신비전 하드웨어 솔루션의 최적 파트너",
-  metadataBase: new URL("https://hummingvision.co.kr"),
+    "크래비스, 바슬러, 콤퓨타, LVS등 글로벌 브랜드 머신비전 카메라, 렌즈, 조명을 공급하는 전문 기업 머신비전 하드웨어 솔루션의 최적 파트너",
+  metadataBase: new URL("https://hummingvision.com"),
+  themeColor: "#00319b",
   openGraph: {
-    title: "허밍비전 HummingVision | 머신비전 하드웨어 전문기업",
+    title: "주식회사 허밍비젼 HummingVision | 머신비전 하드웨어 전문기업",
     description: "산업용 머신비전 분야에 혁신적인 시각 솔루션을 제공합니다.",
-    url: "https://hummingvision.co.kr/",
+    url: "https://hummingvision.com/",
     type: "website",
     images: [
       {
         url: "https://www.hummingvision.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fmain-banner-1.56f02c00.jpg&w=3840&q=75",
         width: 1200,
         height: 630,
-        alt: "허밍비전 OG 이미지",
+        alt: "허밍비젼 OG 이미지",
       },
     ],
-    siteName: "허밍비전",
+    siteName: "허밍비젼",
     locale: "ko_KR",
   },
   robots: {
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://hummingvision.co.kr/",
+    canonical: "https://hummingvision.com/",
   },
 };
 
