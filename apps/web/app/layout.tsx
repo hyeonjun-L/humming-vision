@@ -30,6 +30,11 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  verification: {
+    other: {
+      "naver-site-verification": "6b4d15cd5dba94c6d6813bd8848ddbc9f197db40",
+    },
+  },
   title: "주식회사 허밍비젼 HummingVision | 머신비전 하드웨어 전문기업",
   description:
     "크래비스, 바슬러, 콤퓨타, LVS등 글로벌 브랜드 머신비전 카메라, 렌즈, 조명을 공급하는 전문 기업 머신비전 하드웨어 솔루션의 최적 파트너",
@@ -66,12 +71,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <Head>
-        <meta
-          name="naver-site-verification"
-          content="6b4d15cd5dba94c6d6813bd8848ddbc9f197db40"
-        />
-      </Head>
       <body
         className={`${gothamBookFont.variable} ${notoSansKRFont.variable} ${gothamBoldFont.variable} font-sans`}
       >
