@@ -149,7 +149,7 @@ export const LENS_CARD_FIELDS: {
   },
   {
     label: "포맷사이즈",
-    accessor: (product) => product.lens.formatSize,
+    accessor: (product) => `${product.lens.formatSize}mm`,
   },
   {
     label: "마운트",

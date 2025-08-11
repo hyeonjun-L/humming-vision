@@ -333,7 +333,7 @@ export const categoryOptions: CategoryOptionsMap = {
       type: "input",
       required: true,
       placeholder: "포멧 사이즈 입력",
-      unit: "inch",
+      unit: "mm",
     },
   ],
   [CategoriesEnum.LIGHT]: [],

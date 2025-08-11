@@ -297,7 +297,7 @@ export const categoryFieldOptions: CategoryOptionsMap = {
       label: "Format Size",
       type: "input",
       placeholder: "포맷 크기를 입력하세요",
-      unit: "inch",
+      unit: "mm",
     },
   ],
   [CategoriesEnum.SOFTWARE]: [
