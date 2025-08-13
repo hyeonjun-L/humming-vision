@@ -6,13 +6,13 @@ export class ContactModel extends BaseModel {
   @Column({ nullable: false })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   company: string;
 
   @Column({ nullable: false })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   subject: string;
 
   @Column({ type: 'text', nullable: false })
