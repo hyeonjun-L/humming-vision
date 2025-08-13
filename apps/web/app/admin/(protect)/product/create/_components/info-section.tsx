@@ -72,7 +72,7 @@ export const InfoSection = ({
           name="drawingFile"
           control={control}
           label="Drawing (PDF)"
-          accept={[".pdf", ".dwg", ".stp"]}
+          accept={[".pdf", ".dwg", ".stp", ".dxf", ".zip"]}
         />
       )}
 

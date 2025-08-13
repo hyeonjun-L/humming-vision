@@ -32,7 +32,7 @@ export function fileTypeFilter() {
       return cb(null, true);
     }
 
-    const allowedExtensions = ['.pdf', '.dwg', '.stp'];
+    const allowedExtensions = ['.pdf', '.dwg', '.stp', '.dxf', '.zip'];
 
     if (allowedExtensions.includes(ext)) {
       req.fileType = FileType.PDF;

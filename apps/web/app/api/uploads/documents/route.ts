@@ -9,7 +9,7 @@ import {
   handleAuthError,
 } from "utils/api-error-handler";
 
-const ALLOWED_EXTENSIONS = [".pdf", ".dwg", ".stp"];
+const ALLOWED_EXTENSIONS = [".pdf", ".dwg", ".stp", ".dxf", ".zip"];
 
 function getFileExtension(filename: string): string {
   return "." + filename.split(".").pop()?.toLowerCase();
