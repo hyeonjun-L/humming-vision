@@ -60,7 +60,7 @@ function Cable() {
           values: ["Full", "6.8 Gbit/s (850MB/s)", "5m", "가능"],
         },
       ],
-      connectors: ["MER", "SDR (Mini)"],
+      connectors: ["MDR", "SDR (Mini)"],
     },
     {
       type: "Coax",
@@ -94,7 +94,7 @@ function Cable() {
           values: ["10 GigE", "10 Gbit/s (1,250MB/s)", "37m", "불가능"],
         },
       ],
-      connectors: ["Din", "BNC", "Micro BNC"],
+      connectors: ["DIN", "BNC", "Micro BNC"],
     },
     {
       type: "USB",
