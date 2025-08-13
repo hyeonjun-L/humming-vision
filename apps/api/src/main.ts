@@ -9,6 +9,7 @@ import { useContainer } from 'class-validator';
 import { AppDataSource } from './data-source';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { writeFileSync } from 'fs';
+import { KstTransformInterceptor } from './common/interceptor/kst-transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -49,6 +50,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  // KST 시간 변환 인터셉터 적용
+  app.useGlobalInterceptors(new KstTransformInterceptor());
 
   await app.listen(process.env.PORT ?? 3000);
 }
