@@ -31,9 +31,9 @@ function ProductCard<
   const pathname = usePathname();
 
   return (
-    <li className="w-[48%] sm:w-[31%]">
+    <li className="flex size-full w-[48%] flex-col items-center gap-2.5 sm:w-[31%]">
       <Link
-        className="flex size-full flex-col items-center gap-2.5"
+        className="flex size-full flex-col items-center"
         href={`${pathname}/${product.id}`}
       >
         {representativeImage ? (
@@ -57,21 +57,21 @@ function ProductCard<
           ))}
           <span className="text-gray600 mr-auto">{product.name}</span>
         </div>
-        <Accordion
-          title="상세 정보"
-          className="w-full px-5 py-2.5 font-normal shadow-[0_0_4px_rgba(0,0,0,0.15)]"
-          buttonClassName="py-0"
-        >
-          <dl className="border-gray200 mt-2.5 flex flex-col border-t pt-5">
-            {productFields.map(({ label, accessor }) => (
-              <div key={label} className="flex gap-2.5 text-xs">
-                <dt className="text-[#666970]">{label}</dt>
-                <dd className="text-gray600">{accessor(product)}</dd>
-              </div>
-            ))}
-          </dl>
-        </Accordion>
       </Link>
+      <Accordion
+        title="상세 정보"
+        className="w-full px-5 py-2.5 font-normal shadow-[0_0_4px_rgba(0,0,0,0.15)]"
+        buttonClassName="py-0"
+      >
+        <dl className="border-gray200 mt-2.5 flex flex-col border-t pt-5">
+          {productFields.map(({ label, accessor }) => (
+            <div key={label} className="flex gap-2.5 text-xs">
+              <dt className="text-[#666970]">{label}</dt>
+              <dd className="text-gray600">{accessor(product)}</dd>
+            </div>
+          ))}
+        </dl>
+      </Accordion>
     </li>
   );
 }
