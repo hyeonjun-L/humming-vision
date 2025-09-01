@@ -74,24 +74,17 @@ function Cable() {
       ],
       bodyList: [
         {
-          values: ["1 GigE", "1 Gbit/s (125MB/s)", "100m", "가능"],
+          values: ["CXP-3 / 1lane", "3.125 Gbit/s (325MB/s)", "100m", "가능"],
           rowSpan: {
-            content: (
-              <div className="flex items-center justify-center">
-                2대 이상
-                <br />
-                동시 사용 시<br />
-                전용 보드 필요
-              </div>
-            ),
+            content: "필요",
             span: 3,
           },
         },
         {
-          values: ["5 GigE", "5 Gbit/s (625MB/s)", "100m", "가능"],
+          values: ["CXP-6 / 1lane", "6.25 Gbit/s (625MB/s)", "72m", "가능"],
         },
         {
-          values: ["10 GigE", "10 Gbit/s (1,250MB/s)", "37m", "불가능"],
+          values: ["CXP-12 / 1lane", "12.5 Gbit/s (1,250MB/s)", "30m", "가능"],
         },
       ],
       connectors: ["DIN", "BNC", "Micro BNC"],
@@ -108,7 +101,13 @@ function Cable() {
       ],
       bodyList: [
         {
-          values: ["Base", "2.04 Gbit/s (255MB/s)", "7m", "가능", "필요"],
+          values: [
+            "Base",
+            "5 Gbit/s (625MB/s)",
+            "3.5m",
+            "가능",
+            "2대이상 동시 사용시 전용 보드 필요",
+          ],
         },
       ],
       connectors: ["Micro B"],
