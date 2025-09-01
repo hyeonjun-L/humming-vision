@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     other: {
       "naver-site-verification": "6b4d15cd5dba94c6d6813bd8848ddbc9f197db40",
     },
+    google: "qY1XqMLSzVUqvMZy1DsXeep_6eAk9fCZNZgW7zo7hRM",
   },
   title: "주식회사 허밍비젼 HummingVision | 머신비전 하드웨어 전문기업",
   description:
