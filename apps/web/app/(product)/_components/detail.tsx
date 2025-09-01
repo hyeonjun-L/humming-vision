@@ -37,7 +37,7 @@ function Detail<T extends keyof CategoryToProductTypeMap>({
         />
         <div className="text-gray600 flex w-[415px] flex-col justify-center sm:pl-4 md:w-[535px]">
           <h2 className="text-xl font-semibold md:text-2xl">{product.name}</h2>
-          <p className="mb-5 text-xs sm:mt-5 sm:mb-5 md:mb-10 md:text-base">
+          <p className="mb-5 text-xs sm:mt-5 sm:mb-5 md:mb-10 md:text-base whitespace-pre-line">
             {product.mainFeature}
           </p>
           <div className="flex gap-5">

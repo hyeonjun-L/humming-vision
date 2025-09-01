@@ -6,6 +6,7 @@ import {
   TextInput,
   ImageUploadInput,
   FileUploadInput,
+  TextAreaInput,
 } from "../../_components/shared-form-inputs";
 
 interface InfoSectionProps {
@@ -29,6 +30,15 @@ export const InfoSection = ({
           control={control}
           label="제품명"
           placeholder="제품명 입력"
+        />
+      )}
+
+      {fields.mainFeature && (
+        <TextAreaInput
+          name="mainFeature"
+          control={control}
+          label="주요특징"
+          placeholder="주요특징 입력"
         />
       )}
 
