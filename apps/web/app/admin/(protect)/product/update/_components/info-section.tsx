@@ -63,8 +63,8 @@ export const InfoSection = ({
         <FileUploadInput
           name="datasheetFile"
           control={control}
-          label="Datasheet (PDF)"
-          accept={[".pdf", ".dwg", ".stp"]}
+          label="Datasheet"
+          accept={[".pdf", ".dwg", ".stp", ".dxf", ".zip"]}
         />
       )}
 
@@ -80,7 +80,6 @@ export const InfoSection = ({
         <FileUploadInput
           name="manualFile"
           control={control}
-          accept={[".pdf", ".dwg", ".stp", ".step"]}
           label="Manual (PDF)"
         />
       )}

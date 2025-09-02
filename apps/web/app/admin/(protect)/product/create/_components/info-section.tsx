@@ -71,7 +71,7 @@ export const InfoSection = ({
         <FileUploadInput
           name="drawingFile"
           control={control}
-          label="Drawing (PDF)"
+          label="Drawing"
           accept={[".pdf", ".dwg", ".stp", ".dxf", ".zip"]}
         />
       )}
