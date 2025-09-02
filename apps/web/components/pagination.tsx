@@ -12,15 +12,20 @@ const PageIconButton = ({
   onClick,
   disabled,
   icon,
+  className,
 }: {
   onClick: () => void;
   disabled: boolean;
   icon: React.ReactElement;
+  className?: string;
 }) => (
   <button
     disabled={disabled}
     onClick={onClick}
-    className="group flex size-9 items-center justify-center rounded-full hover:bg-[#D7DAFF]"
+    className={cn(
+      "group flex size-9 items-center justify-center rounded-full hover:bg-[#D7DAFF]",
+      className,
+    )}
   >
     {icon}
   </button>
@@ -45,7 +50,7 @@ export default function Pagination({
 
   return (
     <nav className="mt-4 flex gap-3">
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center sm:gap-2.5">
         <PageIconButton
           disabled={currentPage === 1}
           onClick={() => onPageChange(1)}
@@ -56,6 +61,7 @@ export default function Pagination({
         <PageIconButton
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
+          className="hidden sm:flex"
           icon={
             <PaginationArrowSVG className="group-hover:stroke-main stroke-gray400 size-4 -scale-x-100" />
           }
@@ -72,7 +78,7 @@ export default function Pagination({
               className={cn(
                 currentPage === pageNumber &&
                   "text-main rounded-full bg-[#D7DAFF]",
-                "text-gray600 hover:text-main size-9 text-base",
+                "text-gray600 hover:text-main size-7 text-sm sm:size-9 sm:text-base",
               )}
             >
               {pageNumber}
@@ -81,10 +87,11 @@ export default function Pagination({
         })}
       </div>
 
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center sm:gap-2.5">
         <PageIconButton
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
+          className="hidden sm:flex"
           icon={
             <PaginationArrowSVG className="group-hover:stroke-main stroke-gray400 size-4" />
           }
