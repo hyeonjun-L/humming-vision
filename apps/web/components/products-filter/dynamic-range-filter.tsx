@@ -90,7 +90,7 @@ function DynamicRangeFilter({
         <div className="text-main flex items-center gap-1.5 pb-0.5">
           <input
             name="dynamic-range-min"
-            className="inline-block min-w-0 appearance-none border-none bg-transparent text-center text-sm outline-none"
+            className="border-gray200 inline-block min-w-0 appearance-none border bg-transparent text-center text-sm outline-none"
             style={{ width: `${minInputWidth}px` }}
             value={minInput}
             onChange={(e) => {
@@ -134,7 +134,7 @@ function DynamicRangeFilter({
           <span className="text-gray600">~</span>
           <input
             name="dynamic-range-max"
-            className="inline-block min-w-0 appearance-none border-none bg-transparent text-center text-sm outline-none"
+            className="border-gray200 inline-block min-w-0 appearance-none border bg-transparent text-center text-sm outline-none"
             style={{ width: `${maxInputWidth}px` }}
             value={maxInput}
             onChange={(e) => {

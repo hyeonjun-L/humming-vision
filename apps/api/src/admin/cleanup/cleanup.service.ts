@@ -1,9 +1,10 @@
 import { DeleteS3Response } from '@humming-vision/shared';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AwsService } from 'src/common/aws/aws.service';
 import { ProductModel } from 'src/product/product.entity';
 import { Repository } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CleanupService {
@@ -11,9 +12,18 @@ export class CleanupService {
     @InjectRepository(ProductModel)
     private readonly productRepository: Repository<ProductModel>,
     private readonly awsService: AwsService,
+    private readonly configService: ConfigService,
   ) {}
 
   async cleanupS3Orphans(): Promise<DeleteS3Response> {
+    const nodeEnv = this.configService.get<string>('NODE_ENV');
+
+    if (nodeEnv !== 'production') {
+      throw new BadRequestException(
+        '🚨 PRODUCTION PROTECTION: S3 cleanup operations are disabled in production ',
+      );
+    }
+
     const allProductPdfKeys = await this.productRepository
       .createQueryBuilder('product')
       .select('product.datasheetUrl')
