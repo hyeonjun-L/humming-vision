@@ -46,7 +46,7 @@ function CameraProductTable({
                   alt={product.name}
                   fill
                   sizes="80px"
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
             ) : (
