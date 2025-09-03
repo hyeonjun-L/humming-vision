@@ -144,7 +144,7 @@
   </tr>
   <tr>
     <td align="center">
-      <img src="https://github.com/connection-2023/frontend/assets/90231153/ae188bb3-8226-4663-8377-1aeb073b7c57" width="60%">
+      <img src="images/admin-product-update.png" width="60%">
     </td>
   </tr>
   <tr>

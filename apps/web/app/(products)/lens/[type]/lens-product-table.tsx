@@ -45,13 +45,13 @@ function LensProductTable({
         return (
           <div className="flex items-center gap-1.5">
             {representativeImage?.path ? (
-              <div className="relative aspect-[64/54] w-[64px]">
+              <div className="relative aspect-[64/54] w-[60px]">
                 <Image
                   src={representativeImage.path}
                   alt={product.name}
                   fill
                   sizes="80px"
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
             ) : (
