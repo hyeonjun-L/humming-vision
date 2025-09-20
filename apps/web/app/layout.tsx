@@ -7,7 +7,6 @@ import ModalRoot from "./_components/modal-root";
 import { QueryProvider } from "providers/query.provider";
 import { ToastContainer } from "react-toastify";
 import Footer from "./_components/footer";
-import Head from "next/head";
 
 const notoSansKRFont = Noto_Sans_KR({
   display: "fallback",
