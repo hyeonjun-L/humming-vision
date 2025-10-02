@@ -9,7 +9,7 @@ function HeaderNavModalViewButton() {
   };
 
   return (
-    <button className="lg:hidden" onClick={handleClick}>
+    <button aria-label="메뉴 열기" className="lg:hidden" onClick={handleClick}>
       <HambugerSVG />
     </button>
   );

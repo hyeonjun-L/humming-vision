@@ -50,7 +50,13 @@ const EmblaCarousel = ({ slides, options, children }: PropType) => {
         {children}
         <div className="flex w-full justify-center">
           <div className="flex gap-2 md:gap-4">
-            <button onClick={toggleAutoplay} type="button">
+            <button
+              onClick={toggleAutoplay}
+              type="button"
+              aria-label={
+                autoplayIsPlaying ? "자동 재생 정지" : "자동 재생 시작"
+              }
+            >
               {autoplayIsPlaying ? (
                 <StopSVG className="size-6" />
               ) : (
@@ -61,13 +67,19 @@ const EmblaCarousel = ({ slides, options, children }: PropType) => {
             <NavButton
               onClick={() => onAutoplayButtonClick(onPrevButtonClick)}
               disabled={prevBtnDisabled}
+              aria-label="이전 슬라이드"
             >
               <ArrowSVG className="hidden size-5 rotate-180 md:block" />
             </NavButton>
 
             <div className="flex flex-1 items-center justify-center gap-4">
               {scrollSnaps.map((_, index) => (
-                <DotButton key={index} onClick={() => onDotButtonClick(index)}>
+                <DotButton
+                  key={index}
+                  onClick={() => onDotButtonClick(index)}
+                  aria-label={`슬라이드 ${index + 1}로 이동`}
+                  aria-current={index === selectedIndex ? "true" : "false"}
+                >
                   <div
                     className={cn(
                       "bg-gray100/30 size-2.5 rounded-full",
@@ -81,6 +93,7 @@ const EmblaCarousel = ({ slides, options, children }: PropType) => {
             <NavButton
               onClick={() => onAutoplayButtonClick(onNextButtonClick)}
               disabled={nextBtnDisabled}
+              aria-label="다음 슬라이드"
             >
               <ArrowSVG className="hidden size-5 md:block" />
             </NavButton>
