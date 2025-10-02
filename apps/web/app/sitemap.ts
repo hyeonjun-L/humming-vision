@@ -10,6 +10,10 @@ import {
 import axios from "axios";
 import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 
+export const dynamic = "force-dynamic";
+
+export const revalidate = 3600 * 24; // 24 hours
+
 const BASE_URL = "https://hummingvision.com";
 const PAGE_SIZE = 1000;
 
