@@ -25,13 +25,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     {
       url: `${BASE_URL}/`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "weekly" as const,
       priority: 1.0,
     },
     {
       url: `${BASE_URL}/contact`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "monthly" as const,
       priority: 0.8,
     },
@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 카테고리 페이지
     urls.push({
       url: `${BASE_URL}/camera/${type.toLowerCase()}`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "weekly" as const,
       priority: 0.8,
     });
@@ -73,7 +73,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const product of products) {
           urls.push({
             url: `${BASE_URL}/camera/${type.toLowerCase()}/${product.id}`,
-            lastModified: product.updatedAt || new Date().toISOString(),
+            lastModified: new Date(product.updatedAt || new Date()).toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
           });
@@ -91,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 카테고리 페이지
     urls.push({
       url: `${BASE_URL}/lens/${type.toLowerCase()}`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "weekly" as const,
       priority: 0.8,
     });
@@ -119,7 +119,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const product of products) {
           urls.push({
             url: `${BASE_URL}/lens/${type.toLowerCase()}/${product.id}`,
-            lastModified: product.updatedAt || new Date().toISOString(),
+            lastModified: new Date(product.updatedAt || new Date()).toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
           });
@@ -139,7 +139,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 카테고리 페이지
     urls.push({
       url: `${BASE_URL}/frame-grabber/${WEBLINK}`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     });
@@ -169,7 +169,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const product of products) {
           urls.push({
             url: `${BASE_URL}/frame-grabber/${WEBLINK}/${product.id}`,
-            lastModified: product.updatedAt || new Date().toISOString(),
+            lastModified: new Date(product.updatedAt || new Date()).toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
           });
@@ -188,13 +188,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   urls.push(
     {
       url: `${BASE_URL}/light`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
     {
       url: `${BASE_URL}/light/download`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
@@ -206,7 +206,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 카테고리 페이지
     urls.push({
       url: `${BASE_URL}/etc/software/${type.toLowerCase()}`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     });
@@ -236,7 +236,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const product of products) {
           urls.push({
             url: `${BASE_URL}/software/${type.toLowerCase()}/${product.id}`,
-            lastModified: product.updatedAt || new Date().toISOString(),
+            lastModified: new Date(product.updatedAt || new Date()).toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
           });
@@ -256,7 +256,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const type of accessoryTypes) {
     urls.push({
       url: `${BASE_URL}/etc/accessory/${type}`,
-      lastModified: new Date(),
+      lastModified: new Date().toISOString(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     });
