@@ -1,5 +1,12 @@
 import type { MetadataRoute } from "next";
-import { CategoriesEnum, GetProductResponse } from "@humming-vision/shared";
+import {
+  CameraTypeEnum,
+  CategoriesEnum,
+  FrameGrabberInterfaceEnum,
+  GetProductResponse,
+  LensTypeEnum,
+  SoftwareMakerEnum,
+} from "@humming-vision/shared";
 import axios from "axios";
 import { ENV_API_END_POINT_KEY } from "consts/env-keys.const";
 
@@ -29,11 +36,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   urls.push(...staticPages);
 
   // 카메라 카테고리 페이지 및 제품들
-  const cameraTypes = ["line", "area"];
+  const cameraTypes = Object.values(CameraTypeEnum);
   for (const type of cameraTypes) {
     // 카테고리 페이지
     urls.push({
-      url: `${BASE_URL}/camera/${type}`,
+      url: `${BASE_URL}/camera/${type.toLowerCase()}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.8,
@@ -53,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 revalidate: 3600,
               },
             },
-          }
+          },
         );
 
         const products = res.data.data;
@@ -61,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         for (const product of products) {
           urls.push({
-            url: `${BASE_URL}/camera/${type}/${product.id}`,
+            url: `${BASE_URL}/camera/${type.toLowerCase()}/${product.id}`,
             lastModified: product.updatedAt || new Date().toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
@@ -75,11 +82,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // 렌즈 카테고리 페이지 및 제품들
-  const lensTypes = ["cctv", "tcl"];
+  const lensTypes = Object.values(LensTypeEnum);
   for (const type of lensTypes) {
     // 카테고리 페이지
     urls.push({
-      url: `${BASE_URL}/lens/${type}`,
+      url: `${BASE_URL}/lens/${type.toLowerCase()}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.8,
@@ -99,7 +106,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 revalidate: 3600,
               },
             },
-          }
+          },
         );
 
         const products = res.data.data;
@@ -107,7 +114,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         for (const product of products) {
           urls.push({
-            url: `${BASE_URL}/lens/${type}/${product.id}`,
+            url: `${BASE_URL}/lens/${type.toLowerCase()}/${product.id}`,
             lastModified: product.updatedAt || new Date().toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
@@ -121,11 +128,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // 프레임 그래버 카테고리 페이지 및 제품들
-  const frameGrabberTypes = ["coaxpress", "link", "gige", "usb"];
+  const frameGrabberTypes = Object.values(FrameGrabberInterfaceEnum);
   for (const type of frameGrabberTypes) {
+    const WEBLINK = type === "CAMERA_LINK" ? "link" : type.toLowerCase();
+
     // 카테고리 페이지
     urls.push({
-      url: `${BASE_URL}/frame-grabber/${type}`,
+      url: `${BASE_URL}/frame-grabber/${WEBLINK}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
@@ -135,8 +144,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
       let page = 1;
       while (true) {
-        const res = await axios.get<GetProductResponse<CategoriesEnum.FRAMEGRABBER>>(
-          `${END_POINT}/product/frame-grabber?frameGrabber__type__equal=${type}&take=${PAGE_SIZE}&page=${page}`,
+        const res = await axios.get<
+          GetProductResponse<CategoriesEnum.FRAMEGRABBER>
+        >(
+          `${END_POINT}/product/frame-grabber?frameGrabber__interface__equal=${type}&take=${PAGE_SIZE}&page=${page}`,
           {
             adapter: "fetch",
             fetchOptions: {
@@ -145,7 +156,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 revalidate: 3600,
               },
             },
-          }
+          },
         );
 
         const products = res.data.data;
@@ -153,7 +164,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         for (const product of products) {
           urls.push({
-            url: `${BASE_URL}/frame-grabber/${type}/${product.id}`,
+            url: `${BASE_URL}/frame-grabber/${WEBLINK}/${product.id}`,
             lastModified: product.updatedAt || new Date().toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
@@ -162,7 +173,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         page++;
       }
     } catch (error) {
-      console.error(`Error fetching frame-grabber products for type ${type}:`, error);
+      console.error(
+        `Error fetching frame-grabber products for type ${type}:`,
+        error,
+      );
     }
   }
 
@@ -179,15 +193,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
-    }
+    },
   );
 
   // 소프트웨어 카테고리 페이지 및 제품들
-  const softwareTypes = ["matrox", "euresys"];
+  const softwareTypes = Object.values(SoftwareMakerEnum);
   for (const type of softwareTypes) {
     // 카테고리 페이지
     urls.push({
-      url: `${BASE_URL}/etc/software/${type}`,
+      url: `${BASE_URL}/etc/software/${type.toLowerCase()}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
@@ -197,8 +211,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     try {
       let page = 1;
       while (true) {
-        const res = await axios.get<GetProductResponse<CategoriesEnum.SOFTWARE>>(
-          `${END_POINT}/product/software?software__type__equal=${type}&take=${PAGE_SIZE}&page=${page}`,
+        const res = await axios.get<
+          GetProductResponse<CategoriesEnum.SOFTWARE>
+        >(
+          `${END_POINT}/product/software?software__maker__equal=${type}&take=${PAGE_SIZE}&page=${page}`,
           {
             adapter: "fetch",
             fetchOptions: {
@@ -207,7 +223,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 revalidate: 3600,
               },
             },
-          }
+          },
         );
 
         const products = res.data.data;
@@ -215,7 +231,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         for (const product of products) {
           urls.push({
-            url: `${BASE_URL}/software/${type}/${product.id}`,
+            url: `${BASE_URL}/software/${type.toLowerCase()}/${product.id}`,
             lastModified: product.updatedAt || new Date().toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
@@ -224,7 +240,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         page++;
       }
     } catch (error) {
-      console.error(`Error fetching software products for type ${type}:`, error);
+      console.error(
+        `Error fetching software products for type ${type}:`,
+        error,
+      );
     }
   }
 
