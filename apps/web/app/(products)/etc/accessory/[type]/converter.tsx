@@ -37,29 +37,34 @@ function Converter() {
     <dl className="mb-16 flex flex-col gap-10 lg:gap-0">
       {CONVERTER_LIST.map(({ image, name, description, note, imageStyle }) => (
         <div key={name} className="flex flex-col lg:h-[240px] lg:flex-row">
-          <div className="relative mb-3 h-[209px] w-[318px] flex-shrink-0 sm:w-[415px] lg:h-full lg:w-[476px]">
-            <div className="absolute top-[55%] left-0 h-40 w-11/12 -translate-y-1/2 transform rounded-r-full bg-[#F5F5FC]" />
+          <dt className="bg-main mb-3 w-fit px-5.5 py-[3px] text-xl font-bold text-white lg:hidden">
+            {name}
+          </dt>
+          <dd className="flex flex-col lg:flex-row lg:gap-0">
+            <div className="relative mb-3 h-[209px] w-[318px] flex-shrink-0 sm:w-[415px] lg:mb-0 lg:h-full lg:w-[476px]">
+              <div className="absolute top-[55%] left-0 h-40 w-11/12 -translate-y-1/2 transform rounded-r-full bg-[#F5F5FC]" />
 
-            <div className="absolute left-5 size-full">
-              <Image
-                src={image}
-                alt={`${name} Image`}
-                sizes="(min-width: 1024px) 476px, (min-width: 768px) 415px, 318px"
-                fill
-                className={imageStyle}
-              />
+              <div className="absolute left-5 size-full">
+                <Image
+                  src={image}
+                  alt={`${name} 제품 이미지`}
+                  sizes="(min-width: 1024px) 476px, (min-width: 768px) 415px, 318px"
+                  fill
+                  className={imageStyle}
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex h-full flex-col justify-center gap-5">
-            <dt className="bg-main w-fit px-5.5 py-[3px] text-xl font-bold text-white">
-              {name}
-            </dt>
-            <dd
-              className="text-gray600"
-              dangerouslySetInnerHTML={{ __html: description }}
-            />
-            {note && <p className="mt-2.5 text-sm">{note}</p>}
-          </div>
+            <div className="flex h-full flex-col justify-center gap-5">
+              <p className="bg-main hidden w-fit px-5.5 py-[3px] text-xl font-bold text-white lg:block">
+                {name}
+              </p>
+              <p
+                className="text-gray600"
+                dangerouslySetInnerHTML={{ __html: description }}
+              />
+              {note && <p className="mt-2.5 text-sm">{note}</p>}
+            </div>
+          </dd>
         </div>
       ))}
     </dl>

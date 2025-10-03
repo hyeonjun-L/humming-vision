@@ -9,19 +9,25 @@ import { ToastContainer } from "react-toastify";
 import Footer from "./_components/footer";
 
 const notoSansKRFont = Noto_Sans_KR({
-  display: "fallback",
+  display: "swap",
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: "400",
+  preload: true,
+  fallback: ["system-ui", "-apple-system", "sans-serif"],
+  adjustFontFallback: true,
 });
 
 const gothamBookFont = localFont({
   src: "./font/gotham-book.otf",
   variable: "--font-gotham-book",
+  display: "swap",
 });
 
 const gothamBoldFont = localFont({
   src: "./font/gotham-bold.otf",
   variable: "--font-gotham-bold",
+  display: "swap",
 });
 
 export const viewport: Viewport = {

@@ -43,6 +43,7 @@ function Banner() {
       <Image
         src={BANNER_IMAGE[currentCategory]}
         alt={`${ROUTE_CATEGORY_DISPLAY_NAMES[currentCategory]} 배너 이미지`}
+        fetchPriority="high"
         priority
         width={1940}
         sizes="100vw"

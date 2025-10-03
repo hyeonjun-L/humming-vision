@@ -21,6 +21,8 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: "10Mb",
     },
+    cssChunking: "strict",
+    inlineCss: true,
   },
   api: {
     bodyParser: {

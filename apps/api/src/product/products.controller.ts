@@ -13,7 +13,14 @@ import {
   ValidationPipe,
   BadRequestException,
   DefaultValuePipe,
+  Inject,
 } from '@nestjs/common';
+import {
+  CacheInterceptor,
+  CacheTTL,
+  CACHE_MANAGER,
+} from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
@@ -52,7 +59,10 @@ import { ProductModel } from './product.entity';
 
 @Controller('product')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   @Post(':category')
   @UseInterceptors(TransactionInterceptor)
@@ -120,11 +130,24 @@ export class ProductsController {
       throw new ManualValidationBadRequestException(errors);
     }
 
-    return this.productsService.updateGenericProduct(category, mappedDto, qr);
+    const result = await this.productsService.updateGenericProduct(
+      category,
+      mappedDto,
+      qr,
+    );
+
+    const categoryLower = category.toLowerCase();
+    const productCacheKey = `/product/${categoryLower}/${mappedDto.id}`;
+
+    await this.cacheManager.del(productCacheKey);
+
+    return result;
   }
 
   @Get(':category/:productId')
   @IsPublic()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
   async getProduct(
     @Param('productId', ParseIntPipe) id: number,
     @Param('category', ParseCategoryPipe) category: CategoriesEnum,
@@ -142,6 +165,8 @@ export class ProductsController {
     PaginateLightDto,
   )
   @IsPublic()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(60000)
   async paginateProducts(
     @Query() query: Record<string, any>,
     @Param('category', ParseCategoryPipe) category: CategoriesEnum,
@@ -152,7 +177,6 @@ export class ProductsController {
       | PaginateFrameGrabberDto
       | PaginateSoftwareDto
       | PaginateLightDto;
-
     if (category === CategoriesEnum.CAMERA) {
       dto = plainToInstance(PaginateCameraDto, query, {
         enableImplicitConversion: true,
@@ -196,11 +220,17 @@ export class ProductsController {
     @Param('productId', ParseIntPipe) id: number,
     @QueryRunner() qr: QR,
   ) {
-    return await this.productsService.deleteProduct(id, qr);
+    const deletedProduct = await this.productsService.deleteProduct(id, qr);
+
+    const categoryLower = deletedProduct.category.toLowerCase();
+    const cacheKey = `/product/${categoryLower}/${deletedProduct.id}`;
+    await this.cacheManager.del(cacheKey);
   }
 
   @Get('camera/by-sensor/:sensor')
   @IsPublic()
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(300000)
   async camerasBySensor(
     @Param('sensor') sensor: string,
     @Query('take', new DefaultValuePipe(3), ParseIntPipe) take: number,

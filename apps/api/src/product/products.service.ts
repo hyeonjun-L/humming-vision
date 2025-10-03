@@ -158,5 +158,7 @@ export class ProductsService {
     }
 
     await productRepository.remove(product);
+
+    return { id: product.id, category: product.categories };
   }
 }

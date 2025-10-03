@@ -43,6 +43,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { LogMiddleware } from './common/middleware/log.middleware';
 import { LightModel } from './product/light/light.entity';
 import { CleanupModule } from './admin/cleanup/cleanup.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -54,6 +56,17 @@ import { CleanupModule } from './admin/cleanup/cleanup.module';
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
+    }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 40,
+      },
+    ]),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 300000,
+      max: 100,
     }),
     TypeOrmModule.forFeature([LogModel]),
     TypeOrmModule.forRoot({
@@ -113,6 +126,10 @@ import { CleanupModule } from './admin/cleanup/cleanup.module';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

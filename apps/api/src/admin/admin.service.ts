@@ -46,10 +46,29 @@ export class AdminService {
       throw new UnauthorizedException('존재하지 않는 사용자입니다.');
     }
 
+    if (existingAdmin.failedLoginAttempts >= 5) {
+      throw new UnauthorizedException(
+        '계정이 잠겨있습니다. 관리자에게 문의하세요.',
+      );
+    }
+
     const passOk = await bcrypt.compare(admin.password, existingAdmin.password);
 
     if (!passOk) {
-      throw new UnauthorizedException('비밀번호가 틀렸습니다.');
+      existingAdmin.failedLoginAttempts += 1;
+
+      await this.adminRepository.save(existingAdmin);
+
+      throw new UnauthorizedException(
+        existingAdmin.failedLoginAttempts < 5
+          ? `비밀번호가 틀렸습니다. (시도 횟수 : ${existingAdmin.failedLoginAttempts}/5회)`
+          : '계정이 잠겼습니다. 관리자에게 문의하세요.',
+      );
+    }
+
+    if (existingAdmin.failedLoginAttempts > 0) {
+      existingAdmin.failedLoginAttempts = 0;
+      await this.adminRepository.save(existingAdmin);
     }
 
     return existingAdmin;
