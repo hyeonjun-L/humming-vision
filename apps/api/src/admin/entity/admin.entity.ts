@@ -29,4 +29,7 @@ export class AdminModel extends BaseModel {
 
   @OneToOne(() => LogModel, (log) => log.admin, { nullable: true })
   log?: LogModel;
+
+  @Column({ default: 0 })
+  failedLoginAttempts: number;
 }

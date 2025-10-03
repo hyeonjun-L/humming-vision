@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "build:migrate": "npx typeorm-ts-node-commonjs migration:generate src/database/migrations/InitSchema --dataSource src/data-source.ts && npm run build",
+    "build:migrate": "DB_DATABASE=humming_vision npx typeorm-ts-node-commonjs migration:generate src/database/migrations/InitSchema --dataSource src/data-source.ts && npm run build",
     "typegen": "openapi-typescript ./openapi.json -o ../../packages/shared/src/schema.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

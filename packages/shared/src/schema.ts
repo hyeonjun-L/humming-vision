@@ -611,6 +611,7 @@ export interface components {
             password: string;
             name: string;
             log?: components["schemas"]["LogModel"];
+            failedLoginAttempts: number;
             id: number;
             /** Format: date-time */
             updatedAt: string;
