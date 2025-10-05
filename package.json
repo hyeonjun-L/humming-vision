@@ -26,8 +26,5 @@
     "@nestjs/mapped-types": "*",
     "dotenv": "^17.2.1",
     "g": "^2.0.1"
-  },
-  "overrides": {
-    "cache-manager": "5.2.2"
   }
 }
