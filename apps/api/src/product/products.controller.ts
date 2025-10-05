@@ -151,7 +151,6 @@ export class ProductsController {
     @Param('productId', ParseIntPipe) id: number,
     @Param('category', ParseCategoryPipe) category: CategoriesEnum,
   ) {
-    console.log('hihi');
     const product = await this.productsService.getProductById(id, category);
     return product;
   }
