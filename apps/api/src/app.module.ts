@@ -44,7 +44,7 @@ import { LogMiddleware } from './common/middleware/log.middleware';
 import { LightModel } from './product/light/light.entity';
 import { CleanupModule } from './admin/cleanup/cleanup.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { CacheModule } from '@nestjs/cache-manager';
+// import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -63,11 +63,11 @@ import { CacheModule } from '@nestjs/cache-manager';
         limit: 40,
       },
     ]),
-    CacheModule.register({
-      isGlobal: true,
-      ttl: 300000,
-      max: 100,
-    }),
+    // CacheModule.register({
+    //   isGlobal: true,
+    //   ttl: 300000,
+    //   max: 100,
+    // }),
     TypeOrmModule.forFeature([LogModel]),
     TypeOrmModule.forRoot({
       type: 'postgres',
