@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 
 export const revalidate = 86400;
 
-const BASE_URL = "https://hummingvision.com";
+const BASE_URL = "https://www.hummingvision.com";
 const PAGE_SIZE = 1000;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -73,7 +73,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const product of products) {
           urls.push({
             url: `${BASE_URL}/camera/${type.toLowerCase()}/${product.id}`,
-            lastModified: new Date(product.updatedAt || new Date()).toISOString(),
+            lastModified: new Date(
+              product.updatedAt || new Date(),
+            ).toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
           });
@@ -119,7 +121,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const product of products) {
           urls.push({
             url: `${BASE_URL}/lens/${type.toLowerCase()}/${product.id}`,
-            lastModified: new Date(product.updatedAt || new Date()).toISOString(),
+            lastModified: new Date(
+              product.updatedAt || new Date(),
+            ).toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
           });
@@ -169,7 +173,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const product of products) {
           urls.push({
             url: `${BASE_URL}/frame-grabber/${WEBLINK}/${product.id}`,
-            lastModified: new Date(product.updatedAt || new Date()).toISOString(),
+            lastModified: new Date(
+              product.updatedAt || new Date(),
+            ).toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
           });
@@ -236,7 +242,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const product of products) {
           urls.push({
             url: `${BASE_URL}/software/${type.toLowerCase()}/${product.id}`,
-            lastModified: new Date(product.updatedAt || new Date()).toISOString(),
+            lastModified: new Date(
+              product.updatedAt || new Date(),
+            ).toISOString(),
             changeFrequency: "monthly" as const,
             priority: 0.6,
           });
