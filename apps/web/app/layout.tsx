@@ -7,6 +7,7 @@ import ModalRoot from "./_components/modal-root";
 import { QueryProvider } from "providers/query.provider";
 import { ToastContainer } from "react-toastify";
 import Footer from "./_components/footer";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 const notoSansKRFont = Noto_Sans_KR({
   display: "swap",
@@ -77,6 +78,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <GoogleTagManager gtmId="GTM-NMQ3VSXC" />
       <body
         className={`${gothamBookFont.variable} ${notoSansKRFont.variable} ${gothamBoldFont.variable} font-sans`}
       >
