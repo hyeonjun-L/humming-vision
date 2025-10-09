@@ -7,7 +7,7 @@ import ModalRoot from "./_components/modal-root";
 import { QueryProvider } from "providers/query.provider";
 import { ToastContainer } from "react-toastify";
 import Footer from "./_components/footer";
-import { GoogleTagManager } from "@next/third-parties/google";
+import { GoogleTagManager, GoogleAnalytics } from "@next/third-parties/google";
 
 const notoSansKRFont = Noto_Sans_KR({
   display: "swap",
@@ -90,6 +90,7 @@ export default function RootLayout({
         </QueryProvider>
         <Footer />
       </body>
+      <GoogleAnalytics gaId="G-Y1L7QJJ81M" />
     </html>
   );
 }
