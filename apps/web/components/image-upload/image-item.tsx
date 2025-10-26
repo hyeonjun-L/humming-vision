@@ -72,6 +72,7 @@ const ImageItem = memo(
           </div>
 
           <button
+            type="button"
             onClick={handleRemoveClick}
             className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
           >
@@ -122,6 +123,7 @@ const ImageItem = memo(
         </div>
 
         <button
+          type="button"
           onClick={handleRemoveClick}
           className="flex-shrink-0 rounded-full bg-red-500 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
         >

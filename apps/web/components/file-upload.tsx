@@ -118,6 +118,7 @@ function FileUpload({
               </div>
             </div>
             <button
+              type="button"
               onClick={handleRemoveFile}
               className="flex-shrink-0 rounded-full bg-red-500 p-1 text-white transition-colors hover:bg-red-600"
             >
