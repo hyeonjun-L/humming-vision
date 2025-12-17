@@ -104,7 +104,7 @@ const InfowindowContants = () => {
         >
           <div className="relative size-5">
             <Image
-              src="https://map.naver.com/p/assets/icons/favicon.ico"
+              src="https://ssl.pstatic.net/static/maps/assets/icons/favicon.ico"
               alt="naver map icon"
               fill
             />
