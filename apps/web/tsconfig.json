@@ -6,13 +6,20 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./app/*"],
       "@/public/*": ["../public/*"],
       "@/components/*": ["../components/*"],
       "@/stores/*": ["../stores/*"],
-      "@/types/*": ["../types/*"]
+      "@/types/*": ["../types/*"],
+      "components/*": ["./components/*"],
+      "consts/*": ["./consts/*"],
+      "hooks/*": ["./hooks/*"],
+      "libs/*": ["./libs/*"],
+      "providers/*": ["./providers/*"],
+      "public/*": ["./public/*"],
+      "stores/*": ["./stores/*"],
+      "utils/*": ["./utils/*"]
     }
   },
   "include": [

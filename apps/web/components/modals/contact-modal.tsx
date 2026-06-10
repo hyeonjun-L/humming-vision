@@ -62,6 +62,14 @@ function ContactModal({ data, onDelete }: ContactModalProps) {
                 <label className="text-gray400 text-xs">이메일</label>
                 <p className="text-gray600 text-sm break-words">{data.email}</p>
               </div>
+              {data.phoneNumber && (
+                <div>
+                  <label className="text-gray400 text-xs">전화번호</label>
+                  <p className="text-gray600 text-sm break-words">
+                    {data.phoneNumber}
+                  </p>
+                </div>
+              )}
               {data.company && (
                 <div>
                   <label className="text-gray400 text-xs">회사</label>

@@ -3,6 +3,7 @@
 import { Input } from "components/input";
 import SubmitButton from "components/submit-button";
 import cn from "libs/cn";
+import { Info } from "lucide-react";
 import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +19,7 @@ const contactSchema = z.object({
     .string({ required_error: "이름은 필수입니다" })
     .min(1, "이름을 입력해주세요"),
   company: z.string().optional(),
+  phoneNumber: z.string().optional(),
   email: z
     .string({ required_error: "이메일은 필수입니다" })
     .email("올바른 이메일을 입력해주세요")
@@ -34,6 +36,7 @@ const CONTACT_FIELDS: Array<{
   placeholder: string;
   required: boolean;
   type: "input" | "textarea";
+  hint?: string;
 }> = [
   {
     id: "name",
@@ -55,6 +58,14 @@ const CONTACT_FIELDS: Array<{
     placeholder: "이메일",
     required: true,
     type: "input" as const,
+  },
+  {
+    id: "phoneNumber",
+    label: "전화번호",
+    placeholder: "연락처",
+    required: false,
+    type: "input" as const,
+    hint: "필수는 아니지만, 빠른 연락을 위해 입력을 추천드려요.",
   },
   {
     id: "subject",
@@ -119,7 +130,7 @@ function ContactForm({ isContactPage }: ContactFormProps) {
           },
         )}
       >
-        {CONTACT_FIELDS.map(({ id, label, placeholder, required, type }) => {
+        {CONTACT_FIELDS.map(({ id, label, placeholder, required, type, hint }) => {
           const fieldError = errors[id];
 
           const { onBlur: originalOnBlur, ...fieldProps } = register(id);
@@ -172,6 +183,12 @@ function ContactForm({ isContactPage }: ContactFormProps) {
                     }}
                     {...fieldProps}
                   />
+                )}
+                {hint && !fieldError && (
+                  <span className="absolute right-0 top-9 text-gray400 mt-1.5 flex items-center gap-1 text-xs">
+                    <Info className="size-3 shrink-0" />
+                    {hint}
+                  </span>
                 )}
                 {fieldError && (
                   <span className="absolute -bottom-5 left-3 text-sm text-red-500">

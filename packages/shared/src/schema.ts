@@ -632,6 +632,7 @@ export interface components {
         CreateContactDto: {
             name: string;
             company?: string;
+            phoneNumber?: string;
             /** Format: email */
             email: string;
             subject?: string;
@@ -642,6 +643,7 @@ export interface components {
         ContactModel: {
             name: string;
             company: string;
+            phoneNumber: string;
             email: string;
             subject: string;
             message: string;
@@ -984,6 +986,7 @@ export interface operations {
                 where__email__i_like?: string;
                 where__subject__i_like?: string;
                 where__company__i_like?: string;
+                where__phoneNumber__i_like?: string;
                 order__createdAt: "ASC" | "DESC";
                 page: number;
                 take: number;

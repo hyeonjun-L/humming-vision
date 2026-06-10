@@ -18,6 +18,10 @@ export class BasePaginateContactDto extends BasePaginationDto {
   @IsString()
   where__company__i_like?: string;
 
+  @IsOptional()
+  @IsString()
+  where__phoneNumber__i_like?: string;
+
   @IsIn(['ASC', 'DESC'])
   @IsOptional()
   order__createdAt: 'ASC' | 'DESC' = 'DESC';
