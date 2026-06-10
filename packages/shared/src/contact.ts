@@ -7,6 +7,7 @@ export interface Contact
     | "createdAt"
     | "name"
     | "company"
+    | "phoneNumber"
     | "email"
     | "subject"
     | "message"
@@ -26,6 +27,7 @@ export enum ContactSearchFieldEnum {
   EMAIL = "where__email__i_like",
   SUBJECT = "where__subject__i_like",
   COMPANY = "where__company__i_like",
+  PHONE = "where__phoneNumber__i_like",
 }
 
 export type GetContactResponse = {

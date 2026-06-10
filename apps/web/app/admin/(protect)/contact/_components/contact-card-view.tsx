@@ -37,6 +37,9 @@ function ContactCardView({
           {data.email}
         </p>
       </div>
+      {data.phoneNumber && (
+        <p className="text-gray400 text-xs">{data.phoneNumber}</p>
+      )}
       <p className="text-gray600 truncate text-sm" title={data.subject}>
         {data.subject}
       </p>

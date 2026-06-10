@@ -58,6 +58,7 @@ export class ContactService {
       context: {
         name: contactData.name,
         email: contactData.email,
+        phoneNumber: contactData.phoneNumber,
         message: contactData.message,
       },
       html: `
@@ -73,6 +74,10 @@ export class ContactService {
                     <tr>
                     <td style="font-weight: bold; padding: 8px 0; color: #4a5568;">이메일</td>
                     <td style="padding: 8px 0;">${contactData.email}</td>
+                    </tr>
+                    <tr>
+                    <td style="font-weight: bold; padding: 8px 0; color: #4a5568;">전화번호</td>
+                    <td style="padding: 8px 0;">${contactData.phoneNumber ?? '-'}</td>
                     </tr>
                     <tr>
                     <td style="font-weight: bold; padding: 8px 0; color: #4a5568;">회사</td>

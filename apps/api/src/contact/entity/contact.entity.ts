@@ -9,6 +9,9 @@ export class ContactModel extends BaseModel {
   @Column({ nullable: true })
   company: string;
 
+  @Column({ nullable: true })
+  phoneNumber: string;
+
   @Column({ nullable: false })
   email: string;
 

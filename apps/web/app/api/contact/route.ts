@@ -94,7 +94,8 @@ type ContactFormData = Omit<CreateContactDto, "isRead">;
 export const POST = async (request: NextRequest) => {
   const body = await request.json();
 
-  const { name, company, email, subject, message } = body as ContactFormData;
+  const { name, company, phoneNumber, email, subject, message } =
+    body as ContactFormData;
 
   if (!name || !email || !message) {
     return handleValidationError(
@@ -120,6 +121,7 @@ export const POST = async (request: NextRequest) => {
       {
         name,
         company: company || null,
+        phoneNumber: phoneNumber || null,
         email,
         subject: subject || null,
         message,

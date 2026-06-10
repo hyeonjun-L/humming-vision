@@ -157,6 +157,19 @@ function ContactPage({
     {
       accessorKey: "email",
       header: "연락처",
+      cell: ({ row }) => {
+        const { email, phoneNumber } = row.original;
+        return (
+          <div className="flex flex-col">
+            <span className="truncate">{email}</span>
+            {phoneNumber && (
+              <span className="text-gray400 truncate text-xs">
+                {phoneNumber}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "createdAt",
@@ -200,6 +213,7 @@ function ContactPage({
     { value: ContactSearchFieldEnum.EMAIL, label: "이메일" },
     { value: ContactSearchFieldEnum.SUBJECT, label: "제목" },
     { value: ContactSearchFieldEnum.COMPANY, label: "회사" },
+    { value: ContactSearchFieldEnum.PHONE, label: "전화번호" },
   ];
 
   return (
