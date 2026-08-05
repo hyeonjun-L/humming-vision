@@ -158,6 +158,9 @@ export const categoryFieldOptions: CategoryOptionsMap = {
       type: "input",
       placeholder: "속도를 입력하세요",
       unit: "fps",
+      byType: {
+        [CameraTypeEnum.LINE]: { unit: "kHz" },
+      },
     },
     {
       required: false,
@@ -267,7 +270,10 @@ export const categoryFieldOptions: CategoryOptionsMap = {
       label: "Resolution",
       type: "input",
       placeholder: "해상도를 입력하세요",
-      unit: "lp/mm",
+      unit: "MP",
+      byType: {
+        [LensTypeEnum.TCL]: { label: "WD", unit: "mm" },
+      },
     },
     {
       required: true,
@@ -290,6 +296,10 @@ export const categoryFieldOptions: CategoryOptionsMap = {
       type: "input",
       placeholder: "초점거리를 입력하세요",
       unit: "mm",
+      isNumeric: true,
+      byType: {
+        [LensTypeEnum.TCL]: { label: "배율", unit: "x" },
+      },
     },
     {
       required: true,

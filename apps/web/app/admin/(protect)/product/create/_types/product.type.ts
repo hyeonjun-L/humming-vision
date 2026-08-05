@@ -21,19 +21,24 @@ export type CreateCategoryFields =
   | SoftwareFields
   | LightFields;
 
-type CategoryFieldBase = {
+// 카메라 타입(AREA/LINE)이나 렌즈 타입(CCTV/TCL)에 따라
+// 같은 컬럼을 다른 스펙으로 표기하는 필드용 오버라이드
+// 예: 렌즈 focalLength → CCTV는 "초점거리 (mm)", TCL은 "배율 (x)"
+export type CategoryFieldTypeOverride = Partial<
+  Record<CameraType | LensType, { label?: string; unit?: string }>
+>;
+
+export type CategoryFieldOption = {
   required: boolean;
   fieldName: string;
   label: string;
   type: "select" | "input";
   placeholder?: string;
   unit?: string;
+  isNumeric?: boolean;
+  byType?: CategoryFieldTypeOverride;
   options?: { value: string; label: string }[];
 };
-
-type CategoryFieldValues = Partial<Record<CameraType | LensType, string>>;
-
-export type CategoryFieldOption = CategoryFieldBase & CategoryFieldValues;
 
 export type CategoryOptionsMap = {
   [key in CategoriesEnum]: CategoryFieldOption[];

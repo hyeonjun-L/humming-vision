@@ -1,9 +1,10 @@
-import { Control } from "react-hook-form";
+import { Control, useWatch } from "react-hook-form";
 import { CategoriesEnum } from "@humming-vision/shared";
 import { categoryFieldOptions } from "../_const/constants";
 import { ProductUpdateFormData } from "../_types/product-update.type";
 import { TextInput, SelectInput } from "../../_components/shared-form-inputs";
 import { CategoryFieldOption } from "../../create/_types/product.type";
+import { resolveCategoryFieldLabel } from "../../_utils/field-label";
 
 interface CategoryFieldProps {
   field: CategoryFieldOption;
@@ -13,7 +14,15 @@ interface CategoryFieldProps {
 export const CategoryField = ({ field, control }: CategoryFieldProps) => {
   const fieldName =
     `categoryFields.${field.fieldName}` as keyof ProductUpdateFormData;
-  const label = field.label + (field.unit ? ` (${field.unit})` : "");
+
+  // 카메라/렌즈 타입(AREA·LINE / CCTV·TCL)에 따라 라벨과 단위가 달라지는 필드가 있어
+  // 현재 선택된 타입을 구독한다.
+  const selectedType = useWatch({
+    control,
+    name: "categoryFields.type" as keyof ProductUpdateFormData,
+  }) as string | undefined;
+
+  const label = resolveCategoryFieldLabel(field, selectedType);
   const className = "flex w-full flex-col gap-2 lg:w-[calc(50%-10px)]";
 
   if (field.type === "select") {

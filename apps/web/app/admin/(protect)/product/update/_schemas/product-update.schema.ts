@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { CategoriesEnum } from "@humming-vision/shared";
 import { categoryOptions } from "../../create/_const/constants";
+import {
+  createNumericFieldSchema,
+  isNumericField,
+} from "../../_utils/field-schema";
 
 const fileSchema = z.instanceof(File).nullable().optional();
 const stringSchema = z.string().optional();
@@ -63,7 +67,9 @@ const createUpdateCategorySchema = (category: CategoriesEnum) => {
   fields.forEach((field) => {
     const requiredMessage = `${field.label}은(는) 필수입니다`;
 
-    if (field.required) {
+    if (field.type === "input" && isNumericField(field)) {
+      schemaFields[field.fieldName] = createNumericFieldSchema(field);
+    } else if (field.required) {
       schemaFields[field.fieldName] = z
         .string({ required_error: requiredMessage })
         .min(1, requiredMessage);

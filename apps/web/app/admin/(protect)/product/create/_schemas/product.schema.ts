@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { CategoriesEnum } from "@humming-vision/shared";
 import { categoryOptions } from "../_const/constants";
+import {
+  createNumericFieldSchema,
+  isNumericField,
+} from "../../_utils/field-schema";
 
 const fileSchema = z.instanceof(File).nullable().optional();
 
@@ -53,31 +57,9 @@ const createCategorySchema = (category: CategoriesEnum) => {
         schemaFields[field.fieldName] = z.enum(values).optional();
       }
     } else if (field.type === "input") {
-      if (field.unit) {
+      if (isNumericField(field)) {
         // 숫자 필드
-        schemaFields[field.fieldName] = z.preprocess(
-          (val) => {
-            if (typeof val === "string") {
-              if (val.trim() === "") return undefined;
-              const num = Number(val);
-              return isNaN(num) ? val : num;
-            }
-            return val;
-          },
-          field.required
-            ? z
-                .number({
-                  invalid_type_error: invalidMessage,
-                  required_error: requiredMessage,
-                })
-                .min(0, `${field.label}은(는) 0 이상이어야 합니다`)
-            : z
-                .number({
-                  invalid_type_error: invalidMessage,
-                })
-                .min(0, `${field.label}은(는) 0 이상이어야 합니다`)
-                .optional(),
-        );
+        schemaFields[field.fieldName] = createNumericFieldSchema(field);
       } else {
         // 일반 문자열 필드
         schemaFields[field.fieldName] = field.required

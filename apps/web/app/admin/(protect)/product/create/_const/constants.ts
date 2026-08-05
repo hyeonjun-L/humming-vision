@@ -182,8 +182,10 @@ export const categoryOptions: CategoryOptionsMap = {
       type: "input",
       required: true,
       placeholder: "속도 입력",
-      AREA: "fps",
-      LINE: "kHz",
+      unit: "fps",
+      byType: {
+        [CameraTypeEnum.LINE]: { unit: "kHz" },
+      },
     },
     {
       fieldName: "color",
@@ -291,6 +293,9 @@ export const categoryOptions: CategoryOptionsMap = {
       required: true,
       placeholder: "해상력 입력",
       unit: "MP",
+      byType: {
+        [LensTypeEnum.TCL]: { label: "WD", unit: "mm" },
+      },
     },
     {
       fieldName: "focalLength",
@@ -298,8 +303,11 @@ export const categoryOptions: CategoryOptionsMap = {
       type: "input",
       required: true,
       placeholder: "초점거리 입력",
-      CCTV: "mm",
-      TCL: "x",
+      unit: "mm",
+      isNumeric: true,
+      byType: {
+        [LensTypeEnum.TCL]: { label: "배율", unit: "x" },
+      },
     },
     {
       fieldName: "numericAperture",

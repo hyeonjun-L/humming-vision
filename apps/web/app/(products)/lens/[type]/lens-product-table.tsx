@@ -2,12 +2,13 @@
 
 import ProductCard from "@/(products)/_components/product-card";
 import { TAKE } from "@/(products)/_constants/paginate.const";
-import { LENS_CARD_FIELDS } from "@/(products)/_constants/products.const";
+import { getLensCardFields } from "@/(products)/_constants/products.const";
 import {
   CategoriesEnum,
   GetLensQuery,
   GetProductResponse,
   LensProduct,
+  LensType,
 } from "@humming-vision/shared";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import Pagination from "components/pagination";
@@ -20,19 +21,17 @@ import getRepresentativeImage from "utils/get-representative-image";
 interface LensProductTableProps {
   productsData: GetProductResponse<CategoriesEnum.LENS>;
   searchParams: GetLensQuery;
+  lensType: LensType;
 }
 
 function LensProductTable({
   productsData,
   searchParams,
+  lensType,
 }: LensProductTableProps) {
   const { updateSearchParams } = useUpdateSearchParams();
 
-  const focalLengthLabel = productsData.data.some(
-    (product) => product.lens.type !== "CCTV",
-  )
-    ? "배율"
-    : "초점거리";
+  const lensCardFields = getLensCardFields(lensType);
 
   const columns: ColumnDef<LensProduct>[] = [
     {
@@ -68,9 +67,9 @@ function LensProductTable({
         );
       },
     },
-    ...LENS_CARD_FIELDS.map(({ label, accessor }) => ({
+    ...lensCardFields.map(({ label, accessor }) => ({
       accessorKey: label,
-      header: label === "초점거리" ? focalLengthLabel : label,
+      header: label,
       cell: ({ row }: { row: Row<LensProduct> }) => (
         <p className="text-gray600">{accessor(row.original)}</p>
       ),
@@ -87,7 +86,7 @@ function LensProductTable({
           <ProductCard
             key={product.id}
             product={product}
-            productFields={LENS_CARD_FIELDS}
+            productFields={lensCardFields}
           />
         ))}
       </ul>
