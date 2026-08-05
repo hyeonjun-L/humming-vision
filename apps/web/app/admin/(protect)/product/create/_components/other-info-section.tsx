@@ -3,6 +3,7 @@ import { CategoriesEnum } from "@humming-vision/shared";
 import { categoryOptions } from "../_const/constants";
 import { CategoryFieldOption, ProductFormData } from "../_types/product.type";
 import { TextInput, SelectInput } from "../../_components/shared-form-inputs";
+import { resolveCategoryFieldLabel } from "../../_utils/field-label";
 
 interface CategoryFieldProps {
   field: CategoryFieldOption;
@@ -17,20 +18,8 @@ export const CategoryField = ({
 }: CategoryFieldProps) => {
   const fieldName =
     `categoryFields.${field.fieldName}` as keyof ProductFormData;
-  const value =
-    subCategory && Object.prototype.hasOwnProperty.call(field, subCategory)
-      ? field[subCategory as keyof typeof field]
-      : undefined;
 
-  let label = field.label;
-  if (subCategory === "TCL" && value) {
-    label = "배율";
-  }
-  if (field.unit) {
-    label += ` (${field.unit})`;
-  } else if (value) {
-    label += ` (${value})`;
-  }
+  const label = resolveCategoryFieldLabel(field, subCategory);
 
   const className = "flex w-full flex-col gap-2 lg:w-[calc(50%-10px)]";
 
