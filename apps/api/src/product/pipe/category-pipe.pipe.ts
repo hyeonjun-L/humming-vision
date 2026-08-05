@@ -2,9 +2,10 @@ import { CategoriesEnum } from '@humming-vision/shared';
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 
 @Injectable()
-export class ParseCategoryPipe
-  implements PipeTransform<string, CategoriesEnum>
-{
+export class ParseCategoryPipe implements PipeTransform<
+  string,
+  CategoriesEnum
+> {
   private readonly map: Record<string, CategoriesEnum> = {
     software: CategoriesEnum.SOFTWARE,
     camera: CategoriesEnum.CAMERA,
