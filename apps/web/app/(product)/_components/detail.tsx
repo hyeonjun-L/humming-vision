@@ -1,26 +1,35 @@
 import { CategoryToProductTypeMap } from "@humming-vision/shared";
 import { Download } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import SameSensorCameras from "./same-sensor-cameras";
 import { Suspense } from "react";
 import SameSensorCamerasFallback from "./same-sensor-cameras-fallback";
 import ProductImagesCarousel from "./product-images-carousel";
+import SpecImage from "./spec-image";
+import getImageSize from "utils/get-image-size";
 
 interface DetailProps<T extends keyof CategoryToProductTypeMap> {
   product: CategoryToProductTypeMap[T];
 }
 
-function Detail<T extends keyof CategoryToProductTypeMap>({
+async function Detail<T extends keyof CategoryToProductTypeMap>({
   product,
 }: DetailProps<T>) {
   const productImages = product.images
     .filter((img) => img.type === "PRODUCT")
     .sort((a, b) => a.order - b.order);
 
-  const specImages = product.images
-    .filter((img) => img.type === "SPEC")
-    .sort((a, b) => a.order - b.order);
+  // 스펙 이미지는 원본 크기가 제각각이라(너비 318~1006px, 비율 0.52~4.07)
+  // 치수를 미리 읽어 종횡비만큼 공간을 확보하고 확대 렌더링을 막는다.
+  const specImages = await Promise.all(
+    product.images
+      .filter((img) => img.type === "SPEC")
+      .sort((a, b) => a.order - b.order)
+      .map(async (image) => ({
+        ...image,
+        size: await getImageSize(image.path),
+      })),
+  );
 
   const DOCUMENTS = [
     { label: "DataSheet", url: product.datasheetUrl },
@@ -62,14 +71,11 @@ function Detail<T extends keyof CategoryToProductTypeMap>({
         </h3>
 
         {specImages.map((image, index) => (
-          <div key={image.order} className="relative w-full md:w-[649px]">
-            <Image
+          <div key={image.order} className="w-full max-w-[900px]">
+            <SpecImage
               src={image.path || ""}
-              alt={`Spec Image ${image.order}`}
-              width={0}
-              height={0}
-              sizes="(min-width: 768px) 649px, 100vw"
-              className="h-auto w-full object-contain"
+              alt={`${product.name} 상세스펙 ${image.order + 1}`}
+              size={image.size}
               priority={index < 2}
             />
           </div>

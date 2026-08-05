@@ -514,11 +514,8 @@ export interface components {
             take: number;
         };
         PaginateLensDto: {
-            /**
-             * @default CCTV
-             * @enum {string}
-             */
-            lens__type__equal: "CCTV" | "TCL";
+            /** @enum {string} */
+            lens__type__equal?: "CCTV" | "TCL";
             /** @enum {string} */
             lens__mount__equal?: "C" | "CS" | "F" | "M";
             lens__focalLength__between?: string[];

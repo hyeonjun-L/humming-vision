@@ -11,6 +11,12 @@ export interface ModalProps {
     onDelete: (id: number) => Promise<void>;
   };
   [ModalEnum.FILTER]: Record<string, never>;
+  [ModalEnum.IMAGE_ZOOM]: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+  };
 }
 
 interface ModalState {

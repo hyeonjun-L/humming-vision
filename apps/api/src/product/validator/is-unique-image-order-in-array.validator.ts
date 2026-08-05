@@ -5,9 +5,7 @@ import {
 import { CreateImageDto } from '../image/dto/create-image.dto';
 
 @ValidatorConstraint({ name: 'IsUniqueImageOrderInArray', async: false })
-export class IsUniqueImageOrderInArrayConstraint
-  implements ValidatorConstraintInterface
-{
+export class IsUniqueImageOrderInArrayConstraint implements ValidatorConstraintInterface {
   validate(images: CreateImageDto[]): boolean {
     if (!Array.isArray(images)) return true;
 

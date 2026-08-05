@@ -4,8 +4,9 @@ import { BasePaginateProductDto } from 'src/product/dto/paginate-product.dto';
 import { LensModelMount, LensModelType } from '../lens.const';
 
 export class PaginateLensDto extends BasePaginateProductDto {
+  @IsOptional()
   @IsEnum(LensModelType)
-  lens__type__equal: LensModelType = LensModelType.CCTV;
+  lens__type__equal?: LensModelType;
 
   @IsOptional()
   @IsEnum(LensModelMount)
