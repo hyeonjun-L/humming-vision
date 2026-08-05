@@ -12,7 +12,14 @@ interface SpecImageProps {
   priority?: boolean;
 }
 
-const SIZES = "(min-width: 768px) 649px, 100vw";
+const SIZES = "(min-width: 900px) 900px, 100vw";
+
+/**
+ * 스펙 이미지는 원본 너비가 309~1165px로 제각각이라 컨테이너에 그대로 맞추면
+ * 작은 이미지가 과하게 확대되어 도면·사양표 글씨가 뭉개진다.
+ * 컬럼을 채우되 원본의 이 배율까지만 확대한다.
+ */
+const MAX_UPSCALE = 1.5;
 
 function SpecImage({ src, alt, size, priority = false }: SpecImageProps) {
   const openModal = useModalStore((state) => state.openModal);
@@ -46,16 +53,17 @@ function SpecImage({ src, alt, size, priority = false }: SpecImageProps) {
         })
       }
       aria-label={`${alt} 크게 보기`}
-      className="mx-auto block cursor-zoom-in"
+      className="mx-auto block w-full cursor-zoom-in"
     >
-      {/* w-auto + max-w-full: 원본보다 크게 늘리지 않고, 컨테이너를 넘을 때만 축소 */}
+      {/* 컬럼을 채우되(w-full) 인라인 maxWidth가 확대 상한을 만든다 */}
       <Image
         src={src}
         alt={alt}
         width={size.width}
         height={size.height}
         sizes={SIZES}
-        className="mx-auto h-auto w-auto max-w-full"
+        className="mx-auto h-auto w-full"
+        style={{ maxWidth: `${Math.round(size.width * MAX_UPSCALE)}px` }}
         priority={priority}
       />
     </button>

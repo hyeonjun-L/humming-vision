@@ -71,7 +71,7 @@ async function Detail<T extends keyof CategoryToProductTypeMap>({
         </h3>
 
         {specImages.map((image, index) => (
-          <div key={image.order} className="w-full md:w-[649px]">
+          <div key={image.order} className="w-full max-w-[900px]">
             <SpecImage
               src={image.path || ""}
               alt={`${product.name} 상세스펙 ${image.order + 1}`}
