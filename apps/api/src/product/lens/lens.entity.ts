@@ -37,7 +37,7 @@ export class LensModel {
   @Column()
   fNumnber: string;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'float', nullable: false })
   focalLength: number;
 
   @Column({ type: 'float', nullable: false })
