@@ -270,7 +270,10 @@ export const categoryFieldOptions: CategoryOptionsMap = {
       label: "Resolution",
       type: "input",
       placeholder: "해상도를 입력하세요",
-      unit: "lp/mm",
+      unit: "MP",
+      byType: {
+        [LensTypeEnum.TCL]: { label: "WD", unit: "mm" },
+      },
     },
     {
       required: true,

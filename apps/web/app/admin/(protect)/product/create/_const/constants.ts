@@ -293,6 +293,9 @@ export const categoryOptions: CategoryOptionsMap = {
       required: true,
       placeholder: "해상력 입력",
       unit: "MP",
+      byType: {
+        [LensTypeEnum.TCL]: { label: "WD", unit: "mm" },
+      },
     },
     {
       fieldName: "focalLength",

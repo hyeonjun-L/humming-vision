@@ -7,6 +7,7 @@ import {
   GetFrameGrabberQuery,
   GetLensQuery,
   LensProduct,
+  LensType,
   LensTypeEnum,
   LightProduct,
   SoftwareMakerEnum,
@@ -126,36 +127,45 @@ export const CAMERA_CARD_FIELDS: {
   },
 ];
 
-export const LENS_CARD_FIELDS: {
+// TCL(텔레센트릭) 렌즈는 CCTV 렌즈와 스펙 체계가 달라
+// focalLength는 배율(x), resolution은 WD(mm)로 표기한다.
+export const getLensCardFields = (
+  type: LensType,
+): {
   label: string;
   accessor: (product: LensProduct) => React.ReactNode;
-}[] = [
-  {
-    label: "초점거리",
-    accessor: (product) =>
-      `${product.lens.focalLength}${product.lens.type === "CCTV" ? "mm" : "x"}`,
-  },
-  {
-    label: "해상력",
-    accessor: (product) => `${product.lens.resolution}MP`,
-  },
-  {
-    label: "N/A",
-    accessor: (product) => product.lens.numericAperture,
-  },
-  {
-    label: "F/#",
-    accessor: (product) => product.lens.fNumnber,
-  },
-  {
-    label: "포맷사이즈",
-    accessor: (product) => `${product.lens.formatSize}mm`,
-  },
-  {
-    label: "마운트",
-    accessor: (product) => product.lens.mount,
-  },
-];
+}[] => {
+  const isCCTV = type === LensTypeEnum.CCTV;
+
+  return [
+    {
+      label: isCCTV ? "초점거리" : "배율",
+      accessor: (product) =>
+        `${product.lens.focalLength}${isCCTV ? "mm" : "x"}`,
+    },
+    {
+      label: isCCTV ? "해상력" : "WD",
+      accessor: (product) =>
+        `${product.lens.resolution}${isCCTV ? "MP" : "mm"}`,
+    },
+    {
+      label: "N/A",
+      accessor: (product) => product.lens.numericAperture,
+    },
+    {
+      label: "F/#",
+      accessor: (product) => product.lens.fNumnber,
+    },
+    {
+      label: "포맷사이즈",
+      accessor: (product) => `${product.lens.formatSize}mm`,
+    },
+    {
+      label: "마운트",
+      accessor: (product) => product.lens.mount,
+    },
+  ];
+};
 
 export const FRAME_GRABBER_CARD_FIELDS: {
   label: string;

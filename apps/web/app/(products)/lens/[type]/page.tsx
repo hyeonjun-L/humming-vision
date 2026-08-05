@@ -37,16 +37,18 @@ async function page({ searchParams: initSearchParams, params }: Props) {
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
 
-  try {
-    z.enum(["CCTV", "TCL"]).parse(type.toUpperCase());
-  } catch {
+  const parsedType = z.enum(["CCTV", "TCL"]).safeParse(type.toUpperCase());
+
+  if (!parsedType.success) {
     redirect(`${RoutePath.LENS}${RoutePathWithCategory.CCTV}`);
   }
+
+  const lensType = parsedType.data;
 
   const validatedQuery = buildValidatedQuery(
     {
       ...searchParams,
-      lens__type__equal: type.toUpperCase(),
+      lens__type__equal: lensType,
       page: String(searchParams.page || 1),
       take: String(TAKE),
     },
@@ -75,6 +77,7 @@ async function page({ searchParams: initSearchParams, params }: Props) {
       <LensProductTable
         productsData={lensData.data}
         searchParams={searchParams}
+        lensType={lensType}
       />
     );
   } catch (error) {
