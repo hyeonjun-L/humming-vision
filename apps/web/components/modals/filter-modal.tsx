@@ -5,9 +5,10 @@ import { X } from "lucide-react";
 import { ArrowSVG } from "public/svg";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
-  FILTER_CONFIGS,
+  getFilterConfigs,
   RouteCategory,
 } from "@/(products)/_constants/products.const";
+import { useLensType } from "hooks/useLensType";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
 import ProductsFilter from "components/products-filter/products-filter";
 import RefreshButton from "components/products-filter/refresh-button";
@@ -20,7 +21,9 @@ function FilterModal() {
 
   const currentCategory = pathname.split("/")[1] as RouteCategory;
 
-  const filterConfigs = FILTER_CONFIGS[currentCategory];
+  const lensType = useLensType();
+
+  const filterConfigs = getFilterConfigs(currentCategory, lensType);
 
   const closeModal = useModalStore((state) => state.closeModal);
 

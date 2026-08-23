@@ -519,6 +519,7 @@ export interface components {
             /** @enum {string} */
             lens__mount__equal?: "C" | "CS" | "F" | "M";
             lens__focalLength__between?: string[];
+            lens__resolution__between?: string[];
             lens__formatSize__between?: string[];
             where__name__i_like?: string;
             /** @enum {string} */

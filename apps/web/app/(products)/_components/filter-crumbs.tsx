@@ -1,6 +1,7 @@
 "use client";
 import { usePathname, useSearchParams } from "next/navigation";
-import { FILTER_CONFIGS, RouteCategory } from "../_constants/products.const";
+import { getFilterConfigs, RouteCategory } from "../_constants/products.const";
+import { useLensType } from "hooks/useLensType";
 import cn from "libs/cn";
 import { ChevronDown, X } from "lucide-react";
 import { useUpdateSearchParams } from "hooks/useUpdateSearchParams";
@@ -21,7 +22,9 @@ function FilterCrumbs({ currentCategory }: FilterCrumbsProps) {
 
   const openModal = useModalStore((state) => state.openModal);
 
-  const filterConfigs = FILTER_CONFIGS[currentCategory];
+  const lensType = useLensType();
+
+  const filterConfigs = getFilterConfigs(currentCategory, lensType);
 
   const formatFilterValue = (value: string | null, title: string) => {
     if (!value) return title;

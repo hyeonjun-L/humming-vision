@@ -24,6 +24,7 @@ export const dynamic = "force-dynamic";
 const GetLensQuerySchema = z.object({
   lens__mount__equal: z.enum(["C", "CS", "F", "M"]).optional(),
   lens__focalLength__between: z.array(z.number()).length(2).optional(),
+  lens__resolution__between: z.array(z.number()).length(2).optional(),
   lens__formatSize__between: z.array(z.number()).length(2).optional(),
   lens__type__equal: z.enum(["CCTV", "TCL"]).optional(),
   where__name__i_like: z.string().optional(),
