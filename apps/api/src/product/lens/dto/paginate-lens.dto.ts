@@ -22,6 +22,17 @@ export class PaginateLensDto extends BasePaginateProductDto {
   })
   lens__focalLength__between?: [number, number];
 
+  // CCTV는 해상력(MP), TCL은 WD(mm)로 쓰는 같은 컬럼이다.
+  @IsOptional()
+  @IsArray()
+  @ArrayMinSize(2)
+  @Transform(({ value }) => {
+    if (Array.isArray(value)) return value.map(Number);
+    if (typeof value === 'string') return value.split(',').map(Number);
+    return [];
+  })
+  lens__resolution__between?: [number, number];
+
   @IsOptional()
   @IsArray()
   @ArrayMinSize(2)

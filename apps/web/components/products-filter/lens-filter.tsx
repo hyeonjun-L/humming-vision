@@ -6,8 +6,8 @@ import StaticFilter from "./static-filter";
 import { useValidatedSearchParam } from "./validator/useValidatedSearchParam";
 import { z } from "zod";
 import NumberRangeTuple from "./validator/number-range-tuple-schemas";
-import { LensMount, LensType } from "@humming-vision/shared";
-import { usePathname } from "next/navigation";
+import { LensMount, LensTypeEnum } from "@humming-vision/shared";
+import { useLensType } from "hooks/useLensType";
 
 const LensMountEnum = z.enum(["C", "CS", "F", "M"] as [
   LensMount,
@@ -22,9 +22,9 @@ const LENS_MOUNT: { value: LensMount; label: string }[] = [
 ];
 
 function LensFilter() {
-  const pathName = usePathname();
+  const currentType = useLensType();
 
-  const currentType = pathName.split("/")[2]?.toUpperCase() as LensType;
+  const isTCL = currentType === LensTypeEnum.TCL;
 
   const currentMount = useValidatedSearchParam(
     "lens__mount__equal",
@@ -33,6 +33,9 @@ function LensFilter() {
   const currentFocalLenght =
     useValidatedSearchParam("lens__focalLength__between", NumberRangeTuple) ??
     [];
+  const currentWD =
+    useValidatedSearchParam("lens__resolution__between", NumberRangeTuple) ??
+    [];
   const currentFormatSize =
     useValidatedSearchParam("lens__formatSize__between", NumberRangeTuple) ??
     [];
@@ -40,7 +43,7 @@ function LensFilter() {
   return (
     <>
       <Accordion
-        title={`${currentType === "CCTV" ? "초점거리" : "배율"} (${currentType === "CCTV" ? "mm" : "x"})`}
+        title={`${isTCL ? "배율" : "초점거리"} (${isTCL ? "x" : "mm"})`}
         defaultOpen={currentFocalLenght.length > 0}
         className="border-gray200 border-b"
       >
@@ -48,10 +51,27 @@ function LensFilter() {
           filterKey="lens__focalLength__between"
           initialRangeValues={currentFocalLenght}
           min={0}
-          max={currentType === "CCTV" ? 200 : 20}
-          unit={currentType === "CCTV" ? "mm" : "x"}
+          max={isTCL ? 20 : 200}
+          unit={isTCL ? "x" : "mm"}
         />
       </Accordion>
+
+      {/* TCL은 resolution 컬럼을 WD(작동거리)로 사용한다 */}
+      {isTCL && (
+        <Accordion
+          title="WD (mm)"
+          defaultOpen={currentWD.length > 0}
+          className="border-gray200 border-b"
+        >
+          <DynamicFilter
+            filterKey="lens__resolution__between"
+            initialRangeValues={currentWD}
+            min={1}
+            max={1000}
+            unit="mm"
+          />
+        </Accordion>
+      )}
 
       <Accordion
         title="포맷 사이즈 (mm)"

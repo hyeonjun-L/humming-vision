@@ -236,24 +236,6 @@ export const FILTER_CONFIGS: {
       title: "모델명",
     },
   ],
-  lens: [
-    {
-      key: "lens__mount__equal",
-      title: "마운트",
-    },
-    {
-      key: "lens__focalLength__between",
-      title: "초점거리",
-    },
-    {
-      key: "lens__formatSize__between",
-      title: "포맷사이즈",
-    },
-    {
-      key: "where__name__i_like",
-      title: "모델명",
-    },
-  ],
   "frame-grabber": [
     {
       key: "frameGrabber__maker__equal",
@@ -264,4 +246,32 @@ export const FILTER_CONFIGS: {
       title: "모델명",
     },
   ],
+};
+
+type FilterConfig = { key: string; title: string };
+
+// 렌즈는 타입에 따라 같은 컬럼의 의미가 달라 필터 목록도 갈린다.
+// focalLength → CCTV는 초점거리, TCL은 배율 / resolution → TCL에서만 WD로 노출
+const getLensFilterConfigs = (lensType?: LensType): FilterConfig[] => {
+  const isTCL = lensType === LensTypeEnum.TCL;
+
+  return [
+    { key: "lens__mount__equal", title: "마운트" },
+    {
+      key: "lens__focalLength__between",
+      title: isTCL ? "배율" : "초점거리",
+    },
+    ...(isTCL ? [{ key: "lens__resolution__between", title: "WD" }] : []),
+    { key: "lens__formatSize__between", title: "포맷사이즈" },
+    { key: "where__name__i_like", title: "모델명" },
+  ];
+};
+
+export const getFilterConfigs = (
+  category: RouteCategory,
+  lensType?: LensType,
+): FilterConfig[] | undefined => {
+  if (category === RouteCategory.LENS) return getLensFilterConfigs(lensType);
+
+  return FILTER_CONFIGS[category as keyof CategoryQueryMap];
 };
