@@ -1,5 +1,5 @@
 import Logo from "components/logo";
-import { COMPANY } from "consts/metadata.const";
+import { COMPANY, PRIVACY_POLICY_URL } from "consts/metadata.const";
 
 function Footer() {
   return (
@@ -11,6 +11,15 @@ function Footer() {
           (TEL : {COMPANY.tel} FAX : {COMPANY.fax})
         </p>
         <p>{COMPANY.name}</p>
+        {/* 개인정보처리방침은 홈페이지에 상시 공개해야 한다 (개인정보 보호법 제30조) */}
+        <a
+          href={PRIVACY_POLICY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-main mt-2 font-semibold underline underline-offset-2"
+        >
+          개인정보처리방침
+        </a>
       </div>
     </footer>
   );

@@ -635,6 +635,7 @@ export interface components {
             email: string;
             subject?: string;
             message: string;
+            privacyConsent: boolean;
             /** @default false */
             isRead: boolean;
         };
@@ -646,6 +647,7 @@ export interface components {
             subject: string;
             message: string;
             isRead: boolean;
+            privacyPolicyVersion: string | null;
             id: number;
             /** Format: date-time */
             updatedAt: string;
