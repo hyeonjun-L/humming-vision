@@ -94,13 +94,24 @@ type ContactFormData = Omit<CreateContactDto, "isRead">;
 export const POST = async (request: NextRequest) => {
   const body = await request.json();
 
-  const { name, company, phoneNumber, email, subject, message } =
-    body as ContactFormData;
+  const {
+    name,
+    company,
+    phoneNumber,
+    email,
+    subject,
+    message,
+    privacyConsent,
+  } = body as ContactFormData;
 
   if (!name || !email || !message) {
     return handleValidationError(
       "Missing required fields: name, email, content",
     );
+  }
+
+  if (privacyConsent !== true) {
+    return handleValidationError("Privacy policy consent is required");
   }
 
   const END_POINT = process.env[ENV_API_END_POINT_KEY];
@@ -125,6 +136,7 @@ export const POST = async (request: NextRequest) => {
         email,
         subject: subject || null,
         message,
+        privacyConsent,
       },
       {
         headers,

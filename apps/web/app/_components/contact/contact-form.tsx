@@ -5,12 +5,14 @@ import SubmitButton from "components/submit-button";
 import cn from "libs/cn";
 import { Info } from "lucide-react";
 import { Fragment, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { showToast } from "utils/toast-config";
 import { CreateContactDto } from "@humming-vision/shared";
 import { publicApi } from "libs/axios";
+import { Checkbox } from "components/checkbox";
+import { PRIVACY_POLICY_URL } from "consts/metadata.const";
 
 type ContactFormData = Omit<CreateContactDto, "isRead">;
 
@@ -28,6 +30,10 @@ const contactSchema = z.object({
   message: z
     .string({ required_error: "내용은 필수입니다" })
     .min(1, "내용을 입력해주세요"),
+  // z.literal(true)는 출력 타입이 true라 satisfies 제약을 못 만족한다
+  privacyConsent: z
+    .boolean()
+    .refine((v) => v === true, "개인정보 수집·이용에 동의해주세요"),
 }) satisfies z.ZodType<ContactFormData>;
 
 const CONTACT_FIELDS: Array<{
@@ -94,11 +100,13 @@ function ContactForm({ isContactPage }: ContactFormProps) {
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
+    defaultValues: { privacyConsent: false },
   });
 
   const onSubmit = async (data: ContactFormData) => {
@@ -130,75 +138,117 @@ function ContactForm({ isContactPage }: ContactFormProps) {
           },
         )}
       >
-        {CONTACT_FIELDS.map(({ id, label, placeholder, required, type, hint }) => {
-          const fieldError = errors[id];
+        {CONTACT_FIELDS.map(
+          ({ id, label, placeholder, required, type, hint }) => {
+            const fieldError = errors[id];
 
-          const { onBlur: originalOnBlur, ...fieldProps } = register(id);
+            const { onBlur: originalOnBlur, ...fieldProps } = register(id);
 
-          return (
-            <Fragment key={id}>
-              <p
-                className={cn(
-                  "text-gray600 border-gray300 flex h-full w-24 items-center border-b text-base font-normal",
-                  {
-                    "items-start pt-2.5": label === "내용",
-                    "border-b-red-500": fieldError,
-                    "text-main border-b-main": focusedField === id,
-                  },
-                )}
-              >
-                {label}
-                {required && <span className="ml-1 text-red-500">*</span>}
-              </p>
-              <div className="relative flex flex-col">
-                {type === "input" ? (
-                  <Input
-                    variant="underline"
-                    className={cn("!border-b-gray300", {
-                      "!border-b-red-500": fieldError,
-                      "!border-b-main": focusedField === id,
-                    })}
-                    placeholder={placeholder}
-                    onFocus={() => setFocusedField(id)}
-                    onBlur={(e) => {
-                      setFocusedField(null);
-                      originalOnBlur(e);
-                    }}
-                    {...fieldProps}
-                  />
-                ) : (
-                  <textarea
-                    className={cn(
-                      "border-b-gray300 h-60 w-full resize-none border-0 border-b bg-transparent px-3 pt-2.5 text-base font-normal focus:outline-none",
-                      {
-                        "border-b-red-500": fieldError,
-                        "border-b-main": focusedField === id,
-                      },
-                    )}
-                    placeholder={placeholder}
-                    onFocus={() => setFocusedField(id)}
-                    onBlur={(e) => {
-                      setFocusedField(null);
-                      originalOnBlur(e);
-                    }}
-                    {...fieldProps}
-                  />
-                )}
-                {hint && !fieldError && (
-                  <span className="absolute right-0 top-9 text-gray400 mt-1.5 flex items-center gap-1 text-xs">
-                    <Info className="size-3 shrink-0" />
-                    {hint}
-                  </span>
-                )}
-                {fieldError && (
-                  <span className="absolute -bottom-5 left-3 text-sm text-red-500">
-                    {fieldError.message}
-                  </span>
-                )}
-              </div>
-            </Fragment>
-          );
-        })}
+            return (
+              <Fragment key={id}>
+                <p
+                  className={cn(
+                    "text-gray600 border-gray300 flex h-full w-24 items-center border-b text-base font-normal",
+                    {
+                      "items-start pt-2.5": label === "내용",
+                      "border-b-red-500": fieldError,
+                      "text-main border-b-main": focusedField === id,
+                    },
+                  )}
+                >
+                  {label}
+                  {required && <span className="ml-1 text-red-500">*</span>}
+                </p>
+                <div className="relative flex flex-col">
+                  {type === "input" ? (
+                    <Input
+                      variant="underline"
+                      className={cn("!border-b-gray300", {
+                        "!border-b-red-500": fieldError,
+                        "!border-b-main": focusedField === id,
+                      })}
+                      placeholder={placeholder}
+                      onFocus={() => setFocusedField(id)}
+                      onBlur={(e) => {
+                        setFocusedField(null);
+                        originalOnBlur(e);
+                      }}
+                      {...fieldProps}
+                    />
+                  ) : (
+                    <textarea
+                      className={cn(
+                        "border-b-gray300 h-60 w-full resize-none border-0 border-b bg-transparent px-3 pt-2.5 text-base font-normal focus:outline-none",
+                        {
+                          "border-b-red-500": fieldError,
+                          "border-b-main": focusedField === id,
+                        },
+                      )}
+                      placeholder={placeholder}
+                      onFocus={() => setFocusedField(id)}
+                      onBlur={(e) => {
+                        setFocusedField(null);
+                        originalOnBlur(e);
+                      }}
+                      {...fieldProps}
+                    />
+                  )}
+                  {hint && !fieldError && (
+                    <span className="text-gray400 absolute top-9 right-0 mt-1.5 flex items-center gap-1 text-xs">
+                      <Info className="size-3 shrink-0" />
+                      {hint}
+                    </span>
+                  )}
+                  {fieldError && (
+                    <span className="absolute -bottom-5 left-3 text-sm text-red-500">
+                      {fieldError.message}
+                    </span>
+                  )}
+                </div>
+              </Fragment>
+            );
+          },
+        )}
+
+        <div className="col-span-2 mt-2 flex flex-col gap-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <Controller
+              name="privacyConsent"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  id="privacyConsent"
+                  checked={field.value}
+                  onCheckedChange={(checked) =>
+                    field.onChange(checked === true)
+                  }
+                  onBlur={field.onBlur}
+                  aria-invalid={!!errors.privacyConsent}
+                />
+              )}
+            />
+            <label
+              htmlFor="privacyConsent"
+              className="text-gray600 cursor-pointer text-sm font-normal"
+            >
+              <span className="text-red-500">(필수)</span> 개인정보 수집·이용에
+              동의합니다.
+            </label>
+            <a
+              href={PRIVACY_POLICY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray400 hover:text-main text-sm underline underline-offset-2"
+            >
+              전문 보기
+            </a>
+          </div>
+          {errors.privacyConsent && (
+            <span className="text-sm text-red-500">
+              {errors.privacyConsent.message}
+            </span>
+          )}
+        </div>
       </div>
       <div className="flex items-end xl:order-3">
         <SubmitButton

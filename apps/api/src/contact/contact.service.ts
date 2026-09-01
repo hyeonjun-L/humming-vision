@@ -8,6 +8,7 @@ import { ENV_TO_EMAIL_KEY } from 'src/common/const/env-kets.const';
 import { ConfigService } from '@nestjs/config';
 import { CommonService } from 'src/common/common.service';
 import { BasePaginateContactDto } from './dto/paginate-contact.dto';
+import { PRIVACY_POLICY_VERSION } from './const/privacy.const';
 
 @Injectable()
 export class ContactService {
@@ -38,7 +39,13 @@ export class ContactService {
 
   async createContact(contactData: CreateContactDto, ip?: string) {
     this.checkLimit(ip || contactData.email);
-    const contact = this.contactRepository.create(contactData);
+
+    // privacyConsent는 검증 전용 필드라 엔티티 컬럼이 아니다.
+    // 동의한 방침 버전은 클라이언트 값을 믿지 않고 서버가 채운다.
+    const contact = this.contactRepository.create({
+      ...contactData,
+      privacyPolicyVersion: PRIVACY_POLICY_VERSION,
+    });
 
     await this.contactRepository.save(contact);
 

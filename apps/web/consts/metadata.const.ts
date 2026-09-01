@@ -10,3 +10,13 @@ export const COMPANY = {
   fax: "031-360-2978",
   email: "sales@hummingvision.com",
 } as const;
+
+/**
+ * 개인정보처리방침 전문 주소.
+ * 문의 폼의 동의 항목과 푸터에서 함께 사용한다.
+ *
+ * 방침을 개정하면 API의 PRIVACY_POLICY_VERSION도 함께 올려야
+ * 이후 문의가 새 버전에 동의한 것으로 기록된다.
+ */
+export const PRIVACY_POLICY_URL =
+  "https://app.notion.com/p/3ce64ca0f6d380059d3add802505c651";

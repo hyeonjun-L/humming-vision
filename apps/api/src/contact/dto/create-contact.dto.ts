@@ -4,6 +4,7 @@ import {
   IsBoolean,
   MaxLength,
   IsOptional,
+  Equals,
 } from 'class-validator';
 
 export class CreateContactDto {
@@ -33,6 +34,12 @@ export class CreateContactDto {
   @IsString()
   @MaxLength(2000)
   message: string;
+
+  // 개인정보 수집·이용 동의. 프론트 검증만 두면 API 직접 호출로 우회되므로
+  // 서버에서도 true가 아닌 요청은 거부한다.
+  @IsBoolean()
+  @Equals(true, { message: '개인정보 수집·이용 동의가 필요합니다.' })
+  privacyConsent: boolean;
 
   @IsBoolean()
   isRead: boolean = false;
