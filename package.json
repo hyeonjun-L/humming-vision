@@ -23,7 +23,7 @@
   ],
   "overrides": {
     "fast-xml-parser": "^5.8.0",
-    "handlebars": "^4.7.9",
+    "handlebars": "^4.7.10",
     "liquidjs": "^10.27.0",
     "postcss": "^8.5.15",
     "path-to-regexp": "^8.4.2",
