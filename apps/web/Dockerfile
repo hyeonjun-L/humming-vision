@@ -1,5 +1,5 @@
 # 베이스 이미지 설정
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 # ======================
 # 1단계: 빌더 이미지
